@@ -29,10 +29,11 @@ const authOptions: AuthOptions = {
                     })
                     // console.log("success", res)
                     // console.log(credentials)
-                    console.log(res.data)
+                    console.log(res)
                     return res.data
 
                 } catch (err: AxiosError) {
+                    console.log(err)
                     return {error: err.response.data};
                     // throw new Error(err.response.data, {
                     //     cause: "ekrjekrj",
@@ -68,20 +69,34 @@ const authOptions: AuthOptions = {
             if (s.user?.error) {
                 console.log("MYCsdifjksdjfkdfjlkajsdfkjskldfj")
                 console.log(s.user.error)
-                const myError = new AxiosError(JSON.stringify(s.user.error?.validationError))
-                myError.status = 422
+                const myError = new Error(JSON.stringify(s.user.error?.validationError))
                 throw myError
             }
             return true
 
-        }
+        },
+        session: async ({session, user, token}) => {
+            // console.log("session", session);
+            console.log("suer", user);
+            // console.log("token", token);
+            // if (token.user) {
+            session.user = token.user
+            // }
+            console.log('session callback', session);
+            return session;
+        },
+        async jwt({user, token}) {
+            // console.log("user", user);
+            // console.log("token", token);
+            token.user = user
+            return token
+
+        },
     },
     session: {
         strategy: "jwt", //(1)
     },
-    jwt() {
 
-    },
     pages: {
         signIn: "/auth/login",
     },

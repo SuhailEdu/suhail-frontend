@@ -7,6 +7,7 @@ import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import React from "react";
 import ReactQueryProvider from "@/components/ReactQueryProvider";
 import AuthProvider from "@/providers/authProvider";
+import {getServerSession} from "next-auth";
 
 const inter = Inter({subsets: ["latin"]});
 
@@ -15,15 +16,17 @@ export const metadata: Metadata = {
     description: "Suhail App",
 };
 // const queryClient = new QueryClient()
-export default function RootLayout({
-                                       children,
-                                   }: Readonly<{
+export default async function RootLayout({
+                                             children,
+                                         }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const session = await getServerSession()
+    console.log("session", session)
     return (
         <html lang="en">
         <body className={inter.className}>
-        <AuthProvider>
+        <AuthProvider session={session}>
 
             <Navbar/>
             <ReactQueryProvider>

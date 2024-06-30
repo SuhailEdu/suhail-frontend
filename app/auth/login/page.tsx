@@ -9,9 +9,11 @@ import Link from "next/link";
 import {AxiosError} from "axios";
 import {z} from "zod";
 import {signIn} from "next-auth/react";
+import {redirect, useRouter} from "next/navigation";
 
 
 export default function Login() {
+    const router = useRouter()
     const loginSchema = z.object({
         email: z.string().email(),
         password: z.string().min(8).max(50),
@@ -84,12 +86,23 @@ export default function Login() {
             username: data.email,
             redirect: false
         })
-        const validationE = JSON.parse(r.error)
+        if (r == undefined) {
+            return
+        }
 
-        setValidationErrors(e => ({
-            ...e,
-            ...validationE,
-        }))
+        console.log(r)
+        if (r.error != null) {
+            const validationE = JSON.parse(r.error)
+
+            setValidationErrors(e => ({
+                ...e,
+                ...validationE,
+            }))
+            return
+        } else {
+            router.push('/')
+            console.log("success:", r)
+        }
 
 
         // mutation.mutate(data)
