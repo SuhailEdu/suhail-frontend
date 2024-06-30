@@ -8,6 +8,8 @@ import PrimaryButton from "@/components/shared/PrimaryButton";
 import Link from "next/link";
 import {AxiosError} from "axios";
 import {z} from "zod";
+import {signIn} from "next-auth/react";
+
 
 export default function Login() {
     const loginSchema = z.object({
@@ -31,8 +33,8 @@ export default function Login() {
     const mutation = useMutation({
 
         mutationFn: (data: any) => axiosClient.post('http://localhost:4000/auth/login', data),
-        onSuccess: () => {
-            console.log(data.email)
+        onSuccess: (response) => {
+            console.log(response.data)
         },
 
         onError: (error: AxiosError) => {
@@ -59,7 +61,7 @@ export default function Login() {
     })
 
 
-    function submit(e: SubmitEvent) {
+    async function submit(e: SubmitEvent) {
         e.preventDefault()
         setValidationErrors(defaultErrors)
 
@@ -76,7 +78,21 @@ export default function Login() {
 
 
         }
-        mutation.mutate(data)
+
+        const r = await signIn("credentials", {
+            password: data.password,
+            username: data.email,
+            redirect: false
+        })
+        const validationE = JSON.parse(r.error)
+
+        setValidationErrors(e => ({
+            ...e,
+            ...validationE,
+        }))
+
+
+        // mutation.mutate(data)
 
     }
 

@@ -6,6 +6,7 @@ import Footer from "@/components/layouts/Footer";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import React from "react";
 import ReactQueryProvider from "@/components/ReactQueryProvider";
+import AuthProvider from "@/providers/authProvider";
 
 const inter = Inter({subsets: ["latin"]});
 
@@ -22,18 +23,20 @@ export default function RootLayout({
     return (
         <html lang="en">
         <body className={inter.className}>
-        {/*<QueryClientProvider client={queryClient}>*/}
-        <Navbar/>
-        <ReactQueryProvider>
+        <AuthProvider>
 
-            <main>
-                {children}
-            </main>
+            <Navbar/>
+            <ReactQueryProvider>
 
-            <Footer/>
+                <main>
+                    {children}
+                </main>
 
-        </ReactQueryProvider>
-        {/*</QueryClientProvider>*/}
+                <Footer/>
+
+            </ReactQueryProvider>
+            {/*</QueryClientProvider>*/}
+        </AuthProvider>
         </body>
         </html>
     );
