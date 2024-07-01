@@ -20,6 +20,15 @@ export interface Exam  {
   //   }[],
   //
   // }[],
+}
+export interface Question  {
+    title:string,
+    type:string,
+    options:Option[],
+}
 
 
+export interface Option  {
+    option: string,
+    isCorrect: boolean,
 }

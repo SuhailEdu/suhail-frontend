@@ -8,7 +8,7 @@ interface Props extends React.ComponentProps<'button'> {
 
 }
 
-export default ({href, className, ...props}: Props) => {
+export default function PrimaryButton ({href, className, ...props}: Props)  {
 
     return href ? (
             <Link href={href}>

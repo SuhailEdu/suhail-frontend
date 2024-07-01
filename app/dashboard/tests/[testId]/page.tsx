@@ -15,8 +15,12 @@ import ReportsCards from "@/app/dashboard/tests/[testId]/ReportsCards";
 import {useRouter} from "next/navigation";
 import {useQuery} from "@tanstack/react-query";
 import {useApi} from "@/hooks/useApi";
-import {Exam} from "@/types/exam";
+import {Exam, Question} from "@/types/exam";
+import QuestionsTab from "@/app/dashboard/tests/[testId]/QuestionsTab";
 
+type ExamQueryData =  Exam & {
+    questions: Question[]
+}
 
 export default function ShowTest ({params}: {params:{testId: string}})  {
     const router = useRouter()
@@ -25,12 +29,12 @@ export default function ShowTest ({params}: {params:{testId: string}})  {
     }
     const api = useApi()
 
-    const testQuery = useQuery<Exam>({
+    const testQuery = useQuery<ExamQueryData>({
         queryFn:  () => api.get(`/home/exams/${params.testId}`).then(res => res.data.data),
         queryKey: ["exams" , params.testId]
     });
 
-    const [selectedOption, setSelectedOption] = useState<'students' | 'reports' | 'settings' | 'questions'>('reports')
+    const [selectedOption, setSelectedOption] = useState<'students' | 'reports' | 'settings' | 'questions'>('questions')
 
     function isSelected(option: string) {
         return option == selectedOption ? 'border-black' : 'border-none'
@@ -97,7 +101,13 @@ export default function ShowTest ({params}: {params:{testId: string}})  {
                 </div>
 
                 <div>
-                    <ReportsCards/>
+                    {selectedOption === 'questions' && (
+                        <QuestionsTab questions={testQuery.data.questions} />
+                    )}
+
+                    {selectedOption === 'reports' && (
+                        <ReportsCards/>
+                    )}
 
                 </div>
 
