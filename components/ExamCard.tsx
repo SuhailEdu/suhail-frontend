@@ -7,7 +7,7 @@ export default function ExamCard ({exam} : {exam: Exam})  {
     const router = useRouter()
     return (
 
-        <div onClick={() => router.push('/dashboard/tests/1')}
+        <div onClick={() => router.push(`/dashboard/tests/${exam.id}`)}
              className="rounded-lg hover:bg-gray-100 cursor-pointer border bg-card text-card-foreground shadow-sm p-6  ">
 
             <h2 className="mt-10 scroll-m-20 flex justify-start gap-2  pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
