@@ -24,7 +24,7 @@ export default function QuestionsTab({questions} : {questions: Question[]}) {
 
                     <span>
                     <CustomBadge type={"info"} >
-                        44
+                        {questions.length}
                         {" "}
                         سؤال
 
@@ -40,9 +40,9 @@ export default function QuestionsTab({questions} : {questions: Question[]}) {
                     {questions.map((q , index) => (
 
                     <AccordionItem   key={q.title} value="item-1">
-                        <AccordionTrigger  className={"bg-slate-100 p-2"}>{index+1} - {q.title}</AccordionTrigger>
+                        <AccordionTrigger   className={"bg-slate-100 p-2 h-12"}>{index+1} - {q.title}</AccordionTrigger>
                         <AccordionContent className={"p-2"}>
-                            <div className={"text-lg"}>الاختبارات</div>
+                            <div className={"text-lg"}>الاختيارات</div>
                             <div className={"flex justify-start gap-10 mt-4 items-center"}>
                                 {q.options.map(o => (
                                 <div key={o.option} className="flex items-center">

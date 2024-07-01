@@ -12,17 +12,22 @@ import Link from "next/link";
 import {FileIcon, HomeIcon, InfoIcon, PaperclipIcon, PenIcon} from "lucide-react";
 import {z} from "zod";
 import ReportsCards from "@/app/dashboard/tests/[testId]/ReportsCards";
-import {useRouter} from "next/navigation";
+import {useRouter, useSearchParams} from "next/navigation";
 import {useQuery} from "@tanstack/react-query";
 import {useApi} from "@/hooks/useApi";
 import {Exam, Question} from "@/types/exam";
 import QuestionsTab from "@/app/dashboard/tests/[testId]/QuestionsTab";
+import * as sea from "node:sea";
+import StudentsTab from "@/app/dashboard/tests/[testId]/StudentsTab";
 
 type ExamQueryData =  Exam & {
     questions: Question[]
 }
+type SelectedTap = 'students' | 'reports' | 'questions' | 'settings'
 
 export default function ShowTest ({params}: {params:{testId: string}})  {
+    const searchParams = useSearchParams()
+    console.log(searchParams)
     const router = useRouter()
     const test = {
         title: 'اختبار عملي حاسوب',
@@ -34,7 +39,16 @@ export default function ShowTest ({params}: {params:{testId: string}})  {
         queryKey: ["exams" , params.testId]
     });
 
-    const [selectedOption, setSelectedOption] = useState<'students' | 'reports' | 'settings' | 'questions'>('questions')
+    const [selectedOption, setSelectedOption] = useState<SelectedTap>(() => {
+        const tab = searchParams.get('tab') ?? ""
+        if( ['students' , 'reports' , 'questions' , 'settings'].includes(tab)) {
+            console.log("skdjf")
+            // @ts-ignore
+            return tab
+        }
+        return "students"
+
+    })
 
     function isSelected(option: string) {
         return option == selectedOption ? 'border-black' : 'border-none'
@@ -107,6 +121,10 @@ export default function ShowTest ({params}: {params:{testId: string}})  {
 
                     {selectedOption === 'reports' && (
                         <ReportsCards/>
+                    )}
+
+                    {selectedOption === 'students' && (
+                        <StudentsTab testId={params.testId} />
                     )}
 
                 </div>
