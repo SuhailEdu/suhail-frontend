@@ -30,8 +30,8 @@ export default function Login() {
     })
 
     const [data, setData] = useState<{ email: string; password: string }>({
-        email: '',
-        password: ''
+        email: 'client@gmail.com',
+        password: 'password'
     })
 
     const defaultErrors = {
