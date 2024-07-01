@@ -41,13 +41,13 @@ export default function CustomDataTable<Tdata , Tvalue>({columns , data}: DataTa
 
     return (
         <div className="rounded-md border">
-            <Table>
+            <Table dir={"rtl"}>
                 <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
                         <TableRow key={headerGroup.id}>
                             {headerGroup.headers.map((header) => {
                                 return (
-                                    <TableHead key={header.id}>
+                                    <TableHead className={"text-right bg-slate-50"} key={header.id}>
                                         {header.isPlaceholder
                                             ? null
                                             : flexRender(
