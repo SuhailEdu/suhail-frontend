@@ -9,7 +9,7 @@ import {
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import Link from "next/link";
-import { HomeIcon } from "lucide-react";
+import {HomeIcon, LoaderIcon} from "lucide-react";
 import DashboardMenu from "@/components/DashboardMenu";
 import ExamCard from "@/components/ExamCard";
 import {useApi} from "@/hooks/useApi";
@@ -57,6 +57,12 @@ export default  function  Dashboard({id}: {id: string}) {
                <DashboardMenu />
 
                 <div className="my-8">
+                    {query.isLoading ? <div className="flex justify-center items-center">
+                        <LoaderIcon  className="animate-spin"  />
+
+
+                        </div> :
+
                     <div className="grid gap-4  grid-cols-1 md:grid-cols-3  xl:grid-cols-4">
                         {query.data && query.data?.length > 0 && query.data.map(exam => (
                             <ExamCard exam={exam} key={exam.id}/>
@@ -70,6 +76,8 @@ export default  function  Dashboard({id}: {id: string}) {
                         </div>
 
                     </div>
+
+                    }
                 </div>
 
             </div>
