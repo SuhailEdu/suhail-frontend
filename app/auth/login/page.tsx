@@ -1,5 +1,5 @@
 'use client'
-import React, {FormEvent, useState} from "react";
+import React, {FormEvent, useEffect, useState} from "react";
 import axiosClient from "@/providers/axiosClient";
 import {useMutation} from "@tanstack/react-query";
 import Image from "next/image";
@@ -8,12 +8,22 @@ import PrimaryButton from "@/components/shared/PrimaryButton";
 import Link from "next/link";
 import {AxiosError} from "axios";
 import {z} from "zod";
-import {signIn} from "next-auth/react";
 import {redirect, useRouter} from "next/navigation";
+import {useFormState} from "react-dom";
+import {login} from "@/auth";
+import useAuthStore from "@/stores/AuthStore";
 
 
 export default function Login() {
     const router = useRouter()
+    const [state, formAction] = useFormState<any, any>(login, {
+        state:null,
+        errors : {}
+    });
+
+    const setAuthUser = useAuthStore(state => state.setAuthUser);
+
+
     const loginSchema = z.object({
         email: z.string().email(),
         password: z.string().min(8).max(50),
@@ -34,11 +44,11 @@ export default function Login() {
 
     const mutation = useMutation({
 
-        mutationFn: (data: any) => axiosClient.post('http://localhost:4000/auth/login', data),
+        onMutate: () => console.log("mutation"),
+        mutationFn: submit,
         onSuccess: (response) => {
             console.log(response.data)
         },
-
         onError: (error: AxiosError) => {
             if (!error.isAxiosError) {
                 return
@@ -51,6 +61,7 @@ export default function Login() {
                     ...e,
                     ...errors
                 }))
+                console.log(error)
                 // if (errors?.email && errors?.email.length > 0) {
                 //     // validationErrors.password = errors?.email[0]
                 // }
@@ -77,35 +88,22 @@ export default function Login() {
                 ...errors
             }))
             return
-
-
         }
 
-        const r = await signIn("credentials", {
-            password: data.password,
-            username: data.email,
-            redirect: false
-        })
-        if (r == undefined) {
-            return
-        }
+            const res = await login(data)
 
-        console.log(r)
-        if (r.error != null) {
-            const validationE = JSON.parse(r.error)
-
-            setValidationErrors(e => ({
-                ...e,
-                ...validationE,
+        if (!res?.isOk && res?.status == 422) {
+            setValidationErrors((prevErrors) => ({
+                ...prevErrors,
+                ...res.errors.validationError
             }))
             return
-        } else {
-            router.push('/')
-            console.log("success:", r)
         }
 
+        if(res?.status == 200) {
 
-        // mutation.mutate(data)
+        }
+        console.log(res)
 
     }
 

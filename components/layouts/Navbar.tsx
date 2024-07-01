@@ -1,4 +1,4 @@
-'use client'
+// 'use client'
 import {useEffect, useState} from 'react'
 import {Navbar} from "flowbite-react";
 import {Camera, CircleArrowLeft, Info, Menu} from 'lucide-react';
@@ -9,7 +9,9 @@ import {
 } from "@/components/ui/navigation-menu";
 import PrimaryButton from "@/components/shared/PrimaryButton";
 import MobileNavbar from "@/components/MobileNavbar";
-import {signIn} from "next-auth/react";
+import {getSession, logout} from "@/auth";
+import LogOutButton from "@/components/layouts/LogUserOUt";
+import useAuthStore from "@/stores/AuthStore";
 
 const routeList: RouteProps[] = [
     {
@@ -23,7 +25,9 @@ interface RouteProps {
     label: string;
 }
 
-export default function LayoutNavbar() {
+export default async function LayoutNavbar() {
+
+    const session = await getSession();
 
 
     return (
@@ -63,7 +67,11 @@ export default function LayoutNavbar() {
                     </nav>
 
                     <div className="hidden md:flex gap-2">
-                        <PrimaryButton onClick={() => signIn()}>انضم الينا</PrimaryButton>
+                        {session.isLoggedIn ? (
+                            <LogOutButton />
+                            ): (
+                            <PrimaryButton href={'/auth/login'}>انضم الينا</PrimaryButton>
+                        )}
 
                     </div>
                 </NavigationMenuList>

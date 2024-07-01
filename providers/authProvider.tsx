@@ -1,18 +1,26 @@
 "use client"
-import {SessionProvider} from "next-auth/react";
-import React, {ReactNode} from "react";
-import {Session} from "next-auth";
+import React, {ReactNode, useEffect} from "react";
+import useAuthStore from "@/stores/AuthStore";
+import {SessionData} from "@/session";
 
 
 interface Props {
     children: ReactNode;
-    session: Session | null;
+    session: SessionData;
 }
 
 function AuthProvider({children, session}: Props) {
-    console.log(session)
+    const setAuthUser = useAuthStore( s => s.setAuthUser)
+    useEffect(() => {
+        if(session.isLoggedIn) {
+            console.log("user logged out")
+
+            setAuthUser(session)
+        }
+
+    }, []);
     return (
-        <SessionProvider>{children}</SessionProvider>
+        <div>{children}</div>
 
     )
 
