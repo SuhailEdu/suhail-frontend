@@ -69,7 +69,7 @@ export default  function  Dashboard({id}: {id: string}) {
                         ))}
                         <div
                             className="rounded-lg hover:bg-gray-100 cursor-pointer border bg-card text-card-foreground shadow-sm p-6  ">
-                            <Link href="/dashboard/tests/create" className="text-center min-h-20 flex items-center justify-center leading-9 text-xl">
+                            <Link href="/dashboard/tests/new" className="text-center min-h-20 flex items-center justify-center leading-9 text-xl">
                                 +
                                 اختبار جديد
                             </Link>
