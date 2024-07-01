@@ -1,5 +1,5 @@
 'use client'
-import React, {FormEvent, useEffect, useState} from "react";
+import React, {FormEvent, FormEventHandler, FormHTMLAttributes, useEffect, useState} from "react";
 import axiosClient from "@/providers/axiosClient";
 import {useMutation} from "@tanstack/react-query";
 import Image from "next/image";
@@ -15,13 +15,6 @@ import useAuthStore from "@/stores/AuthStore";
 
 
 export default function Login() {
-    const router = useRouter()
-    const [state, formAction] = useFormState<any, any>(login, {
-        state:null,
-        errors : {}
-    });
-
-    const setAuthUser = useAuthStore(state => state.setAuthUser);
 
 
     const loginSchema = z.object({
@@ -30,7 +23,7 @@ export default function Login() {
     })
 
     const [data, setData] = useState<{ email: string; password: string }>({
-        email: 'client@gmail.com',
+        email: 'ash@gmail.com',
         password: 'password'
     })
 
@@ -42,36 +35,6 @@ export default function Login() {
     const [validationErrors, setValidationErrors] = useState(defaultErrors)
 
 
-    const mutation = useMutation({
-
-        onMutate: () => console.log("mutation"),
-        mutationFn: submit,
-        onSuccess: (response) => {
-            console.log(response.data)
-        },
-        onError: (error: AxiosError) => {
-            if (!error.isAxiosError) {
-                return
-            }
-
-            if (error?.response?.status === 422) {
-                const errors = error?.response?.data?.validationError;
-                console.log(errors)
-                setValidationErrors(e => ({
-                    ...e,
-                    ...errors
-                }))
-                console.log(error)
-                // if (errors?.email && errors?.email.length > 0) {
-                //     // validationErrors.password = errors?.email[0]
-                // }
-                //
-                // if (errors?.password) {
-                //     // validationErrors.password = errors?.password[0]
-                // }
-            }
-        },
-    })
 
 
     async function submit(e: SubmitEvent) {

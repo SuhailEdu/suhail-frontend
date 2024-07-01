@@ -32,7 +32,7 @@ export default async function RootLayout({
 
     }
     return (
-        <html lang="en">
+        <html dir="rtl" lang="ar">
         <body className={inter.className}>
         <AuthProvider session={session}>
 

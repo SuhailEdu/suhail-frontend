@@ -6,6 +6,7 @@ export interface SessionData {
     isLoggedIn:boolean,
     firstName? :string,
     lastName? :string,
+    token? :string,
 }
 
 export const defaultSession:SessionData = {

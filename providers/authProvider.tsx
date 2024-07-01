@@ -13,9 +13,8 @@ function AuthProvider({children, session}: Props) {
     const setAuthUser = useAuthStore( s => s.setAuthUser)
     useEffect(() => {
         if(session.isLoggedIn) {
-            console.log("user logged out")
-
             setAuthUser(session)
+            console.log("setting user done")
         }
 
     }, []);

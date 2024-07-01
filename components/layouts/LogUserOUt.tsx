@@ -19,7 +19,6 @@ export default  function LogOutButton() {
 
     const user =  useAuthStore(state => state.user);
 
-    console.log(user)
 
     return (
         <>

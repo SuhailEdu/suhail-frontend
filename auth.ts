@@ -39,6 +39,7 @@ export const login = async (
         session.email = res.data.email
         session.firstName = res.data.first_name
         session.lastName = res.data.last_name
+        session.token = res.data.token
         console.log('no errors' , res.data)
 
 
@@ -46,12 +47,11 @@ export const login = async (
     }
     catch (e:any) {
         console.log('errors here')
-        console.log(e)
         if (!e.isAxiosError) {
             return
         }
 
-        if (e && e.status === 422) {
+        if (e && e.response.status === 422) {
 
         return {
             status: e.response.status,
