@@ -11,15 +11,18 @@ interface Props {
 
 function AuthProvider({children, session}: Props) {
     const setAuthUser = useAuthStore( s => s.setAuthUser)
+    const [mounted, setMounted] = React.useState(false);
     useEffect(() => {
         if(session.isLoggedIn) {
             setAuthUser(session)
             console.log("setting user done")
         }
+        setMounted(true)
 
     }, []);
-    return (
-        <div>{children}</div>
+
+    return mounted && (
+        <>{children}</>
 
     )
 

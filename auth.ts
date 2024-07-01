@@ -51,7 +51,7 @@ export const login = async (
             return
         }
 
-        if (e && e.response.status === 422) {
+        if (e && e?.response?.status === 422) {
 
         return {
             status: e.response.status,
@@ -59,6 +59,7 @@ export const login = async (
             isOk: false
         }
         }
+        console.log(e)
         return
     }
 

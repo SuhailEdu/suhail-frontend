@@ -4,7 +4,7 @@ import QuestionItem from "./QuestionItem";
 import Badge from "@/components/CustomBadge";
 import {z, ZodError, ZodIssue, ZodParsedType} from "zod";
 import PrimaryButton from "@/components/shared/PrimaryButton";
-import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, TooltipArrow} from "@/components/ui/tooltip";
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
 
 
 interface QuestionType {
@@ -323,19 +323,25 @@ const QuestionsStep = forwardRef(({
         function addEmptyOption() {
 
 
-            setQuestions(q => {
-                return q.map(question => {
-                    if (question.id == activeQuestion?.id) {
-                        question.options.push({
-                            id: Math.random(),
-                            title: 'أزرق',
-                            isCorrect: false,
-                        })
-                    }
-                    return question
+            if(!activeQuestion?.id) {
+                return
 
-                })
+            }
+
+            const newQ = questions.map(question => {
+                if (question.id == activeQuestion?.id) {
+                    question.options.push({
+                        id: Math.random(),
+                        title: 'أزرق' + Math.random(),
+                        isCorrect: false,
+                    })
+                }
+                return question
+
             })
+
+
+            setQuestions(newQ)
         }
 
         function removeOption(optionId: number) {
@@ -423,7 +429,7 @@ const QuestionsStep = forwardRef(({
                 <div className="flex gap-1 flex-wrap">
                     {questions.map(q => (
 
-                        <TooltipProvider className={"border border-red-500"}>
+                        <TooltipProvider key={q.id} className={"border border-red-500"}>
                             <Tooltip open={!!tooltipMessage.find(m => m.id === q.id)} className={"border border-red-500"}>
                                 <TooltipTrigger>
                                     <Badge

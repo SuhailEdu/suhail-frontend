@@ -15,6 +15,8 @@ import QuestionsStep from "@/components/QuestionsStep";
 import InviteStep from "@/components/InviteStep";
 import TestCreatedStep from "@/components/TestCreatedStep";
 import PrimaryButton from "@/components/shared/PrimaryButton";
+import {useApi} from "@/hooks/useApi";
+import {useMutation} from "@tanstack/react-query";
 // import TestInfoStep from "../../../Shared/Components/CreateTest/TestInfoStep";
 // import QuestionsStep from "../../../Shared/Components/CreateTest/QuestionsStep";
 // import InviteStep from "../../../Shared/Components/CreateTest/InviteStep";
@@ -37,6 +39,8 @@ interface Option {
 }
 
 export default function New() {
+
+    const api = useApi()
 
     const [step, setStep] = useState<'info' | 'questions' | 'invite' | 'testCreated'>('info')
 
@@ -64,6 +68,16 @@ export default function New() {
     const testInfoStepRef = useRef()
     const inviteStepRef = useRef()
 
+    const mutation = useMutation({
+        mutationFn: handleSubmitExam,
+        onError: (e) => {
+            if(e?.response.status === 422 && e?.response?.data?.validationError) {
+                console.log(e.response.data.validationError)
+            }
+        },
+        onSuccess: (s) =>  setStep("testCreated"),
+    })
+
     const [questions, setQuestions] = useState<QuestionType[]>([
         {
             title: 'ما لون السمك في الماء',
@@ -86,13 +100,12 @@ export default function New() {
     ])
 
 
-    function handleNextStep() {
+    async function handleNextStep() {
 
+        console.log(step)
 
         if (step == 'info') {
             const isReadyToSubmit = testInfoStepRef.current?.isReadyToSubmit()
-
-            console.log(isReadyToSubmit, testInfoStepRef.current)
 
             if (isReadyToSubmit) {
                 setStep('questions')
@@ -111,7 +124,9 @@ export default function New() {
 
 
         if (step == 'invite') {
-            setStep('testCreated')
+             mutation.mutate()
+
+            // setStep('testCreated')
         }
 
 
@@ -150,6 +165,39 @@ export default function New() {
         }
         return 'test'
     }
+
+    function handleChangeQuestions(questions) {
+        setQuestions(questions)
+
+    }
+
+    async function handleSubmitExam() {
+        const refinedQuestions = questions.map(q => {
+
+            const options = q.options.map((option) => {
+                return {
+                    option : option.title,
+                    is_correct: option.isCorrect
+                }
+            })
+
+            return {
+                type: "options",
+                title:  q.title,
+                options
+            }
+
+        })
+        console.log(refinedQuestions)
+            const res = await api.post("/home/exams/create" , {
+                exam_title: testInfoData.title,
+                status: testInfoData.type,
+                questions:refinedQuestions ,
+            })
+        return res
+
+    }
+
 
 
     return (
@@ -206,7 +254,11 @@ export default function New() {
                             ref={questionStepRef}
                             tooltipMessage={tooltipMessage}
                             setTooltipMessage={setTooltipMessage}
-                            questions={questions} setQuestions={setQuestions} key={"questions"}/>}
+                            questions={questions}
+                            setQuestions={(questions) => handleChangeQuestions(questions) } key={"questions"}/>
+
+
+                    }
                     {step == 'invite' &&
                         <InviteStep
                             ref={inviteStepRef}

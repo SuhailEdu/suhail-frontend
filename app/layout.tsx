@@ -34,18 +34,18 @@ export default async function RootLayout({
     return (
         <html dir="rtl" lang="ar">
         <body className={inter.className}>
+        <ReactQueryProvider>
         <AuthProvider session={session}>
 
             <Navbar/>
-            <ReactQueryProvider>
                 <main>
                     {children}
                 </main>
                 <Footer/>
+        </AuthProvider>
 
             </ReactQueryProvider>
             {/*</QueryClientProvider>*/}
-        </AuthProvider>
         </body>
         </html>
     );

@@ -29,7 +29,8 @@ export function useApi() {
   // axios
 
   return axios.create({
-    baseURL: "http://134.122.87.199:4000",
+    // baseURL: "http://134.122.87.199:4000",
+    baseURL: "http://127.0.0.1:4000",
     headers: {
       Authorization: `Bearer ${user.token}`,
       Accept: "application/json",

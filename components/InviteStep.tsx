@@ -13,13 +13,13 @@ interface Option {
     readonly value: string;
 }
 
-interface Props {
+interface Props extends  React.ComponentProps<'p'>{
     setNextButtonDisabled: Function
     emails: readonly Option[]
     setEmails: Function
 }
 
-export default function InviteStep ({emails, setEmails, ...props}: Props) {
+export default function InviteStep ({emails, setEmails, ...props}:Props)  {
 
     const [emailValidationMessage, setEmailValidationMessage] = useState<string>("")
 
