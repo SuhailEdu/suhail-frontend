@@ -1,5 +1,5 @@
 import {CrossIcon, PlusIcon, TimerIcon, XIcon} from "lucide-react";
-import React, {useState, KeyboardEventHandler} from 'react'
+import React, {useState, KeyboardEventHandler, useEffect} from 'react'
 import QuestionItem from "./QuestionItem";
 import Badge from "@/components/CustomBadge";
 import {isValid, z, ZodError, ZodIssue, ZodParsedType} from "zod";
@@ -16,10 +16,11 @@ interface Option {
 interface Props extends  React.ComponentProps<'p'>{
     setNextButtonDisabled: Function
     emails: readonly Option[]
-    setEmails: Function
+    setEmails: Function,
+    validationError?: string
 }
 
-export default function InviteStep ({emails, setEmails, ...props}:Props)  {
+export default function InviteStep ({emails, setEmails , validationError, ...props}:Props)  {
 
     const [emailValidationMessage, setEmailValidationMessage] = useState<string>("")
 
@@ -31,6 +32,13 @@ export default function InviteStep ({emails, setEmails, ...props}:Props)  {
         label,
         value: label,
     });
+
+    useEffect(() => {
+        if(validationError) {
+            setEmailValidationMessage(validationError);
+
+        }
+    }, [validationError]);
 
 
     function validateEmail(email: string) {
@@ -91,7 +99,6 @@ export default function InviteStep ({emails, setEmails, ...props}:Props)  {
                     escapeClearsValue={true}
                     menuIsOpen={false}
                     onInputChange={(newValue) => {
-                        console.log(newValue)
                         if (newValue.trim()) {
                             validateEmail(newValue)
                         }

@@ -9,7 +9,7 @@ import {
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import Link from "next/link";
-import {FileIcon, HomeIcon, InfoIcon, PenIcon} from "lucide-react";
+import {FileIcon, HomeIcon, InfoIcon, LoaderIcon, PenIcon} from "lucide-react";
 import TestInfoStep from "@/components/TestInfoStep";
 import QuestionsStep from "@/components/QuestionsStep";
 import InviteStep from "@/components/InviteStep";
@@ -17,6 +17,7 @@ import TestCreatedStep from "@/components/TestCreatedStep";
 import PrimaryButton from "@/components/shared/PrimaryButton";
 import {useApi} from "@/hooks/useApi";
 import {useMutation} from "@tanstack/react-query";
+import {setActTimeout} from "@tanstack/react-query/src/__tests__/utils";
 // import TestInfoStep from "../../../Shared/Components/CreateTest/TestInfoStep";
 // import QuestionsStep from "../../../Shared/Components/CreateTest/QuestionsStep";
 // import InviteStep from "../../../Shared/Components/CreateTest/InviteStep";
@@ -68,11 +69,54 @@ export default function New() {
     const testInfoStepRef = useRef()
     const inviteStepRef = useRef()
 
+    const [stepButtonsLoading, setStepButtonsLoading] = useState(false)
+    const [createdExam, setCreatedExam] = useState<object>({})
+
+    const [serverValidationError , setServerValidationError] = useState<{
+        errorBelongsTo: "questions" | "testInfo",
+        error : object
+    } | null>(null)
+
     const mutation = useMutation({
         mutationFn: handleSubmitExam,
+        onMutate: () => {
+            setTooltipMessage([])
+            setServerValidationError(null)
+            setStepButtonsLoading(true)
+        },
+        onSettled: () => {
+            setStepButtonsLoading(false)
+        },
         onError: (e) => {
             if(e?.response.status === 422 && e?.response?.data?.validationError) {
-                console.log(e.response.data.validationError)
+                const validationError = e?.response?.data?.validationError
+                console.log(validationError)
+                if(validationError && validationError.questions) {
+                    setServerValidationError({
+                        errorBelongsTo: "questions",
+                        error: validationError.questions
+                    })
+                }
+            }
+        },
+        onSuccess: (s) =>  {
+            setCreatedExam(s.data.data)
+            setStep("invite")
+        },
+    })
+
+
+    const invitationMutation = useMutation({
+        mutationFn: inviteExamParticipants,
+        onSettled: () => {
+            setStepButtonsLoading(false)
+        },
+        onError: (e) => {
+            if(e?.response.status === 422 && e?.response?.data?.validationError) {
+                const validationError = e?.response?.data?.validationError
+                if(validationError && validationError.emails && validationError.emails.length > 0 ) {
+                    setInvitationEmailsError(validationError.emails)
+                }
             }
         },
         onSuccess: (s) =>  setStep("testCreated"),
@@ -98,14 +142,17 @@ export default function New() {
         }
 
     ])
+    const [invitationEmailsError, setInvitationEmailsError] = useState<string>("")
 
 
     async function handleNextStep() {
 
-        console.log(step)
+        setStepButtonsLoading(true)
+
 
         if (step == 'info') {
-            const isReadyToSubmit = testInfoStepRef.current?.isReadyToSubmit()
+            const isReadyToSubmit = await testInfoStepRef.current?.isReadyToSubmit()
+
 
             if (isReadyToSubmit) {
                 setStep('questions')
@@ -114,21 +161,27 @@ export default function New() {
         }
 
         if (step == 'questions') {
-            const isReadyToSubmit = questionStepRef.current?.isReadyToSubmit()
+            const isReadyToSubmit = await questionStepRef.current?.isReadyToSubmit()
 
             if (isReadyToSubmit) {
-                setStep('invite')
 
+                 mutation.mutate()
+                // setStep('invite')
             }
-        }
 
+        }
 
         if (step == 'invite') {
-             mutation.mutate()
+            console.log(studentsEmails.length  , studentsEmails)
+            if(studentsEmails.length > 0) {
+                invitationMutation.mutate()
+            } {
+                // setStep('testCreated')
+            }
 
-            // setStep('testCreated')
         }
 
+        setStepButtonsLoading(false)
 
     }
 
@@ -188,13 +241,20 @@ export default function New() {
             }
 
         })
-        console.log(refinedQuestions)
-            const res = await api.post("/home/exams/create" , {
+            return  await api.post("/home/exams/create" , {
                 exam_title: testInfoData.title,
                 status: testInfoData.type,
                 questions:refinedQuestions ,
             })
-        return res
+
+    }
+
+    async function inviteExamParticipants() {
+        const examId = createdExam?.id ?? ""
+        console.log(createdExam)
+        return  await api.post(`/home/exams/${examId}/invite` , {
+            emails:studentsEmails.map(e => e.value) ,
+        })
 
     }
 
@@ -251,6 +311,7 @@ export default function New() {
 
                     {step == 'questions' &&
                         <QuestionsStep
+                            serverValidationError={serverValidationError && serverValidationError.errorBelongsTo == "questions" ? serverValidationError : null}
                             ref={questionStepRef}
                             tooltipMessage={tooltipMessage}
                             setTooltipMessage={setTooltipMessage}
@@ -261,6 +322,7 @@ export default function New() {
                     }
                     {step == 'invite' &&
                         <InviteStep
+                            validationError={invitationEmailsError ?? ""}
                             ref={inviteStepRef}
                             emails={studentsEmails} setEmails={setStudentsEmails} key={"questions"}
                             setNextButtonDisabled={setIsNextDisabled}/>}
@@ -273,15 +335,21 @@ export default function New() {
                     <div className="flex flex-row-reverse  justify-between items-end">
                         {!['testCreated'].includes(step) && (
                             <
-                                PrimaryButton disabled={isNextDisabled && tooltipMessage.length == 0}
+                                PrimaryButton disabled={(isNextDisabled && tooltipMessage.length == 0) || stepButtonsLoading}
                                               onClick={handleNextStep}
-                                              className="my-2 text-end">التالي</PrimaryButton>
+                                              className="my-2 text-end">
+                                {stepButtonsLoading ? <LoaderIcon className={"animate-spin"}/> : <span>
+                                التالي
+                                </span>
+                                }
+
+                            </PrimaryButton>
                         )
                         }
 
                         {!['info', 'testCreated'].includes(step) && (
 
-                            <PrimaryButton disabled={isNextDisabled} onClick={handelPreviousStep}
+                            <PrimaryButton disabled={isNextDisabled || stepButtonsLoading} onClick={handelPreviousStep}
                                            className="my-2 text-end">السابق</PrimaryButton>
                         )}
 

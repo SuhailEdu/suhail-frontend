@@ -3,6 +3,8 @@ import {forwardRef, useImperativeHandle, useState} from 'react'
 import {z} from "zod";
 import CustomTextInput from "@/components/shared/CustomTextInput";
 import {Label} from "@/components/ui/label";
+import {useApi} from "@/hooks/useApi";
+import {sleep} from "@tanstack/query-core/build/modern/utils";
 
 
 type TestData = {
@@ -17,6 +19,8 @@ interface Props {
 
 const TestInfoStep = forwardRef(({testData, setTestData}: Props, ref) => {
 
+    const api = useApi()
+
         const [titleError, setTitleError] = useState<string>("")
 
 
@@ -27,11 +31,40 @@ const TestInfoStep = forwardRef(({testData, setTestData}: Props, ref) => {
         }));
 
 
-        function isReadyToSubmit(): boolean {
+        async function isReadyToSubmit(): boolean {
 
-            const error = validateTitle(testData.title)
 
-            return error
+        const validationReady = validateTitle(testData.title)
+
+            console.log(validationReady)
+
+           if(!validationReady) {
+               return false
+           }
+
+           try {
+               const res = await api.post("/home/exams/create/check-title" , {
+                   exam_title: testData.title
+               })
+               return true
+               console.log("success" , res)
+
+           } catch (e) {
+               if(e?.response?.status == 422) {
+                   console.log("error" , e.response)
+                   const error = e?.response?.data?.validationError?.exam_title
+                   if(error) {
+                       setTitleError(error)
+                   }
+
+               }
+               return false
+           }
+
+
+
+            // console.log(res.status)
+            return false
 
         }
 

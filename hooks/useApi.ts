@@ -25,7 +25,6 @@ export function useApi() {
   // return axios;
 
 
-  console.log(user.token)
   // axios
 
   return axios.create({
