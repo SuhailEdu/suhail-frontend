@@ -13,10 +13,12 @@ import React, {useState} from "react";
 import {z} from "zod";
 import {useApi} from "@/hooks/useApi";
 import {useQuery} from "@tanstack/react-query";
+import {opt} from "ts-interface-checker";
+import {id} from "postcss-selector-parser";
 
 type Question = {
     title: string,
-        type: "options",
+        type: "options" | "yesOrNo",
 
 }
 type Option = {
@@ -40,6 +42,7 @@ export default function QuestionsTab({ testId} : { testId:string}) {
 
     const api = useApi()
     const [isNewQuestionDialogOpen, setIsNewQuestionDialogOpen] = useState<boolean>(false)
+    const [dialogMode, setDialogMode] = useState<"create" | "update">("create")
 
     const [titleError, setTitleError] = useState<string>("")
     const [optionsErrors, setOptionsErrors] = useState<{id:number , message:string}[] >([])
@@ -67,6 +70,7 @@ export default function QuestionsTab({ testId} : { testId:string}) {
             }
         ]
     )
+    const [questionToUpdate, setQuestionToUpdate] = useState<string | null>(null)
 
 
     function removeOption(id: number) {
@@ -98,7 +102,13 @@ export default function QuestionsTab({ testId} : { testId:string}) {
                     return true
                 }
                 const titles = questionsQuery.data
+                    .filter(q => {
+                        if(dialogMode === "create") {
+                            return true
 
+                        }
+                        return q.id != questionToUpdate;
+                    })
                     .map(q => q.title)
 
                 if (!titles) {
@@ -164,6 +174,10 @@ export default function QuestionsTab({ testId} : { testId:string}) {
     }
 
     async function handleSubmitQuestion() {
+
+        if(dialogMode !== 'create') {
+            return
+        }
         const isTitleValid = validateTitle()
         if (!isTitleValid) {
             console.log('failed')
@@ -217,6 +231,100 @@ export default function QuestionsTab({ testId} : { testId:string}) {
 
     }
 
+    function openUpdateQuestionDialog(questionId:string) {
+        if(!questionsQuery.data||  questionsQuery.data?.length < 1) {
+            return
+
+        }
+
+        const q = questionsQuery.data.find(q  => q.id == questionId)
+        if(q) {
+
+            setQuestion({
+                title: q.title,
+                type: q.type == "options" ? "options" : "yesOrNo",
+            })
+
+            setOptions(q.options.map(i => ({id: Math.random() , is_correct: i.is_correct, option: i.option})))
+
+            setQuestionToUpdate(questionId)
+            setDialogMode("update")
+            setIsNewQuestionDialogOpen(true)
+        }
+    }
+
+
+    async function handleUpdateQuestion() {
+        if(dialogMode !== 'update' || questionToUpdate == null) {
+            return
+        }
+        setIsSubmittingQuestion(true)
+
+        const isTitleValid = validateTitle()
+        if (!isTitleValid) {
+            setIsSubmittingQuestion(false)
+            return
+        }
+        const isOptionsValid = validateOptions()
+        if (!isOptionsValid) {
+            setIsSubmittingQuestion(false)
+            return
+
+        }
+
+        try {
+            const res = await api.patch(`/home/exams/${testId}/questions/${questionToUpdate}` , {
+                    title: question.title,
+                    type: "options",
+                    options: options
+            })
+
+            if(res.status === 200) {
+                setIsSubmittingQuestion(false)
+                setIsNewQuestionDialogOpen(false)
+                await questionsQuery.refetch()
+
+            }
+            console.log(res)
+
+        } catch (e) {
+            if(e?.response?.status === 422 && e?.response?.data?.validationError) {
+                const validationError = e.response.data.validationError
+                if(validationError && validationError.title) {
+                    setTitleError(validationError.title)
+                }
+
+
+                if(validationError && validationError.options ) {
+                    console.log(validationError.options[0])
+                    setTitleError(validationError.options[0])
+                    // setOptionsErrors(prevErrors => ([
+                    //     ...prevErrors,
+                    //     {
+                    //         id: options[0]?.id,
+                    //         message: validationError.options[0]
+                    //     }
+                    // ]))
+                }
+
+                if(validationError && validationError.question_index !== null) {
+                    console.log(validationError)
+                    setOptionsErrors(prevErrors => ([
+                        ...prevErrors,
+                        {
+                            id: options[0]?.id,
+                            message: validationError.message
+                        }
+                    ]))
+                    // setTitleError(validationError.title)
+                }
+            }
+
+        }
+
+        setIsSubmittingQuestion(false)
+
+    }
     return (
         <div className=" container">
 
@@ -241,13 +349,24 @@ export default function QuestionsTab({ testId} : { testId:string}) {
 
             </div>
             <div className={"mt-20 "}>
+                {questionsQuery.data && questionsQuery.data.length ?(
+
                 <Accordion className={"border rounded-lg"} type="single" collapsible>
                     {questionsQuery.data &&  questionsQuery.data?.map((q , index) => (
 
                     <AccordionItem  value={q.title} key={q.title}>
                         <AccordionTrigger    className={"bg-slate-100 p-2 h-12"}>{index+1} - {q.title}</AccordionTrigger>
                         <AccordionContent className={"p-2"}>
-                            <div className={"text-lg"}>الاختيارات</div>
+                            <div className={"text-lg max-w-lg flex justify-between items-center"}>
+                                <div>
+                                    الاختيارات
+
+                                </div>
+                                <div onClick={() => openUpdateQuestionDialog(q.id)} className={"text-orange-700 underline cursor-pointer"}>
+                                    تعديل
+
+                                </div>
+                            </div>
                             <div className={"flex justify-start gap-10 mt-4 items-center"}>
                                 {q.options.map(o => (
                                 <div key={o.option} className="flex items-center">
@@ -269,18 +388,17 @@ export default function QuestionsTab({ testId} : { testId:string}) {
                         ))}
                 </Accordion>
 
+                ): (
+                    <div>Empty</div>
+                ) }
+
             </div>
 
             <Dialog onOpenChange={setIsNewQuestionDialogOpen}  open={isNewQuestionDialogOpen}  >
                 <DialogContent  className={"min-h-60"} dir={"rtl"}>
                     <DialogHeader className={"text-right"} dir={"rtl"}>
-                        <DialogTitle  className={"text-right"}>أضف أسئلة جديدة</DialogTitle>
-                            <>
-
-                            <span className={"my-4"}>
-                                أدعوا طلابك للمشاركة في الاختبار
-                            </span>
-                            <div className="w-full md:w-1/2 text-xl my-8 ">
+                        <DialogTitle  className={"text-right"}>{dialogMode == "create" ? "سؤال جديد"  : "تحديث سؤال" }</DialogTitle>
+                            <div className="w-full md:w-1/2 text-xl my-12 ">
 
                                 <CustomTextInput
                                     size={'large'}
@@ -406,17 +524,16 @@ export default function QuestionsTab({ testId} : { testId:string}) {
                             </div>
 
 
-                            </>
 
                             <div className={"flex justify-end items-center mt-8"}>
                                 <PrimaryButton
-                                    onClick={handleSubmitQuestion}
+                                    onClick={dialogMode == "create" ? handleSubmitQuestion : handleUpdateQuestion}
 
                                     disabled={ isSubmittingQuestion || !!titleError}>{
                                     (isSubmittingQuestion ?
                                             <span><LoaderIcon className={"animate-spin"}/></span>
                                             :
-                                            <span>اضافة</span>
+                                            <span>{dialogMode == "create" ? "اضافة": "تحديث"}</span>
 
                                     )
                                 }</PrimaryButton>
