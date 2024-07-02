@@ -19,6 +19,7 @@ import {Exam, Question} from "@/types/exam";
 import QuestionsTab from "@/app/dashboard/tests/[testId]/QuestionsTab";
 import * as sea from "node:sea";
 import StudentsTab from "@/app/dashboard/tests/[testId]/StudentsTab";
+import useAuthStore from "@/stores/AuthStore";
 
 type ExamQueryData =  Exam & {
     questions: Question[]
@@ -27,7 +28,7 @@ type SelectedTap = 'students' | 'reports' | 'questions' | 'settings'
 
 export default function ShowTest ({params}: {params:{testId: string}})  {
     const searchParams = useSearchParams()
-    console.log(searchParams)
+    const authUser = useAuthStore(state => state.user)
     const router = useRouter()
     const test = {
         title: 'اختبار عملي حاسوب',
@@ -38,12 +39,16 @@ export default function ShowTest ({params}: {params:{testId: string}})  {
         queryFn:  () => api.get(`/home/exams/${params.testId}`).then(res => res.data.data),
         queryKey: ["exams" , params.testId]
     });
+    const isMyTest = testQuery.data?.user_id == authUser.id
+    // const isMyTest = false
+
+    console.log(testQuery.data , authUser , "auth")
 
     const [selectedOption, setSelectedOption] = useState<SelectedTap>(() => {
         const tab = searchParams.get('tab') ?? ""
         if( ['students' , 'reports' , 'questions' , 'settings'].includes(tab)) {
             // @ts-ignore
-            return tab
+            return tab as SelectedTap
         }
         return "questions"
 
@@ -53,7 +58,6 @@ export default function ShowTest ({params}: {params:{testId: string}})  {
         return option == selectedOption ? 'border-black' : 'border-none'
     }
 
-    console.log(testQuery.data)
 
     return (
         <div>
@@ -97,17 +101,25 @@ export default function ShowTest ({params}: {params:{testId: string}})  {
                 <div className="my-8 py-4">
                     <div className="my-8">
                         <div className='flex justify-start border-b-2 '>
-                            <p onClick={() => setSelectedOption('reports')}
-                               className={`border-b-2 ${isSelected('reports')} px-4 cursor-pointer`}>الاحصائيات</p>
+                            {isMyTest && (
+                                <p onClick={() => setSelectedOption('reports')}
+                                   className={`border-b-2 ${isSelected('reports')} px-4 cursor-pointer`}>الاحصائيات</p>
+
+                            )}
                             <p onClick={() => setSelectedOption('questions')}
                                className={`border-b-2 ${isSelected('questions')} px-4 cursor-pointer`}>أسئلة
                                 الاختبار</p>
-                            <p onClick={() => setSelectedOption('students')}
-                               className={`border-b-2 ${isSelected('students')} px-4 cursor-pointer`}>الطلاب</p>
 
-                            <p onClick={() => setSelectedOption('settings')}
-                               className={`border-b-2 ${isSelected('settings')} px-4 cursor-pointer`}>اعدادات
-                                الاختبار</p>
+                            {isMyTest && (
+                                <>
+                                <p onClick={() => setSelectedOption('students')}
+                                   className={`border-b-2 ${isSelected('students')} px-4 cursor-pointer`}>الطلاب</p>
+
+                                <p onClick={() => setSelectedOption('settings')}
+                            className={`border-b-2 ${isSelected('settings')} px-4 cursor-pointer`}>اعدادات
+                            الاختبار</p>
+                                </>
+                            )}
                         </div>
                     </div>
 
@@ -115,7 +127,7 @@ export default function ShowTest ({params}: {params:{testId: string}})  {
 
                 <div>
                     {selectedOption === 'questions' && (
-                        <QuestionsTab testId={params.testId} questions={testQuery.data.questions} />
+                        <QuestionsTab isMyExam={isMyTest} testId={params.testId} questions={testQuery.data.questions} />
                     )}
 
                     {selectedOption === 'reports' && (

@@ -47,7 +47,7 @@ type QuestionResponse = {
     }[]
 }[]
 
-export default function QuestionsTab({ testId} : { testId:string}) {
+export default function QuestionsTab({ testId , isMyExam} : { testId:string , isMyExam?:boolean }) {
 
     const api = useApi()
     const [isNewQuestionDialogOpen, setIsNewQuestionDialogOpen] = useState<boolean>(false)
@@ -386,7 +386,10 @@ export default function QuestionsTab({ testId} : { testId:string}) {
                     </span>
 
                 </div>
-                <PrimaryButton onClick={() => setIsNewQuestionDialogOpen(true)}>سؤال جديد </PrimaryButton>
+                {isMyExam && (
+                    <PrimaryButton onClick={() => setIsNewQuestionDialogOpen(true)}>سؤال جديد </PrimaryButton>
+
+                )}
 
             </div>
             <div className={"mt-20 "}>
@@ -404,6 +407,9 @@ export default function QuestionsTab({ testId} : { testId:string}) {
 
                                 </div>
                                 <div>
+                                    {isMyExam && (
+
+                                        <>
 
                                     <span onClick={() => openUpdateQuestionDialog(q.id)}
                                          className={"text-orange-400 hover:underline cursor-pointer ml-2"}>
@@ -416,6 +422,8 @@ export default function QuestionsTab({ testId} : { testId:string}) {
                                         حذف
 
                                     </span>
+                                        </>
+                                )}
                                 </div>
                             </div>
                             <div className={"flex justify-start gap-10 mt-4 items-center"}>
@@ -423,7 +431,7 @@ export default function QuestionsTab({ testId} : { testId:string}) {
                                     <div key={o.option} className="flex items-center">
                                     <input
                                         readOnly={true}
-                                        checked={o.is_correct} id="default-radio-2" type="radio" value=""
+                                        checked={o.is_correct && isMyExam} id="default-radio-2" type="radio" value=""
                                         name="default-radio"
                                         className="w-4 h-4 focus:bg-red-500 text-red-500  "/>
                                     <label htmlFor="default-radio-2"

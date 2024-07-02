@@ -15,7 +15,6 @@ function AuthProvider({children, session}: Props) {
     useEffect(() => {
         if(session.isLoggedIn) {
             setAuthUser(session)
-            console.log("setting user done")
         }
         setMounted(true)
 

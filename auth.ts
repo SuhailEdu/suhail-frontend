@@ -5,8 +5,6 @@ import { getIronSession } from "iron-session";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import axiosClient from "@/providers/axiosClient";
-import {AxiosError} from "axios";
-import useAuthStore from "@/stores/AuthStore";
 
 
 export const getSession = async () => {
@@ -41,7 +39,6 @@ export const register = async (
 
     try {
         const res = await axiosClient.post('/auth/register' , {...formData})
-        console.log(res)
         session.isLoggedIn = true;
         session.id = res.data.id
         session.email = res.data.email
@@ -78,6 +75,7 @@ export const login = async (
     try {
         const res = await axiosClient.post('/auth/login' , {...formData})
         session.isLoggedIn = true;
+        console.log(res.data)
         session.id = res.data.id
         session.email = res.data.email
         session.firstName = res.data.first_name
