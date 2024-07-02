@@ -39,8 +39,8 @@ export default function QuestionsTab({questions} : {questions: Question[]}) {
                 <Accordion className={"border rounded-lg"} type="single" collapsible>
                     {questions.map((q , index) => (
 
-                    <AccordionItem   key={q.title} value="item-1">
-                        <AccordionTrigger   className={"bg-slate-100 p-2 h-12"}>{index+1} - {q.title}</AccordionTrigger>
+                    <AccordionItem  value={q.title} key={q.title}>
+                        <AccordionTrigger    className={"bg-slate-100 p-2 h-12"}>{index+1} - {q.title}</AccordionTrigger>
                         <AccordionContent className={"p-2"}>
                             <div className={"text-lg"}>الاختيارات</div>
                             <div className={"flex justify-start gap-10 mt-4 items-center"}>
