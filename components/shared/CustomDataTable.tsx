@@ -16,6 +16,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import React from "react";
+import {LoaderIcon} from "lucide-react";
 
 interface CustomTextInputProps {
     label?: string
@@ -63,7 +64,18 @@ CustomDataTable.HeaderRow = function HeaderRow ({children}: Props) {
     )
 
 }
-CustomDataTable.Body = function HeaderRow ({children , hasData , columnsLength , ...props}: React.PropsWithChildren<{hasData:boolean , columnsLength:number}>) {
+CustomDataTable.Body = function HeaderRow ({children , isLoading , hasData , columnsLength , ...props}: React.PropsWithChildren<{hasData:boolean , columnsLength:number , isLoading?:boolean}>) {
+    if(isLoading) {
+        return <TableBody>
+            <TableRow>
+                <TableCell colSpan={columnsLength} className="h-24">
+                        <LoaderIcon className={"animate-spin mx-auto"} />
+                </TableCell>
+            </TableRow>
+
+        </TableBody>
+
+    }
     return (
         <TableBody>
             {hasData ? (

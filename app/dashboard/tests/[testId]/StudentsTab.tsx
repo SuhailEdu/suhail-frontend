@@ -164,6 +164,8 @@ export default function StudentsTab({testId}:{testId:string}) {
 
             if(res.status === 200) {
                 setIsInviteDialogOpen(false)
+
+                await participantsQuery.refetch()
             }
 
         } catch (e) {
@@ -251,7 +253,7 @@ export default function StudentsTab({testId}:{testId:string}) {
                                 <CustomDataTable.HeaderRow>حالة الدعوة</CustomDataTable.HeaderRow>
                                 <CustomDataTable.HeaderRow>الخيارات</CustomDataTable.HeaderRow>
                             </CustomDataTable.Header>
-                            <CustomDataTable.Body columnsLength={3} hasData={participantsQuery.data.length > 0}>
+                            <CustomDataTable.Body isLoading={participantsQuery.isLoading} columnsLength={3} hasData={participantsQuery.data.length > 0}>
                                 {participantsQuery.data.map((p:Participant) => (
 
                                 <CustomDataTable.Row key={p.email}>
