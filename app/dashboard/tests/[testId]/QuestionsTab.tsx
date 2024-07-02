@@ -15,6 +15,15 @@ import {useApi} from "@/hooks/useApi";
 import {useQuery} from "@tanstack/react-query";
 import {opt} from "ts-interface-checker";
 import {id} from "postcss-selector-parser";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription, AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle
+} from "@/components/ui/alert-dialog";
 
 type Question = {
     title: string,
@@ -59,7 +68,6 @@ export default function QuestionsTab({ testId} : { testId:string}) {
         queryFn:  () => api.get(`/home/exams/${testId}/questions`).then(res => res.data.data),
         queryKey: ["exams" , testId]
     });
-    console.log(questionsQuery.data)
 
     const [options , setOptions] = useState<Option[]>(
         [
@@ -71,6 +79,10 @@ export default function QuestionsTab({ testId} : { testId:string}) {
         ]
     )
     const [questionToUpdate, setQuestionToUpdate] = useState<string | null>(null)
+    const [questionToDelete, setQuestionToDelete] = useState<string | null>(null)
+    const [isDeleteQuestionDialogOpen, setIsDeleteQuestionDialogOpen] = useState<boolean>(false)
+    const [deleteQuestionValidationMessage, setDeleteQuestionValidationMessage] = useState<string>("")
+    const [isDeletingQuestion, setIsDeletingQuestion] = useState<boolean>(false)
 
 
     function removeOption(id: number) {
@@ -298,13 +310,6 @@ export default function QuestionsTab({ testId} : { testId:string}) {
                 if(validationError && validationError.options ) {
                     console.log(validationError.options[0])
                     setTitleError(validationError.options[0])
-                    // setOptionsErrors(prevErrors => ([
-                    //     ...prevErrors,
-                    //     {
-                    //         id: options[0]?.id,
-                    //         message: validationError.options[0]
-                    //     }
-                    // ]))
                 }
 
                 if(validationError && validationError.question_index !== null) {
@@ -325,6 +330,42 @@ export default function QuestionsTab({ testId} : { testId:string}) {
         setIsSubmittingQuestion(false)
 
     }
+
+    function openDeleteQuestionDialog(questionId:string)  {
+        setQuestionToDelete(questionId)
+        setIsDeleteQuestionDialogOpen(true)
+    }
+
+    async function deleteConfirmedQuestion(e) {
+        e.preventDefault()
+        setIsDeletingQuestion(true)
+        setDeleteQuestionValidationMessage("")
+
+        try {
+            const res = await api.delete(`/home/exams/${testId}/questions/${questionToDelete}`, )
+
+            if(res.status == 204) {
+                await questionsQuery.refetch()
+                setDeleteQuestionValidationMessage("")
+                setIsDeleteQuestionDialogOpen(false)
+
+            }
+
+        } catch (e) {
+            if(e?.response?.status === 422 && e?.response?.data?.validationError) {
+                const validationError = e.response.data.validationError
+                console.log(validationError)
+                // if(validationError && validationError.emails) {
+                    setDeleteQuestionValidationMessage("حدث خطأ ما")
+                // }
+            }
+
+        }
+
+        setIsDeletingQuestion(false)
+
+    }
+
     return (
         <div className=" container">
 
@@ -357,19 +398,29 @@ export default function QuestionsTab({ testId} : { testId:string}) {
                     <AccordionItem  value={q.title} key={q.title}>
                         <AccordionTrigger    className={"bg-slate-100 p-2 h-12"}>{index+1} - {q.title}</AccordionTrigger>
                         <AccordionContent className={"p-2"}>
-                            <div className={"text-lg max-w-lg flex justify-between items-center"}>
+                            <div className={"text-lg  flex justify-between items-center"}>
                                 <div>
                                     الاختيارات
 
                                 </div>
-                                <div onClick={() => openUpdateQuestionDialog(q.id)} className={"text-orange-700 underline cursor-pointer"}>
-                                    تعديل
+                                <div>
 
+                                    <span onClick={() => openUpdateQuestionDialog(q.id)}
+                                         className={"text-orange-400 hover:underline cursor-pointer ml-2"}>
+                                        تعديل
+
+                                    </span>
+
+                                    <span onClick={() =>openDeleteQuestionDialog(q.id)}
+                                         className={"text-red-500 hover:underline cursor-pointer"}>
+                                        حذف
+
+                                    </span>
                                 </div>
                             </div>
                             <div className={"flex justify-start gap-10 mt-4 items-center"}>
                                 {q.options.map(o => (
-                                <div key={o.option} className="flex items-center">
+                                    <div key={o.option} className="flex items-center">
                                     <input
                                         readOnly={true}
                                         checked={o.is_correct} id="default-radio-2" type="radio" value=""
@@ -543,6 +594,46 @@ export default function QuestionsTab({ testId} : { testId:string}) {
                 </DialogContent>
             </Dialog>
 
+
+            <AlertDialog onOpenChange={setIsDeleteQuestionDialogOpen} open={isDeleteQuestionDialogOpen}>
+                <AlertDialogContent dir={"rtl"}>
+                    <AlertDialogHeader dir={"rtl"}>
+                        <AlertDialogTitle className={"text-right"}>هل أنت متأكد؟</AlertDialogTitle>
+                        <AlertDialogDescription className={"text-right"}>
+
+                            هذا الأجراء لا يمكن الغاؤه. سيتم مسح جميع البيانات  المرتبطة بهذا السؤال بما في ذلك النتائج
+                            {deleteQuestionValidationMessage && (
+                                <div className="text-red-500 mt-4">
+                                    {deleteQuestionValidationMessage}
+                                </div>
+
+                            )}
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>الغاء</AlertDialogCancel>
+                        <AlertDialogAction   onClick={deleteConfirmedQuestion} className={"bg-transparent"}>
+                            <PrimaryButton disabled={isDeletingQuestion} color={"danger"}>
+                                {isDeletingQuestion ?
+                                    ( <span>
+                                    <LoaderIcon className={"animate-spin"}/>
+                                </span>
+                                    )
+                                    :
+                                    (
+                                        <span>
+                                    تأكيد
+                                </span>
+
+                                    )
+
+                                }
+
+                            </PrimaryButton>
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
 
         </div>
 
