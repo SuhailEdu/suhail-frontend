@@ -5,7 +5,7 @@ import React from "react";
 
 interface Props extends React.ComponentProps<'button'> {
     href?: string
-    color? :"primary" | "danger"
+    color? :"primary" | "danger" | 'base'
 }
 
 export default function PrimaryButton ({href, className,color ,  ...props}: Props)  {
@@ -14,6 +14,8 @@ export default function PrimaryButton ({href, className,color ,  ...props}: Prop
         switch (color) {
             case "danger" :
                 return "bg-red-500 text-white hover:text-white hover:bg-red-600"
+            case "base" :
+                return "bg-white text-black hover:bg-slate-100 hover:text-black"
 
             case "primary" :
             default:
@@ -25,7 +27,7 @@ export default function PrimaryButton ({href, className,color ,  ...props}: Prop
     return href ? (
             <Link href={href}>
 
-                <Button className={` ${getColor()} font-bold ${className}`}
+                <Button className={` ${getColor()}  ${className}`}
                         {...props}
                 >{props.children}</Button>
 
@@ -33,7 +35,7 @@ export default function PrimaryButton ({href, className,color ,  ...props}: Prop
         )
         :
         (
-            <Button className={cn(`${getColor()} font-bold`, className)}
+            <Button className={cn(`${getColor()} `, className)}
                     {...props}
             >{props.children}</Button>
         )
