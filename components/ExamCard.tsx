@@ -2,8 +2,15 @@ import {FileIcon, InfoIcon} from "lucide-react";
 import {useRouter} from "next/navigation";
 import CustomBadge from "@/components/CustomBadge";
 import {Exam} from "@/types/exam";
+type ParticipatingExamResource = {
+    id: string,
+    exam_title: string,
+    questions_count: string,
+    created_at: string,
+    updated_at: string,
+}
 
-export default function ExamCard ({exam} : {exam: Exam})  {
+export default function ExamCard ({exam , type} : {exam: Exam |ParticipatingExamResource , type : 'my' | 'participating'})  {
     const router = useRouter()
     return (
 
@@ -25,14 +32,16 @@ export default function ExamCard ({exam} : {exam: Exam})  {
                         سؤال
                 </span>
                 </CustomBadge>
+                {type == "my"  && "participants_count" in exam  && (
                 <CustomBadge type='success'>
                     <InfoIcon size={17}/>
                     <span>
-                {exam.participants_count}
+                {"participants_count" in exam ? exam.participants_count : ""}
                         {" "}
                         مشارك
                 </span>
                 </CustomBadge>
+                )}
                 <CustomBadge type='info'>
                     <InfoIcon size={17}/>
                     <span>

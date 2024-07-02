@@ -1,4 +1,4 @@
-import DashboardHome from "@/components/DashboardHome";
+import DashboardHome from "@/app/dashboard/DashboardHome";
 import {getSession} from "@/auth";
 
 
