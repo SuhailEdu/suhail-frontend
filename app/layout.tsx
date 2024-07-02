@@ -9,6 +9,7 @@ import ReactQueryProvider from "@/components/ReactQueryProvider";
 import AuthProvider from "@/providers/authProvider";
 import {getSession} from "@/auth";
 import useAuthStore from "@/stores/AuthStore";
+import {Tajawal} from 'next/font/google'
 
 const inter = Inter({subsets: ["latin"]});
 
@@ -19,6 +20,12 @@ export const metadata: Metadata = {
 // const queryClient = new QueryClient()
 
 
+const tajwalFont = Tajawal({
+    // weight: ['200' , '300' ,'400' , '500' , '600' , '700' , '800' , '900'],
+    weight: ['200' , '300' ,'400' , '500' ,  '700' , '800' , '900'],
+    // weight: '200',
+    subsets: ['arabic']
+})
 
 export default async function RootLayout({
                                              children,
@@ -26,13 +33,9 @@ export default async function RootLayout({
     children: React.ReactNode;
 }>) {
     const session = await getSession()
-    console.log("session", session)
-    if(session.isLoggedIn) {
 
-
-    }
     return (
-        <html dir="rtl" lang="ar">
+        <html className={tajwalFont.className} dir="rtl" lang="ar">
         <body className={inter.className}>
         <ReactQueryProvider>
         <AuthProvider session={session}>
