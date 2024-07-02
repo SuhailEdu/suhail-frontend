@@ -15,8 +15,8 @@ import useAuthStore from "@/stores/AuthStore";
 
 const routeList: RouteProps[] = [
     {
-        href: "/about",
-        label: "عن المنصة",
+        href: "/dashboard",
+        label: "لوحة التحكم",
     },
 ];
 

@@ -25,7 +25,7 @@ export default  function LogOutButton() {
 
             {/*{user.isLoggedIn && (*/}
                 <PrimaryButton disabled={!isLoaded} onClick={() => logUserOut()}>
-                    {isLoaded ? "log gout" :<LoaderCircle className="animate-spin" />}
+                    {isLoaded ? "تسجيل الخروج" :<LoaderCircle className="animate-spin" />}
                 </PrimaryButton>
 
             {/*)}*/}

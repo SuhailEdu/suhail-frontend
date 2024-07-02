@@ -1,11 +1,5 @@
 import PrimaryButton from "@/components/shared/PrimaryButton";
 import CustomBadge from "@/components/CustomBadge";
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-} from "@/components/ui/accordion"
 import {ColumnDef} from "@tanstack/react-table";
 import CustomDataTable from "@/components/shared/CustomDataTable";
 import {useQuery} from "@tanstack/react-query";
@@ -18,11 +12,20 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import CreatableSelect from "react-select/creatable";
 import React, {KeyboardEventHandler, useEffect, useState} from "react";
 import {z} from "zod";
-import {LoaderIcon} from "lucide-react";
+import {LoaderIcon, TrashIcon} from "lucide-react";
 import {Close} from "@radix-ui/react-dialog";
+import {BsThreeDots, BsThreeDotsVertical} from "react-icons/bs";
 type Participant = {
     email:string,
     status:string,
@@ -193,6 +196,7 @@ export default function StudentsTab({testId}:{testId:string}) {
                             <CustomDataTable.Header>
                                 <CustomDataTable.HeaderRow>البريد الالكتروني</CustomDataTable.HeaderRow>
                                 <CustomDataTable.HeaderRow>حالة الدعوة</CustomDataTable.HeaderRow>
+                                <CustomDataTable.HeaderRow>الخيارات</CustomDataTable.HeaderRow>
                             </CustomDataTable.Header>
                             <CustomDataTable.Body columnsLength={participantsQuery.data.length} hasData={participantsQuery.data.length > 0}>
                                 {participantsQuery.data.map((p:Participant) => (
@@ -203,6 +207,28 @@ export default function StudentsTab({testId}:{testId:string}) {
                                         <CustomBadge type={formatInviteStatusClass(p.status)} >
                                             {formatInviteStatus(p.status)}
                                         </CustomBadge>
+                                    </CustomDataTable.Cell>
+
+                                    <CustomDataTable.Cell>
+                                        <DropdownMenu dir={"rtl"}>
+                                            <DropdownMenuTrigger><BsThreeDotsVertical /></DropdownMenuTrigger>
+                                            <DropdownMenuContent>
+                                                <DropdownMenuLabel>الخيارات</DropdownMenuLabel>
+                                                <DropdownMenuSeparator />
+                                                <DropdownMenuItem >
+                                                    <div className={"text-red-500 hover:text-red-500 flex gap-1 cursor-pointer"}>
+                                                    <span>
+                                                        <TrashIcon size={'18'}/>
+                                                    </span>
+
+                                                        <span>
+                                                        حذف
+                                                    </span>
+
+                                                    </div>
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
                                     </CustomDataTable.Cell>
                                 </CustomDataTable.Row>
                                 ))}

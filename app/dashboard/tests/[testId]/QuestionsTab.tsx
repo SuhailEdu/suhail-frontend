@@ -8,6 +8,10 @@ import {
 } from "@/components/ui/accordion"
 import CustomTextInput from "@/components/shared/CustomTextInput";
 import {Question} from "@/types/exam";
+import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import CreatableSelect from "react-select/creatable";
+import {LoaderIcon} from "lucide-react";
+import React from "react";
 
 export default function QuestionsTab({questions} : {questions: Question[]}) {
     console.log(questions)
@@ -66,6 +70,40 @@ export default function QuestionsTab({questions} : {questions: Question[]}) {
 
 
             </div>
+
+            <Dialog onOpenChange={setIsInviteDialogOpen}  open={isInviteDialogOpen}  >
+                <DialogContent  className={"min-h-60"} dir={"rtl"}>
+                    {/*<Close >s</Close>*/}
+                    <DialogHeader className={"text-right"} dir={"rtl"}>
+                        <DialogTitle  className={"text-right"}>أدعو المشاركين في الاختبار</DialogTitle>
+                        <DialogDescription>
+                            <h3 className={"my-4"}>
+                                أدعوا طلابك للمشاركة في الاختبار
+                                <span className="text-green-500 mr-1">
+                        (اختياري)
+
+                    </span>
+                            </h3>
+
+                            <p className="text-red-500">{emailValidationMessage}</p>
+                            <div className={"flex justify-end items-center mt-8"}>
+                                <PrimaryButton
+                                    onClick={handleSendInvitations}
+
+                                    disabled={emails.length < 1 || isSendingIvitations || emailValidationMessage}>{
+                                    (isSendingIvitations ?
+                                            <span><LoaderIcon className={"animate-spin"}/></span>
+                                            :
+                                            <span>اضافة</span>
+
+                                    )
+                                }</PrimaryButton>
+
+                            </div>
+                        </DialogDescription>
+                    </DialogHeader>
+                </DialogContent>
+            </Dialog>
 
 
 
