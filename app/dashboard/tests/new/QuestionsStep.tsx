@@ -1,6 +1,6 @@
 import {ChevronDown, CrossIcon, PlusIcon, TimerIcon, XIcon} from "lucide-react";
 import {forwardRef, useEffect, useImperativeHandle, useState} from 'react'
-import QuestionItem from "./QuestionItem";
+import QuestionItem from "../../../../components/QuestionItem";
 import Badge from "@/components/CustomBadge";
 import {z, ZodError, ZodIssue, ZodParsedType} from "zod";
 import PrimaryButton from "@/components/shared/PrimaryButton";

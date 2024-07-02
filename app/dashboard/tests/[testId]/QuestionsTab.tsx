@@ -6,14 +6,14 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion"
-import {Question} from "@/types/exam";
 import CustomTextInput from "@/components/shared/CustomTextInput";
+import {Question} from "@/types/exam";
 
 export default function QuestionsTab({questions} : {questions: Question[]}) {
     console.log(questions)
 
     return (
-        <div className="lg:mx-20">
+        <div className=" container">
 
             <div className="flex justify-between items-center">
                 <div className={"text-2xl flex gap-4"}>
@@ -35,7 +35,7 @@ export default function QuestionsTab({questions} : {questions: Question[]}) {
                 <PrimaryButton>سؤال جديد</PrimaryButton>
 
             </div>
-            <div className={"mt-20 mx-10"}>
+            <div className={"mt-20 "}>
                 <Accordion className={"border rounded-lg"} type="single" collapsible>
                     {questions.map((q , index) => (
 
@@ -48,7 +48,7 @@ export default function QuestionsTab({questions} : {questions: Question[]}) {
                                 <div key={o.option} className="flex items-center">
                                     <input
                                         readOnly={true}
-                                        checked={o?.is_correct} id="default-radio-2" type="radio" value=""
+                                        checked={o?.is_correct?? false} id="default-radio-2" type="radio" value=""
                                         name="default-radio"
                                         className="w-4 h-4 focus:bg-red-500 text-red-500  "/>
                                     <label htmlFor="default-radio-2"
@@ -66,6 +66,8 @@ export default function QuestionsTab({questions} : {questions: Question[]}) {
 
 
             </div>
+
+
 
         </div>
 

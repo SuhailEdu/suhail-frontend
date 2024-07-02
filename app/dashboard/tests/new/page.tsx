@@ -10,17 +10,13 @@ import {
 } from "@/components/ui/breadcrumb"
 import Link from "next/link";
 import {FileIcon, HomeIcon, InfoIcon, LoaderIcon, PenIcon} from "lucide-react";
-import TestInfoStep from "@/components/TestInfoStep";
-import QuestionsStep from "@/components/QuestionsStep";
-import InviteStep from "@/components/InviteStep";
-import TestCreatedStep from "@/components/TestCreatedStep";
+import TestInfoStep from "@/app/dashboard/tests/new/TestInfoStep";
+import QuestionsStep from "@/app/dashboard/tests/new/QuestionsStep";
+import InviteStep from "@/app/dashboard/tests/new/InviteStep";
+import TestCreatedStep from "@/app/dashboard/tests/new/TestCreatedStep";
 import PrimaryButton from "@/components/shared/PrimaryButton";
 import {useApi} from "@/hooks/useApi";
 import {useMutation} from "@tanstack/react-query";
-import {setActTimeout} from "@tanstack/react-query/src/__tests__/utils";
-// import TestInfoStep from "../../../Shared/Components/CreateTest/TestInfoStep";
-// import QuestionsStep from "../../../Shared/Components/CreateTest/QuestionsStep";
-// import InviteStep from "../../../Shared/Components/CreateTest/InviteStep";
 
 interface QuestionType {
     title: string,

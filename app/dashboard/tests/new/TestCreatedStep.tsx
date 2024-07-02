@@ -1,6 +1,6 @@
 import {ArrowLeft, CrossIcon, HomeIcon, PlusIcon, TimerIcon, XIcon} from "lucide-react";
 import React, {useState, KeyboardEventHandler} from 'react'
-import QuestionItem from "./QuestionItem";
+import QuestionItem from "../../../../components/QuestionItem";
 import Badge from "@/components/CustomBadge";
 import {isValid, z, ZodError, ZodIssue, ZodParsedType} from "zod";
 import PrimaryButton from "@/components/shared/PrimaryButton";

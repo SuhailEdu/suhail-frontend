@@ -1,6 +1,6 @@
 import {CrossIcon, PlusIcon, TimerIcon, XIcon} from "lucide-react";
 import React, {useState, KeyboardEventHandler, useEffect} from 'react'
-import QuestionItem from "./QuestionItem";
+import QuestionItem from "../../../../components/QuestionItem";
 import Badge from "@/components/CustomBadge";
 import {isValid, z, ZodError, ZodIssue, ZodParsedType} from "zod";
 import PrimaryButton from "@/components/shared/PrimaryButton";
@@ -80,7 +80,7 @@ export default function InviteStep ({emails, setEmails , validationError, ...pro
     return (
         <>
             <div className="mb-2 block">
-                <h3 className={"h"}>
+                <h3 className={""}>
                     أدعوا طلابك للمشاركة في الاختبار
                     <span className="text-green-500 mr-1">
                         (اختياري)

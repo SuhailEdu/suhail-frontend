@@ -6,12 +6,23 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion"
-import {Question} from "@/types/exam";
-import CustomTextInput from "@/components/shared/CustomTextInput";
 import {ColumnDef} from "@tanstack/react-table";
 import CustomDataTable from "@/components/shared/CustomDataTable";
 import {useQuery} from "@tanstack/react-query";
 import {useApi} from "@/hooks/useApi";
+import {
+    Dialog, DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import CreatableSelect from "react-select/creatable";
+import React, {KeyboardEventHandler, useEffect, useState} from "react";
+import {z} from "zod";
+import {LoaderIcon} from "lucide-react";
+import {Close} from "@radix-ui/react-dialog";
 type Participant = {
     email:string,
     status:string,
@@ -27,6 +38,8 @@ type Participant = {
     },
 ]
 export default function StudentsTab({testId}:{testId:string}) {
+
+    const [emails , setEmails] = useState<string[]>([])
 
     const api = useApi()
 
@@ -63,6 +76,92 @@ export default function StudentsTab({testId}:{testId:string}) {
 
     }
 
+    const [emailValidationMessage, setEmailValidationMessage] = useState<string>("")
+
+    const [inputValue, setInputValue] = React.useState('');
+
+    const [isInviteDialogOpen, setIsInviteDialogOpen] = useState<boolean>(false)
+    const [isSendingIvitations, setIsSendingIvitations] = useState<boolean>(false)
+    // const [value, setValue] = React.useState<readonly Option[]>([]);
+
+
+    const createOption = (label: string) => ({
+        label,
+        value: label,
+    });
+
+
+
+    function validateEmail(email: string) {
+        const schema = z.string().email({message: "البريد الالكتروني غير صحيح"})
+            .refine((e) => {
+                const verifiedEmails = emails.map(v => v.value)
+                return !verifiedEmails.includes(e)
+
+            }, "البريد الالكتروني مستخدم بالفعل")
+            .refine((e) => {
+                if( participantsQuery?.data && participantsQuery?.data?.length > 0){
+
+                const verifiedEmails = participantsQuery.data.map(v => v.email)
+                return !verifiedEmails.includes(e)
+                }
+                return true
+
+            }, "البريد الالكتروني ضمن المشاركين بالفعل")
+
+        const errors = schema.safeParse(email)
+
+        if (errors.success) {
+            if (emailValidationMessage) {
+                setEmailValidationMessage("")
+            }
+            return true
+        }
+
+        const message = JSON.parse(errors.error.message)[0].message
+
+        setEmailValidationMessage(message)
+    }
+
+    const handleKeyDown: KeyboardEventHandler = (event) => {
+        if (emailValidationMessage) return;
+        switch (event.key) {
+            case 'Enter':
+            case 'Tab':
+                setEmails((prev) => [...prev, createOption(inputValue)]);
+                setInputValue('');
+                event.preventDefault();
+        }
+    };
+
+    async function handleSendInvitations() {
+        setIsSendingIvitations(true)
+        // setTimeout( ()=> {
+        // }, 3000)
+        try {
+            const res = await api.post(`/home/exams/${testId}/invite`, {
+                emails: emails.map(e => e.value),
+            })
+
+            if(res.status === 200) {
+                setIsInviteDialogOpen(false)
+            }
+
+        } catch (e) {
+            if(e?.response?.status === 422 && e?.response?.data?.validationError) {
+                const validationError = e.response.data.validationError
+                if(validationError.emails ) {
+                    setEmailValidationMessage(validationError.emails)
+                }
+
+            }
+
+        }
+
+        setIsSendingIvitations(false)
+
+    }
+
 
     return (
         <div className=" container">
@@ -71,20 +170,20 @@ export default function StudentsTab({testId}:{testId:string}) {
                 <div className={"text-2xl flex gap-4"}>
 
                     <span>
-                    أسئلة اختبارك
+                    المشاركين في الاختبار
                     </span>
 
                     <span>
                     <CustomBadge type={"info"} >
-                        {/*{questions.length}*/}
+                        {participantsQuery.data?.length ?? 0}
                         {" "}
-                        سؤال
+                        مستخدم
 
                     </CustomBadge>
                     </span>
 
                 </div>
-                <PrimaryButton>سؤال جديد</PrimaryButton>
+                <PrimaryButton onClick={() => setIsInviteDialogOpen(true)}>دعوة جديدة</PrimaryButton>
 
             </div>
             <div className={"mt-20 "}>
@@ -116,9 +215,63 @@ export default function StudentsTab({testId}:{testId:string}) {
                 </div>
 
             </div>
+            <Dialog onOpenChange={setIsInviteDialogOpen}  open={isInviteDialogOpen}  >
+                <DialogContent  className={"min-h-60"} dir={"rtl"}>
+                    {/*<Close >s</Close>*/}
+                    <DialogHeader className={"text-right"} dir={"rtl"}>
+                        <DialogTitle  className={"text-right"}>أدعو المشاركين في الاختبار</DialogTitle>
+                        <DialogDescription>
+                            <h3 className={"my-4"}>
+                                أدعوا طلابك للمشاركة في الاختبار
+                                <span className="text-green-500 mr-1">
+                        (اختياري)
 
+                    </span>
+                            </h3>
+
+                            <p className="text-red-500">{emailValidationMessage}</p>
+                            <CreatableSelect
+                                isDisabled={isSendingIvitations}
+                                components={{
+                                    DropdownIndicator: null
+                                }}
+                                inputValue={inputValue}
+                                isMulti
+                                isClearable={true}
+                                escapeClearsValue={true}
+                                menuIsOpen={false}
+                                onInputChange={(newValue) => {
+                                    if (newValue.trim()) {
+                                        validateEmail(newValue)
+                                    }
+                                    setInputValue(newValue)
+
+                                }}
+                                onChange={(newValue) => setEmails(newValue)}
+                                onKeyDown={e => handleKeyDown(e)}
+                                placeholder="أدخل عنوان البريد الالكترني ثم اضغط على زر Enter"
+                                value={emails}
+                            />
+                            <div className={"flex justify-end items-center mt-8"}>
+                                <PrimaryButton
+                                    onClick={handleSendInvitations}
+
+                                    disabled={emails.length < 1 || isSendingIvitations || emailValidationMessage}>{
+                                    (isSendingIvitations ?
+                                            <span><LoaderIcon className={"animate-spin"}/></span>
+                                            :
+                                            <span>ارسال</span>
+
+                                    )
+                                }</PrimaryButton>
+
+                            </div>
+                        </DialogDescription>
+                    </DialogHeader>
+                </DialogContent>
+            </Dialog>
         </div>
 
-)
+    )
 
 }
