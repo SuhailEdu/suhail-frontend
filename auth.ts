@@ -21,14 +21,57 @@ export const getSession = async () => {
 
     return session;
 };
-
-type Data = {
+type loginData = {
     email :string,
     password :string,
 }
 
+type registerData = {
+    first_name :string,
+    last_name :string,
+    email :string,
+    password :string,
+}
+
+
+export const register = async (
+    formData:registerData
+) => {
+    const session = await getSession();
+
+    try {
+        const res = await axiosClient.post('/auth/register' , {...formData})
+        console.log(res)
+        session.isLoggedIn = true;
+        session.id = res.data.id
+        session.email = res.data.email
+        session.firstName = res.data.first_name
+        session.lastName = res.data.last_name
+        session.token = res.data.token
+
+        await session.save();
+    }
+    catch (e:any) {
+        if (!e.isAxiosError) {
+            return
+        }
+
+        if (e && e?.response?.status === 422) {
+
+            return {
+                status: e.response.status,
+                errors: e.response.data,
+                isOk: false
+            }
+        }
+        return
+    }
+
+    redirect("/");
+};
+
 export const login = async (
-    formData:Data
+    formData:loginData
 ) => {
     const session = await getSession();
 

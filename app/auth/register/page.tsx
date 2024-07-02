@@ -10,24 +10,30 @@ import {AxiosError} from "axios";
 import {z} from "zod";
 import {redirect, useRouter} from "next/navigation";
 import {useFormState} from "react-dom";
-import {login} from "@/auth";
+import {login, register} from "@/auth";
 import useAuthStore from "@/stores/AuthStore";
 
 
-export default function Login() {
+export default function Register() {
 
 
-    const loginSchema = z.object({
+    const registerSchema = z.object({
+        first_name: z.string().min(3).max(20),
+        last_name: z.string().min(3).max(20),
         email: z.string().email(),
         password: z.string().min(8).max(50),
     })
 
-    const [data, setData] = useState<{ email: string; password: string }>({
-        email: 'ash@gmail.com',
-        password: 'password'
+    const [data, setData] = useState<{ email: string; password: string  , first_name:string , last_name:string}>({
+        first_name: '',
+        last_name: '',
+        email: '',
+        password: ''
     })
 
     const defaultErrors = {
+        first_name: [""],
+        last_name: [""],
         email: [""],
         password: [""],
     }
@@ -41,7 +47,7 @@ export default function Login() {
         e.preventDefault()
         setValidationErrors(defaultErrors)
 
-        const s = loginSchema.safeParse(data)
+        const s = registerSchema.safeParse(data)
 
         if (!s.success) {
             const errors = s.error.formErrors.fieldErrors
@@ -53,9 +59,10 @@ export default function Login() {
             return
         }
 
-            const res = await login(data)
+            const res = await register(data)
 
         if (!res?.isOk && res?.status == 422) {
+            console.log(res.errors.validationError)
             setValidationErrors((prevErrors) => ({
                 ...prevErrors,
                 ...res.errors.validationError
@@ -83,10 +90,36 @@ export default function Login() {
                     </div>
                     <div className="mt-12 flex flex-col items-center">
                         <h1 className="text-2xl xl:text-3xl font-extrabold">
-                            تسجيل الدخول
+                            انشاء حساب جديد
                         </h1>
                         <div className="w-full flex-1 mt-8">
                             <form onSubmit={submit} className="flex max-w-md flex-col gap-4">
+                                <div className={"grid grid-cols-2 gap-2"}>
+
+                                    <CustomTextInput
+                                        label="الاسم الأول"
+                                        id="first_name"
+                                        type="text"
+                                        errors={validationErrors.first_name[0] ?? ""}
+                                        value={data.first_name}
+                                        onChange={(e) => setData(d => ({
+                                            ...d,
+                                            first_name: e.target.value
+                                        }))}
+                                    />
+
+                                    <CustomTextInput
+                                        label="الأخير الأول"
+                                        id="last_name"
+                                        type="text"
+                                        errors={validationErrors.last_name[0] ?? ""}
+                                        value={data.last_name}
+                                        onChange={(e) => setData(d => ({
+                                            ...d,
+                                            last_name: e.target.value
+                                        }))}
+                                    />
+                                </div>
 
                                 <CustomTextInput
                                     label="البريد الالكتروني"
@@ -115,12 +148,13 @@ export default function Login() {
                                 <PrimaryButton type="submit">تأكيد</PrimaryButton>
                             </form>
                             <p
-                                className="mt-4 text-sm text-gray-500 dark:text-gray-400">ليس لديك حساب بعد ؟
+                                className="mt-4 text-sm text-gray-500 dark:text-gray-400">لديك حساب بالفعل؟
                                 {" "}
                                 <Link
-                                    href="/auth/register"
-                                    className="font-medium text-blue-600 hover:underline dark:text-blue-500">أنشاء حساب
-                                    جديد</Link>.</p>
+                                    href="/auth/login"
+                                    className="font-medium text-blue-600 hover:underline dark:text-blue-500">
+                                    تسجيل الدخول
+                                </Link>.</p>
                         </div>
                     </div>
                 </div>
@@ -131,6 +165,7 @@ export default function Login() {
                 </div>
 
             </div>
+
         </div>
     )
 }

@@ -36,15 +36,18 @@ export default async function RootLayout({
 
     return (
         <html className={tajwalFont.className} dir="rtl" lang="ar">
-        <body className={inter.className}>
+        <body >
         <ReactQueryProvider>
         <AuthProvider session={session}>
+
+            <div className={`h-screen `}>
 
             <Navbar/>
                 <main>
                     {children}
                 </main>
-                <Footer/>
+                <Footer />
+            </div>
         </AuthProvider>
 
             </ReactQueryProvider>
