@@ -1,5 +1,5 @@
 "use client"
-import React, {useRef, useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -26,7 +26,7 @@ import InviteStep from "@/app/dashboard/tests/new/InviteStep";
 import TestCreatedStep from "@/app/dashboard/tests/new/TestCreatedStep";
 import PrimaryButton from "@/components/shared/PrimaryButton";
 import {useApi} from "@/hooks/useApi";
-import {useMutation} from "@tanstack/react-query";
+import {useMutation, useQuery} from "@tanstack/react-query";
 import CustomTextInput from "@/components/shared/CustomTextInput";
 import {
     Sheet,
@@ -38,28 +38,38 @@ import {
 } from "@/components/ui/sheet"
 import {CiMenuBurger} from "react-icons/ci";
 
-interface QuestionType {
+interface LiveQuestionResponse {
+    id: number,
     title: string,
-    id: number,
-    options: QuestionOptionType[]
+    type: 'options' | 'yesOrNo',
+    exam_id: string,
+    created_at: string,
+    updated_at: string,
+    options:string[]
 }
 
-interface QuestionOptionType {
-    id: number,
-    title: string
-    isCorrect: boolean
-}
 
-interface Option {
-    readonly label: string;
-    readonly value: string;
-}
-
-export default function New() {
+export default function New({params} : {params:{testId: string}}) {
 
     const api = useApi()
 
+    const testId = params.testId
+
+    const questionsQuery = useQuery<LiveQuestionResponse[]>({
+        queryFn: () => api.get(`/home/exams/${testId}/live`).then(res => res.data.data),
+        queryKey: ['exams' , testId , 'live']
+    })
+
+    console.log(questionsQuery.data)
+
     const [isSidebarOpen , setIsSidebarOpen] = useState<boolean>(true)
+    const [selectedQuestion , setSelectedQuestion] = useState<LiveQuestionResponse | null>(null)
+
+    useEffect(() => {
+        if(questionsQuery.data && questionsQuery.data.length> 0) {
+            setSelectedQuestion(questionsQuery.data[0])
+        }
+    }, []);
 
 
     return (
@@ -109,17 +119,26 @@ export default function New() {
                 </PrimaryButton>
 
             </div>
+                {selectedQuestion !== null ? (
+
                 <div className="mt-20">
-                    <div className={"text-2xl text-center"}>كيف حالك في يوم الاربعاء?</div>
-                    <div key={1} className="flex items-center justify-center mt-16">
+                    <div className={"text-2xl text-center"}>{selectedQuestion.title}</div>
+                    <div className={"flex justify-center gap-12 items-center"}>
+
+                    {selectedQuestion.options.map(option => (
+
+                    <div key={option} className="flex items-center justify-center mt-16">
                         <input
                             checked={true} id="default-radio-2" type="radio" value=""
                             name="default-radio"
                             className="w-4 h-4 focus:bg-red-500 text-red-500  "/>
                         <label htmlFor="default-radio-2"
                                className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                            Kjdkfjdk
+                            {option}
                         </label>
+
+                    </div>
+                    ))}
 
                     </div>
 
@@ -130,25 +149,41 @@ export default function New() {
 
                     </div>
                 </div>
+
+                ): (
+                    <div>Noo</div>
+                )}
             </div>
             <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
                 <SheetContent side={"left"} dir={"rtl"}>
                     <SheetHeader dir={"rtl"}>
                         <SheetTitle className={"text-right"}>قائمة الأسئلة</SheetTitle>
-                        <SheetDescription>
-                            This action cannot be undone. This will permanently delete your account
-                            and remove your data from our servers.
-                        </SheetDescription>
-                        <div className={"border rounded-lg p-2 text-right   hover:bg-slate-50 cursor-pointer my-2"}>
+                        {questionsQuery.data && questionsQuery.data?.length > 0 ? (
+
+                        <div className={"mt-4"}>
+                            {questionsQuery.data.map(question => (
+
+                        <div onClick={() => {
+                            setSelectedQuestion(question)
+                            setIsSidebarOpen(false)
+                        }} key={question.id} className={`border rounded-lg p-2 text-right ${question.id == selectedQuestion?.id && 'bg-slate-100' }
+                          hover:bg-slate-100 cursor-pointer my-2`}>
                             <div className="flex items-center justify-start gap-2">
 
                             <span><PaperclipIcon size={18} /></span>
                             <span>
-                           كيف تأكل يوم الخميس اذا؟
+                           {question.title}
 
                             </span>
                             </div>
                         </div>
+
+                            ))}
+                        </div>
+
+                        ) : (
+                           <div>No</div>
+                            )}
                     </SheetHeader>
                 </SheetContent>
             </Sheet>
