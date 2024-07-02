@@ -5,15 +5,27 @@ import React from "react";
 
 interface Props extends React.ComponentProps<'button'> {
     href?: string
-
+    color? :"primary" | "danger"
 }
 
-export default function PrimaryButton ({href, className, ...props}: Props)  {
+export default function PrimaryButton ({href, className,color ,  ...props}: Props)  {
+
+    function getColor() {
+        switch (color) {
+            case "danger" :
+                return "bg-red-500 text-white hover:text-white hover:bg-red-600"
+
+            case "primary" :
+            default:
+                return "bg-primary hover:bg-primary hover:text-white text-white"
+        }
+
+    }
 
     return href ? (
             <Link href={href}>
 
-                <Button className={`bg-primary hover:bg-primary hover:text-white   text-white font-bold ${className}`}
+                <Button className={` ${getColor()} font-bold ${className}`}
                         {...props}
                 >{props.children}</Button>
 
@@ -21,7 +33,7 @@ export default function PrimaryButton ({href, className, ...props}: Props)  {
         )
         :
         (
-            <Button className={cn('bg-primary  text-white hover:bg-primary hover:text-white font-bold', className)}
+            <Button className={cn(`${getColor()} font-bold`, className)}
                     {...props}
             >{props.children}</Button>
         )

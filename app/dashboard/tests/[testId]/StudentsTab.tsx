@@ -13,6 +13,17 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
@@ -51,7 +62,19 @@ export default function StudentsTab({testId}:{testId:string}) {
         queryKey: ['exams' , "id"],
     })
 
-    console.log(participantsQuery.data)
+
+    const [emailValidationMessage, setEmailValidationMessage] = useState<string>("")
+
+    const [inputValue, setInputValue] = React.useState('');
+
+    const [isInviteDialogOpen, setIsInviteDialogOpen] = useState<boolean>(false)
+    const [isSendingIvitations, setIsSendingIvitations] = useState<boolean>(false)
+
+
+    const [isDeleteParticipantDialogOpen, setIsDeleteParticipantDialogOpen] = useState<boolean>(false)
+    const [isDeletingParticipant, setIsDeletingParticipant] = useState<boolean>(false)
+    const [participantEmailToDelete, setParticipantEmailToDelete] = useState<string>("")
+    const [deleteParticipantValidationMessage, setDeleteParticipantValidationMessage] = useState<string>("")
 
     function formatInviteStatus(status:string) {
         switch (status) {
@@ -79,13 +102,6 @@ export default function StudentsTab({testId}:{testId:string}) {
 
     }
 
-    const [emailValidationMessage, setEmailValidationMessage] = useState<string>("")
-
-    const [inputValue, setInputValue] = React.useState('');
-
-    const [isInviteDialogOpen, setIsInviteDialogOpen] = useState<boolean>(false)
-    const [isSendingIvitations, setIsSendingIvitations] = useState<boolean>(false)
-    // const [value, setValue] = React.useState<readonly Option[]>([]);
 
 
     const createOption = (label: string) => ({
@@ -165,6 +181,43 @@ export default function StudentsTab({testId}:{testId:string}) {
 
     }
 
+    function handleDeleteParticipant(email:string) {
+        setParticipantEmailToDelete(email)
+        setIsDeleteParticipantDialogOpen(true)
+    }
+
+    async function handleConfirmedParticipantDeletion(e:any) {
+        e.preventDefault()
+        setIsDeletingParticipant(true)
+        setDeleteParticipantValidationMessage("")
+
+        try {
+            const res = await api.post(`/home/exams/${testId}/remove-participants`, {
+                emails: [participantEmailToDelete],
+            })
+
+            if(res.status === 200) {
+                await participantsQuery.refetch()
+                setDeleteParticipantValidationMessage("")
+                setIsDeleteParticipantDialogOpen(false)
+
+            }
+
+        } catch (e) {
+            if(e?.response?.status === 422 && e?.response?.data?.validationError) {
+                const validationError = e.response.data.validationError
+                console.log(validationError)
+                if(validationError && validationError.emails) {
+                    setDeleteParticipantValidationMessage(validationError.emails)
+                }
+            }
+
+        }
+
+        setIsDeletingParticipant(false)
+
+    }
+
 
     return (
         <div className=" container">
@@ -198,7 +251,7 @@ export default function StudentsTab({testId}:{testId:string}) {
                                 <CustomDataTable.HeaderRow>حالة الدعوة</CustomDataTable.HeaderRow>
                                 <CustomDataTable.HeaderRow>الخيارات</CustomDataTable.HeaderRow>
                             </CustomDataTable.Header>
-                            <CustomDataTable.Body columnsLength={participantsQuery.data.length} hasData={participantsQuery.data.length > 0}>
+                            <CustomDataTable.Body columnsLength={3} hasData={participantsQuery.data.length > 0}>
                                 {participantsQuery.data.map((p:Participant) => (
 
                                 <CustomDataTable.Row key={p.email}>
@@ -216,7 +269,7 @@ export default function StudentsTab({testId}:{testId:string}) {
                                                 <DropdownMenuLabel>الخيارات</DropdownMenuLabel>
                                                 <DropdownMenuSeparator />
                                                 <DropdownMenuItem >
-                                                    <div className={"text-red-500 hover:text-red-500 flex gap-1 cursor-pointer"}>
+                                                    <div onClick={() => handleDeleteParticipant(p.email)} className={"text-red-500 hover:text-red-500 flex gap-1 cursor-pointer"}>
                                                     <span>
                                                         <TrashIcon size={'18'}/>
                                                     </span>
@@ -296,6 +349,45 @@ export default function StudentsTab({testId}:{testId:string}) {
                     </DialogHeader>
                 </DialogContent>
             </Dialog>
+            <AlertDialog onOpenChange={setIsDeleteParticipantDialogOpen} open={isDeleteParticipantDialogOpen}>
+                <AlertDialogContent dir={"rtl"}>
+                    <AlertDialogHeader dir={"rtl"}>
+                        <AlertDialogTitle className={"text-right"}>هل أنت متأكد؟</AlertDialogTitle>
+                        <AlertDialogDescription className={"text-right"}>
+
+                            هذا الأجراء لا يمكن الغاؤه. سيتم مسح جميع بيانات المستخدم المرتبطة بهذا الاختبار
+                            {deleteParticipantValidationMessage && (
+                                <div className="text-red-500 mt-4">
+                                    {deleteParticipantValidationMessage}
+                                </div>
+
+                            )}
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>الغاء</AlertDialogCancel>
+                        <AlertDialogAction   onClick={handleConfirmedParticipantDeletion} className={"bg-transparent"}>
+                            <PrimaryButton disabled={isDeletingParticipant} color={"danger"}>
+                                {isDeletingParticipant ?
+                                    ( <span>
+                                    <LoaderIcon className={"animate-spin"}/>
+                                </span>
+                                    )
+                                    :
+                                    (
+                                        <span>
+                                    تأكيد
+                                </span>
+
+                                    )
+
+                                }
+
+                            </PrimaryButton>
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
 
     )

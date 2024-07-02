@@ -75,7 +75,7 @@ CustomDataTable.Body = function HeaderRow ({children , hasData , columnsLength ,
 
                 <TableRow>
                     <TableCell colSpan={columnsLength} className="h-24 text-center">
-                        No results.
+                       لا يوجد نتائج.
                     </TableCell>
                 </TableRow>
             )}
