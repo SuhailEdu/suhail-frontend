@@ -15,6 +15,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import React from "react";
 
 interface CustomTextInputProps {
     label?: string
@@ -31,58 +32,75 @@ interface DataTableProps<TData, TValue> {
     data: TData[]
 }
 
-export default function CustomDataTable<Tdata , Tvalue>({columns , data}: DataTableProps<Tdata, Tvalue>)  {
-
-    const table = useReactTable({
-        data,
-        columns,
-        getCoreRowModel: getCoreRowModel(),
-    })
+const CustomDataTable = function CustomDataTable({children}:React.PropsWithChildren){
 
     return (
         <div className="rounded-md border">
             <Table dir={"rtl"}>
-                <TableHeader>
-                    {table.getHeaderGroups().map((headerGroup) => (
-                        <TableRow key={headerGroup.id}>
-                            {headerGroup.headers.map((header) => {
-                                return (
-                                    <TableHead className={"text-right bg-slate-50"} key={header.id}>
-                                        {header.isPlaceholder
-                                            ? null
-                                            : flexRender(
-                                                header.column.columnDef.header,
-                                                header.getContext()
-                                            )}
-                                    </TableHead>
-                                )
-                            })}
-                        </TableRow>
-                    ))}
-                </TableHeader>
-                <TableBody>
-                    {table.getRowModel().rows?.length ? (
-                        table.getRowModel().rows.map((row) => (
-                            <TableRow
-                                key={row.id}
-                                data-state={row.getIsSelected() && "selected"}
-                            >
-                                {row.getVisibleCells().map((cell) => (
-                                    <TableCell key={cell.id}>
-                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                    </TableCell>
-                                ))}
-                            </TableRow>
-                        ))
-                    ) : (
-                        <TableRow>
-                            <TableCell colSpan={columns.length} className="h-24 text-center">
-                                No results.
-                            </TableCell>
-                        </TableRow>
-                    )}
-                </TableBody>
+                {children}
+
             </Table>
         </div>
     )
 }
+
+CustomDataTable.Header = function Header ({children}: Props) {
+    return (
+
+        <TableHeader>
+                <TableRow>
+                    {children}
+                </TableRow>
+        </TableHeader>
+    )
+
+}
+CustomDataTable.HeaderRow = function HeaderRow ({children}: Props) {
+    return (
+                    <TableHead className={"text-right bg-slate-50"}>
+                        {children}
+                    </TableHead>
+    )
+
+}
+CustomDataTable.Body = function HeaderRow ({children , hasData , columnsLength , ...props}: React.PropsWithChildren<{hasData:boolean , columnsLength:number}>) {
+    return (
+        <TableBody>
+            {hasData ? (
+                <>
+                    {children}
+                </>
+
+            ): (
+
+                <TableRow>
+                    <TableCell colSpan={columnsLength} className="h-24 text-center">
+                        No results.
+                    </TableCell>
+                </TableRow>
+            )}
+        </TableBody>
+    )
+
+}
+CustomDataTable.Row = function HeaderRow ({children , ...props}: React.PropsWithChildren) {
+    return (
+        <TableRow
+            {...props}
+            // data-state={row.getIsSelected() && "selected"}
+        >
+            {children}
+        </TableRow>
+    )
+
+}
+CustomDataTable.Cell = function HeaderRow ({children , ...props}: React.HTMLProps<'td'>) {
+    return (
+        <TableCell {...props}>
+            {children}
+        </TableCell>
+    )
+
+}
+
+export default CustomDataTable

@@ -37,9 +37,35 @@ export default function StudentsTab({testId}:{testId:string}) {
 
     console.log(participantsQuery.data)
 
+    function formatInviteStatus(status:string) {
+        switch (status) {
+            case "pending":
+                return "تم ارسال الدعوة"
+            case "accepted":
+                return "تم قبول الدعوة"
+            case "declined":
+            default:
+                return "تم رفض الدعوة"
+        }
+
+    }
+
+    function formatInviteStatusClass(status:string) {
+        switch (status) {
+            case "pending":
+                return "info"
+            case "accepted":
+                return "success"
+            case "declined":
+            default:
+                return "danger"
+        }
+
+    }
+
 
     return (
-        <div className="lg:mx-20">
+        <div className=" container">
 
             <div className="flex justify-between items-center">
                 <div className={"text-2xl flex gap-4"}>
@@ -61,10 +87,31 @@ export default function StudentsTab({testId}:{testId:string}) {
                 <PrimaryButton>سؤال جديد</PrimaryButton>
 
             </div>
-            <div className={"mt-20 mx-10"}>
-                <div className={"container"}>
+            <div className={"mt-20 "}>
+                <div className={""}>
                     {participantsQuery.data && (
-                        <CustomDataTable columns={columns} data={participantsQuery.data} />
+                        <CustomDataTable>
+                            <CustomDataTable.Header>
+                                <CustomDataTable.HeaderRow>البريد الالكتروني</CustomDataTable.HeaderRow>
+                                <CustomDataTable.HeaderRow>حالة الدعوة</CustomDataTable.HeaderRow>
+                            </CustomDataTable.Header>
+                            <CustomDataTable.Body columnsLength={participantsQuery.data.length} hasData={participantsQuery.data.length > 0}>
+                                {participantsQuery.data.map((p:Participant) => (
+
+                                <CustomDataTable.Row key={p.email}>
+                                    <CustomDataTable.Cell>{p.email}</CustomDataTable.Cell>
+                                    <CustomDataTable.Cell>
+                                        <CustomBadge type={formatInviteStatusClass(p.status)} >
+                                            {formatInviteStatus(p.status)}
+                                        </CustomBadge>
+                                    </CustomDataTable.Cell>
+                                </CustomDataTable.Row>
+                                ))}
+
+                            </CustomDataTable.Body>
+
+                        </CustomDataTable>
+                        // <CustomDataTable columns={columns} data={participantsQuery.data} />
                     )}
                 </div>
 
