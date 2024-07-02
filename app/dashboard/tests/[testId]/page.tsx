@@ -42,11 +42,10 @@ export default function ShowTest ({params}: {params:{testId: string}})  {
     const [selectedOption, setSelectedOption] = useState<SelectedTap>(() => {
         const tab = searchParams.get('tab') ?? ""
         if( ['students' , 'reports' , 'questions' , 'settings'].includes(tab)) {
-            console.log("skdjf")
             // @ts-ignore
             return tab
         }
-        return "students"
+        return "questions"
 
     })
 
@@ -61,7 +60,7 @@ export default function ShowTest ({params}: {params:{testId: string}})  {
             <Breadcrumb className="inline-block border p-2 rounded-lg  ">
                 <BreadcrumbList>
                     <BreadcrumbItem>
-                        <BreadcrumbLink>
+                        <BreadcrumbLink asChild>
                             <Link className=" cursor-pointer flex gap-3 items-bottom justify-between"
                                   href="/dashboard">
                                 <span>
@@ -74,7 +73,7 @@ export default function ShowTest ({params}: {params:{testId: string}})  {
                         </BreadcrumbLink>
 
                         <BreadcrumbSeparator/>
-                        <BreadcrumbLink>
+                        <BreadcrumbLink asChild>
                             <div className=" flex gap-3 items-bottom justify-between">
                                 <span>
                                 <PaperclipIcon size={'18'}/>
@@ -116,7 +115,7 @@ export default function ShowTest ({params}: {params:{testId: string}})  {
 
                 <div>
                     {selectedOption === 'questions' && (
-                        <QuestionsTab questions={testQuery.data.questions} />
+                        <QuestionsTab testId={params.testId} questions={testQuery.data.questions} />
                     )}
 
                     {selectedOption === 'reports' && (

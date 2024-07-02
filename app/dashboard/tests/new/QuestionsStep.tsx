@@ -315,8 +315,6 @@ const QuestionsStep = forwardRef(({
 
         function handleOptionsChange(optionId: number, updatedOption: QuestionOptionType) {
 
-            console.log(optionId, updatedOption)
-
             setQuestions(q => {
 
                 return q.map(question => {
