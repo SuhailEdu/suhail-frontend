@@ -37,6 +37,7 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet"
 import {CiMenuBurger} from "react-icons/ci";
+import {options} from "axios";
 
 interface LiveQuestionResponse {
     id: number,
@@ -46,6 +47,10 @@ interface LiveQuestionResponse {
     created_at: string,
     updated_at: string,
     options:string[]
+}
+interface Answer{
+    id: number,
+    answer: string
 }
 
 
@@ -60,7 +65,8 @@ export default function New({params} : {params:{testId: string}}) {
         queryKey: ['exams' , testId , 'live']
     })
 
-    console.log(questionsQuery.data)
+    const [answers , setAnswers] = useState<Answer[]>([])
+
 
     const [isSidebarOpen , setIsSidebarOpen] = useState<boolean>(true)
     const [selectedQuestion , setSelectedQuestion] = useState<LiveQuestionResponse | null>(null)
@@ -69,8 +75,82 @@ export default function New({params} : {params:{testId: string}}) {
         if(questionsQuery.data && questionsQuery.data.length> 0) {
             setSelectedQuestion(questionsQuery.data[0])
         }
+
     }, []);
 
+
+    function selectedOptionNumber():number {
+        if(questionsQuery.data && questionsQuery.data.length > 0 && selectedQuestion) {
+            const questionIndex = questionsQuery.data.findIndex(q => q.id == selectedQuestion.id)
+            return questionIndex  == -1 ? 1 : questionIndex + 1
+        }
+        return 0
+
+    }
+
+    function selectNextQuestion() {
+        if(questionsQuery.data && questionsQuery.data.length > 0 && selectedQuestion) {
+            const questionIndex = questionsQuery.data.findIndex(q => q.id == selectedQuestion.id)
+            if(questionIndex > -1 && questionsQuery.data[questionIndex + 1]) {
+                 setSelectedQuestion(questionsQuery.data[questionIndex + 1])
+                return
+
+            }
+            setSelectedQuestion(questionsQuery.data[0])
+        }
+
+    }
+
+    function selectPreviousQuestion() {
+        if(questionsQuery.data && questionsQuery.data.length > 0 && selectedQuestion) {
+            const questionIndex = questionsQuery.data.findIndex(q => q.id == selectedQuestion.id)
+            if(questionIndex > -1 && questionsQuery.data[questionIndex  - 1]) {
+                setSelectedQuestion(questionsQuery.data[questionIndex - 1])
+                return
+
+            }
+            setSelectedQuestion(questionsQuery.data[0])
+        }
+
+    }
+
+
+    function handleAnswerChange(newAnswer:string) {
+        if(!selectedQuestion) {
+            return
+        }
+
+        setAnswers(preAnswers => {
+            if(!preAnswers.find(a => a.id == selectedQuestion.id )) {
+                return [
+                    ...preAnswers,
+                    {
+                        id: selectedQuestion.id,
+                        answer: newAnswer
+                    }
+                ]
+
+            }
+
+
+
+            return preAnswers.map(a => {
+                console.log(newAnswer , a)
+                if(a.id == selectedQuestion.id) {
+                    return {
+                        ...a,
+                        answer:newAnswer
+                    }
+                }
+                return a
+
+
+            })
+
+
+        })
+
+    }
 
     return (
         <div className={"container"}>
@@ -115,7 +195,7 @@ export default function New({params} : {params:{testId: string}}) {
                 </h1>
                 <PrimaryButton color={'base'} onClick={() => setIsSidebarOpen(true)} className={"flex justify-between gap-2 items-center text-xl cursor-pointer"}>
                     <span><CiMenuBurger/></span>
-                    <span>الأسئلة</span>
+                    <span>عرض الأسئلة</span>
                 </PrimaryButton>
 
             </div>
@@ -127,13 +207,17 @@ export default function New({params} : {params:{testId: string}}) {
 
                     {selectedQuestion.options.map(option => (
 
-                    <div key={option} className="flex items-center justify-center mt-16">
+                    <div key={option} className="flex items-center justify-center mt-16 ">
                         <input
-                            checked={true} id="default-radio-2" type="radio" value=""
-                            name="default-radio"
-                            className="w-4 h-4 focus:bg-red-500 text-red-500  "/>
-                        <label htmlFor="default-radio-2"
-                               className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                            id={option}
+                            checked={!!answers.find(a => a.id == selectedQuestion.id && a.answer == option )}  type="radio"
+                            onChange={() => handleAnswerChange(option)}
+
+                            name={`question-radio-${selectedQuestion.id}`}
+                            className="w-4 h-4 focus:bg-red-500 text-red-500 cursor-pointer "/>
+                        <label
+                               htmlFor={option}
+                               className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 cursor-pointer">
                             {option}
                         </label>
 
@@ -143,9 +227,9 @@ export default function New({params} : {params:{testId: string}}) {
                     </div>
 
                     <div className={"mt-16 flex justify-center gap-12 items-center"}>
-                        <ArrowBigRight size={'29'}/>
-                        <span>12 / 20</span>
-                        <ArrowBigLeft size={'29'}/>
+                        <ArrowBigRight onClick={selectPreviousQuestion} className={"cursor-pointer"} size={'29'}/>
+                        <span>{selectedOptionNumber()} / {questionsQuery.data?.length}</span>
+                        <ArrowBigLeft onClick={selectNextQuestion} className={"cursor-pointer"} size={'29'}/>
 
                     </div>
                 </div>
