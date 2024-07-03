@@ -1,43 +1,19 @@
 "use client"
-import React, {useEffect, useRef, useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {
     Breadcrumb,
     BreadcrumbItem,
     BreadcrumbLink,
     BreadcrumbList,
-    BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import Link from "next/link";
-import {
-    ArrowBigLeft,
-    ArrowBigRight,
-    FileIcon,
-    HomeIcon,
-    InfoIcon,
-    LoaderIcon,
-    MinusIcon,
-    PaperclipIcon,
-    PenIcon
-} from "lucide-react";
-import TestInfoStep from "@/app/dashboard/tests/new/TestInfoStep";
-import QuestionsStep from "@/app/dashboard/tests/new/QuestionsStep";
-import InviteStep from "@/app/dashboard/tests/new/InviteStep";
-import TestCreatedStep from "@/app/dashboard/tests/new/TestCreatedStep";
+import {ArrowBigLeft, ArrowBigRight, HomeIcon, PaperclipIcon, PenIcon} from "lucide-react";
 import PrimaryButton from "@/components/shared/PrimaryButton";
 import {useApi} from "@/hooks/useApi";
-import {useMutation, useQuery} from "@tanstack/react-query";
-import CustomTextInput from "@/components/shared/CustomTextInput";
-import {
-    Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-} from "@/components/ui/sheet"
+import {useQuery} from "@tanstack/react-query";
+import {Sheet, SheetContent, SheetHeader, SheetTitle,} from "@/components/ui/sheet"
 import {CiMenuBurger} from "react-icons/ci";
-import {options} from "axios";
 
 interface LiveQuestionResponse {
     id: number,
@@ -66,6 +42,8 @@ export default function New({params} : {params:{testId: string}}) {
     })
 
     const [answers , setAnswers] = useState<Answer[]>([])
+
+    console.log(questionsQuery.data)
 
 
     const [isSidebarOpen , setIsSidebarOpen] = useState<boolean>(true)

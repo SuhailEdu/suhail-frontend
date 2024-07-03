@@ -32,6 +32,8 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import CustomBadge from "@/components/CustomBadge";
+
 
 interface LiveQuestionResponse {
     id: number,
@@ -41,6 +43,19 @@ interface LiveQuestionResponse {
     created_at: string,
     updated_at: string,
     options:Option[]
+
+}
+interface LiveExamResponse {
+    exam: {
+        id: string,
+        user_id: string,
+        exam_title: string,
+        status: string,
+        live_status: 'live' | 'paused' | 'finished',
+        created_at: string,
+        updated_at: string,
+    },
+    questions: LiveQuestionResponse[]
 }
 interface Option {
     option: string,
@@ -59,7 +74,7 @@ export default function New({params} : {params:{testId: string}}) {
 
     const testId = params.testId
 
-    const questionsQuery = useQuery<LiveQuestionResponse[]>({
+    const questionsQuery = useQuery<LiveExamResponse>({
         queryFn: () => api.get(`/home/exams/${testId}/live/manage/questions`).then(res => res.data.data),
         queryKey: ['exams' , testId , 'live']
     })
@@ -71,16 +86,16 @@ export default function New({params} : {params:{testId: string}}) {
     const [selectedQuestion , setSelectedQuestion] = useState<LiveQuestionResponse | null>(null)
 
     useEffect(() => {
-        if(questionsQuery.data && questionsQuery.data.length> 0) {
-            setSelectedQuestion(questionsQuery.data[0])
+        if(questionsQuery.data && questionsQuery.data.questions.length> 0) {
+            setSelectedQuestion(questionsQuery.data.questions[0])
         }
 
     }, []);
 
 
     function selectedOptionNumber():number {
-        if(questionsQuery.data && questionsQuery.data.length > 0 && selectedQuestion) {
-            const questionIndex = questionsQuery.data.findIndex(q => q.id == selectedQuestion.id)
+        if(questionsQuery.data && questionsQuery.data.questions.length > 0 && selectedQuestion) {
+            const questionIndex = questionsQuery.data.questions.findIndex(q => q.id == selectedQuestion.id)
             return questionIndex  == -1 ? 1 : questionIndex + 1
         }
         return 0
@@ -88,27 +103,27 @@ export default function New({params} : {params:{testId: string}}) {
     }
 
     function selectNextQuestion() {
-        if(questionsQuery.data && questionsQuery.data.length > 0 && selectedQuestion) {
-            const questionIndex = questionsQuery.data.findIndex(q => q.id == selectedQuestion.id)
-            if(questionIndex > -1 && questionsQuery.data[questionIndex + 1]) {
-                 setSelectedQuestion(questionsQuery.data[questionIndex + 1])
+        if(questionsQuery.data && questionsQuery.data.questions.length > 0 && selectedQuestion) {
+            const questionIndex = questionsQuery.data.questions.findIndex(q => q.id == selectedQuestion.id)
+            if(questionIndex > -1 && questionsQuery.data.questions[questionIndex + 1]) {
+                 setSelectedQuestion(questionsQuery.data.questions[questionIndex + 1])
                 return
 
             }
-            setSelectedQuestion(questionsQuery.data[0])
+            setSelectedQuestion(questionsQuery.data.questions[0])
         }
 
     }
 
     function selectPreviousQuestion() {
-        if(questionsQuery.data && questionsQuery.data.length > 0 && selectedQuestion) {
-            const questionIndex = questionsQuery.data.findIndex(q => q.id == selectedQuestion.id)
-            if(questionIndex > -1 && questionsQuery.data[questionIndex  - 1]) {
-                setSelectedQuestion(questionsQuery.data[questionIndex - 1])
+        if(questionsQuery.data && questionsQuery.data.questions.length > 0 && selectedQuestion) {
+            const questionIndex = questionsQuery.data.questions.findIndex(q => q.id == selectedQuestion.id)
+            if(questionIndex > -1 && questionsQuery.data.questions[questionIndex  - 1]) {
+                setSelectedQuestion(questionsQuery.data.questions[questionIndex - 1])
                 return
 
             }
-            setSelectedQuestion(questionsQuery.data[0])
+            setSelectedQuestion(questionsQuery.data.questions[0])
         }
 
     }
@@ -151,6 +166,42 @@ export default function New({params} : {params:{testId: string}}) {
 
     }
 
+    function getExamLiveStatus() {
+        if(!questionsQuery.data) {
+            return ""
+        }
+        switch (questionsQuery.data.exam.live_status) {
+            case "finished":
+                return'منتهي'
+
+            case "live":
+                return'نشط'
+
+            case "paused":
+                return'متوقف'
+
+            default:
+                return'غير معروف'
+        }
+
+    }
+
+    function getExamLiveStatusBadge() {
+        if(!questionsQuery.data) {
+            return ""
+        }
+        switch (questionsQuery.data.exam.live_status) {
+            case "finished":
+                return'info'
+            case "live":
+                return'success'
+            case "paused":
+            default:
+                return'primary'
+        }
+
+    }
+
     return (
         <div className={"container"}>
             <Breadcrumb className="inline-block border p-2 rounded-lg  ">
@@ -171,6 +222,8 @@ export default function New({params} : {params:{testId: string}}) {
                         <BreadcrumbSeparator/>
 
                         </span>
+                        {questionsQuery.data && (
+
 
                         <BreadcrumbLink asChild>
                             <Link  className=" flex gap-3  items-bottom justify-between" href="/dashboard">
@@ -178,10 +231,12 @@ export default function New({params} : {params:{testId: string}}) {
                                 <PenIcon size={'18'}/>
                                 </span>
                                 <span>
-                                اختبار جديد
+                                {questionsQuery.data.exam.exam_title}
                                 </span>
                             </Link>
                         </BreadcrumbLink>
+
+                        )}
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
@@ -189,8 +244,11 @@ export default function New({params} : {params:{testId: string}}) {
             <div>
 
             <div className="my-12 pr-4 flex justify-between">
-                <h1 className="scroll-m-20 text-4xl font- tracking-tight lg:text-5xl">
+                <h1 className="scroll-m-20 flex justify-between items-center gap-4 text-4xl tracking-tight lg:text-5xl">
                     <span>ادارة الاختبار</span>
+                    <span className={""}>
+                        <CustomBadge className={"inline-block"} type={getExamLiveStatusBadge()}>{getExamLiveStatus()}</CustomBadge>
+                    </span>
                 </h1>
 
                                 <PrimaryButton color={'base'} onClick={() => setIsSidebarOpen(true)} className={"flex justify-between gap-2 items-center text-xl cursor-pointer"}>
@@ -249,7 +307,7 @@ export default function New({params} : {params:{testId: string}}) {
 
                     <div className={"mt-16 flex justify-center gap-12 items-center"}>
                         <ArrowBigRight onClick={selectPreviousQuestion} className={"cursor-pointer"} size={'29'}/>
-                        <span>{selectedOptionNumber()} / {questionsQuery.data?.length}</span>
+                        <span>{selectedOptionNumber()} / {questionsQuery.data?.questions.length}</span>
                         <ArrowBigLeft onClick={selectNextQuestion} className={"cursor-pointer"} size={'29'}/>
 
                     </div>
@@ -263,10 +321,10 @@ export default function New({params} : {params:{testId: string}}) {
                 <SheetContent side={"left"} dir={"rtl"}>
                     <SheetHeader dir={"rtl"}>
                         <SheetTitle className={"text-right"}>قائمة الأسئلة</SheetTitle>
-                        {questionsQuery.data && questionsQuery.data?.length > 0 ? (
+                        {questionsQuery.data && questionsQuery.data?.questions.length > 0 ? (
 
                         <div className={"mt-4"}>
-                            {questionsQuery.data.map(question => (
+                            {questionsQuery.data.questions.map(question => (
 
                         <div onClick={() => {
                             setSelectedQuestion(question)
