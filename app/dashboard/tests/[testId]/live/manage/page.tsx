@@ -8,13 +8,30 @@ import {
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import Link from "next/link";
-import {ArrowBigLeft, ArrowBigRight, HomeIcon, PaperclipIcon, PenIcon} from "lucide-react";
+import {
+    ArrowBigLeft,
+    ArrowBigRight,
+    HomeIcon,
+    PaperclipIcon,
+    PauseIcon,
+    PenIcon,
+    SettingsIcon,
+    StopCircle
+} from "lucide-react";
 import PrimaryButton from "@/components/shared/PrimaryButton";
 import {useApi} from "@/hooks/useApi";
 import {useQuery} from "@tanstack/react-query";
 import {Sheet, SheetContent, SheetHeader, SheetTitle,} from "@/components/ui/sheet"
 import {CiMenuBurger} from "react-icons/ci";
 import StudentsList from "@/app/dashboard/tests/[testId]/live/manage/StudentsList";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 
 interface LiveQuestionResponse {
     id: number,
@@ -50,7 +67,7 @@ export default function New({params} : {params:{testId: string}}) {
     const [answers , setAnswers] = useState<Answer[]>([])
 
 
-    const [isSidebarOpen , setIsSidebarOpen] = useState<boolean>(true)
+    const [isSidebarOpen , setIsSidebarOpen] = useState<boolean>(false)
     const [selectedQuestion , setSelectedQuestion] = useState<LiveQuestionResponse | null>(null)
 
     useEffect(() => {
@@ -175,17 +192,46 @@ export default function New({params} : {params:{testId: string}}) {
                 <h1 className="scroll-m-20 text-4xl font- tracking-tight lg:text-5xl">
                     <span>ادارة الاختبار</span>
                 </h1>
-                <PrimaryButton color={'base'} onClick={() => setIsSidebarOpen(true)} className={"flex justify-between gap-2 items-center text-xl cursor-pointer"}>
+
+                                <PrimaryButton color={'base'} onClick={() => setIsSidebarOpen(true)} className={"flex justify-between gap-2 items-center text-xl cursor-pointer"}>
                     <span><CiMenuBurger/></span>
                     <span>عرض الأسئلة</span>
                 </PrimaryButton>
+                <DropdownMenu dir={"rtl"}>
+                    <DropdownMenuTrigger>
+                        <PrimaryButton className={"flex justify-between items-center gap-2"}>
+
+                            <SettingsIcon size={'16'}/>
+                            <span>الاعدادات</span>
+                        </PrimaryButton>
+
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className={"px-2 "}>
+                        <DropdownMenuLabel>الخيارات</DropdownMenuLabel>
+                        <DropdownMenuSeparator/>
+                        <DropdownMenuItem className={"mb-1 cursor-pointer"}>
+                            <div className={"text-black  flex items-center gap-1"}>
+                                <span><PauseIcon size={'18'}/></span>
+                                <span>ايقاف الاختبار مؤقتا</span>
+                            </div>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className={"mb-1 cursor-pointer"}>
+
+                            <div className={"text-red-500 hover:text-red-500 flex items-center gap-1"}>
+                                <span><StopCircle size={'18'}/></span>
+                                <span>انهاء الاختبار</span>
+                            </div>
+                        </DropdownMenuItem>
+
+                    </DropdownMenuContent>
+                </DropdownMenu>
 
             </div>
                 {selectedQuestion !== null ? (
 
-                <div className="mt-20">
-                    <div className={"text-2xl text-center"}>{selectedQuestion.title}</div>
-                    <div className={"flex justify-center gap-12 items-center"}>
+                    <div className="mt-20">
+                        <div className={"text-2xl text-center"}>{selectedQuestion.title}</div>
+                        <div className={"flex justify-center gap-12 items-center"}>
 
                     {selectedQuestion.options.map((option , index) => (
 
