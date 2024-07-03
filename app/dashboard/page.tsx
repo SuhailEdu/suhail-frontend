@@ -1,18 +1,14 @@
 import DashboardHome from "@/app/dashboard/DashboardHome";
-import {getSession} from "@/auth";
 
 
 async function Home() {
-    const session = await getSession()
-
-    console.log("session" , session)
 
     return (
         <>
-            {session.email && (
-                <DashboardHome id={session.email}/>
+            {/*{session.email && (*/}
+                <DashboardHome />
 
-            )}
+            {/*)}*/}
         </>
         // <h1>hk</h1>
     )

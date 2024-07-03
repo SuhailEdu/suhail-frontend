@@ -1,26 +1,20 @@
 import PrimaryButton from "@/components/shared/PrimaryButton";
 import CustomBadge from "@/components/CustomBadge";
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-} from "@/components/ui/accordion"
+import {Accordion, AccordionContent, AccordionItem, AccordionTrigger,} from "@/components/ui/accordion"
 import CustomTextInput from "@/components/shared/CustomTextInput";
-import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {InfoIcon, LoaderIcon, MinusIcon, PlusIcon} from "lucide-react";
 import React, {useState} from "react";
 import {z} from "zod";
 import {useApi} from "@/hooks/useApi";
 import {useQuery} from "@tanstack/react-query";
-import {opt} from "ts-interface-checker";
-import {id} from "postcss-selector-parser";
 import {
     AlertDialog,
     AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
-    AlertDialogDescription, AlertDialogFooter,
+    AlertDialogDescription,
+    AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle
 } from "@/components/ui/alert-dialog";
@@ -66,7 +60,7 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
 
     const questionsQuery = useQuery<QuestionResponse>({
         queryFn:  () => api.get(`/home/exams/${testId}/questions`).then(res => res.data.data),
-        queryKey: ["exams" , testId]
+        queryKey: ["exams" , testId , 'questions']
     });
 
     const [options , setOptions] = useState<Option[]>(

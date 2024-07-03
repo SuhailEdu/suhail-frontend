@@ -1,22 +1,15 @@
 "use client"
 
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
+import {Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList,} from "@/components/ui/breadcrumb"
 import Link from "next/link";
-import {HomeIcon, LoaderIcon} from "lucide-react";
+import {HomeIcon} from "lucide-react";
 import {useState} from "react";
 import MyExamsTab from "@/app/dashboard/MyExamsTab";
 import ParticpatingExamsTab from "@/app/dashboard/ParticpatingExamsTab";
 // import DashboardMenu from "@/";
 
 
-export default  function  Dashboard({id}: {id: string}) {
+export default  function  Dashboard() {
     const [selectedOption , setSelectedOption] = useState<'my' | 'others'>('my')
 
     function isSelected(option: string) {

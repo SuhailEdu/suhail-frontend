@@ -1,5 +1,3 @@
-import DashboardHome from "@/app/dashboard/DashboardHome";
-import {getSession} from "@/auth";
 import {useApi} from "@/hooks/useApi";
 import {useQuery} from "@tanstack/react-query";
 import {Exam} from "@/types/exam";
@@ -17,6 +15,8 @@ function MyExamsTab({children}:any) {
         queryFn: () => api.get("/home/exams").then((res) => res.data.data),
         queryKey: ["exams"]
     })
+
+    console.log(query.data)
 
     return (
         <div className="my-8">

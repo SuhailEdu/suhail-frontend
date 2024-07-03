@@ -1,58 +1,44 @@
 "use client"
-import React, {useRef, useState} from 'react'
+import React, {useState} from 'react'
 import {
     Breadcrumb,
     BreadcrumbItem,
     BreadcrumbLink,
     BreadcrumbList,
-    BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import Link from "next/link";
-import {FileIcon, HomeIcon, InfoIcon, PaperclipIcon, PenIcon} from "lucide-react";
-import {z} from "zod";
+import {HomeIcon, PaperclipIcon} from "lucide-react";
 import ReportsCards from "@/app/dashboard/tests/[testId]/ReportsCards";
-import {useRouter, useSearchParams} from "next/navigation";
 import {useQuery} from "@tanstack/react-query";
 import {useApi} from "@/hooks/useApi";
-import {Exam, Question} from "@/types/exam";
+import {Exam} from "@/types/exam";
 import QuestionsTab from "@/app/dashboard/tests/[testId]/QuestionsTab";
-import * as sea from "node:sea";
 import StudentsTab from "@/app/dashboard/tests/[testId]/StudentsTab";
-import useAuthStore from "@/stores/AuthStore";
 
 type ExamQueryData =  Exam & {
-    questions: Question[]
+    is_my_exam: boolean
 }
 type SelectedTap = 'students' | 'reports' | 'questions' | 'settings'
 
 export default function ShowTest ({params}: {params:{testId: string}})  {
-    const searchParams = useSearchParams()
-    const authUser = useAuthStore(state => state.user)
-    const router = useRouter()
-    const test = {
-        title: 'اختبار عملي حاسوب',
-    }
     const api = useApi()
 
     const testQuery = useQuery<ExamQueryData>({
         queryFn:  () => api.get(`/home/exams/${params.testId}`).then(res => res.data.data),
         queryKey: ["exams" , params.testId]
     });
-    const isMyTest = testQuery.data?.user_id == authUser.id
-    // const isMyTest = false
-
-    console.log(testQuery.data , authUser , "auth")
 
     const [selectedOption, setSelectedOption] = useState<SelectedTap>(() => {
-        const tab = searchParams.get('tab') ?? ""
-        if( ['students' , 'reports' , 'questions' , 'settings'].includes(tab)) {
-            // @ts-ignore
-            return tab as SelectedTap
-        }
-        return "questions"
+        // const tab = searchParams.get('tab') ?? ""
+        // if( ['students' , 'reports' , 'questions' , 'settings'].includes(tab)) {
+        //     return tab as SelectedTap
+        // }
+        return "reports"
 
     })
+
+    console.log("here is test qeury" , testQuery.data)
 
     function isSelected(option: string) {
         return option == selectedOption ? 'border-black' : 'border-none'
@@ -83,7 +69,7 @@ export default function ShowTest ({params}: {params:{testId: string}})  {
                                 <PaperclipIcon size={'18'}/>
                                 </span>
                                 <span>
-                                {test.title}
+                                {testQuery.data?.exam_title ?? ""}
                                 </span>
                             </div>
                         </BreadcrumbLink>
@@ -101,24 +87,17 @@ export default function ShowTest ({params}: {params:{testId: string}})  {
                 <div className="my-8 py-4">
                     <div className="my-8">
                         <div className='flex justify-start border-b-2 '>
-                            {isMyTest && (
                                 <p onClick={() => setSelectedOption('reports')}
                                    className={`border-b-2 ${isSelected('reports')} px-4 cursor-pointer`}>الاحصائيات</p>
 
-                            )}
                             <p onClick={() => setSelectedOption('questions')}
                                className={`border-b-2 ${isSelected('questions')} px-4 cursor-pointer`}>أسئلة
                                 الاختبار</p>
 
-                            {isMyTest && (
-                                <>
+                            {testQuery.data.is_my_exam && (
                                 <p onClick={() => setSelectedOption('students')}
                                    className={`border-b-2 ${isSelected('students')} px-4 cursor-pointer`}>الطلاب</p>
 
-                                <p onClick={() => setSelectedOption('settings')}
-                            className={`border-b-2 ${isSelected('settings')} px-4 cursor-pointer`}>اعدادات
-                            الاختبار</p>
-                                </>
                             )}
                         </div>
                     </div>
@@ -127,10 +106,10 @@ export default function ShowTest ({params}: {params:{testId: string}})  {
 
                 <div>
                     {selectedOption === 'questions' && (
-                        <QuestionsTab isMyExam={isMyTest} testId={params.testId} questions={testQuery.data.questions} />
+                        <QuestionsTab isMyExam={testQuery.data.is_my_exam} testId={params.testId} />
                     )}
-
                     {selectedOption === 'reports' && (
+
                         <ReportsCards/>
                     )}
 
