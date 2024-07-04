@@ -58,7 +58,9 @@ export default function New({params} : {params:{testId: string}}) {
 
     const questionsQuery = useQuery<LiveExamResponse>({
         queryFn: () => api.get(`/home/exams/${testId}/live`).then(res => res.data.data),
-        queryKey: ['exams' , testId , 'live']
+        queryKey: ['exams' , testId , 'live'],
+        refetchOnWindowFocus: false
+
     })
 
     const { sendMessage, lastMessage, readyState }
@@ -66,7 +68,15 @@ export default function New({params} : {params:{testId: string}}) {
             protocols: [ user.token ?? "" ],
         onError(e) {
             console.log("error", e);
-
+        },
+        onMessage(m) {
+            if(m?.data) {
+                const data = JSON.parse(m.data)
+                switch (data.type) {
+                    case "LIVE_EXAM_STATUS_UPDATED":
+                        liveExamStatusUpdated(data.payload.status)
+                }
+            }
         },
         // retryOnError:false,
         reconnectInterval: 10,
@@ -80,18 +90,6 @@ export default function New({params} : {params:{testId: string}}) {
         [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
     }[readyState];
     // console.log(lastMessage)
-
-    useEffect(() => {
-        if(lastMessage?.data) {
-            const data = JSON.parse(lastMessage.data)
-            switch (data.type) {
-                case "LIVE_EXAM_STATUS_UPDATED":
-                    liveExamStatusUpdated(data.payload.status)
-            }
-
-        }
-
-    }, [lastMessage , readyState]);
 
     function liveExamStatusUpdated(status:"paused" | "finished" | 'live') {
         queryClient.setQueryData(['exams' , testId , 'live'] , () => {
