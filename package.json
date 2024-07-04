@@ -33,6 +33,7 @@
     "react-dom": "^18",
     "react-hook-form": "^7.52.0",
     "react-select": "^5.8.0",
+    "react-use-websocket": "^4.8.1",
     "swr": "^2.2.5",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",

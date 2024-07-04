@@ -11,11 +11,13 @@ import Link from "next/link";
 import {ArrowBigLeft, ArrowBigRight, HomeIcon, PaperclipIcon, PenIcon} from "lucide-react";
 import PrimaryButton from "@/components/shared/PrimaryButton";
 import {useApi} from "@/hooks/useApi";
-import {useQuery} from "@tanstack/react-query";
+import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {Sheet, SheetContent, SheetHeader, SheetTitle,} from "@/components/ui/sheet"
 import {CiMenuBurger} from "react-icons/ci";
 import CustomBadge from "@/components/CustomBadge";
 import {getExamLiveStatus, getExamLiveStatusBadge} from "@/helpers/liveTestHelper";
+import useWebSocket, {ReadyState} from "react-use-websocket";
+import useAuthStore from "@/stores/AuthStore";
 
 interface LiveQuestionResponse {
     id: number,
@@ -49,13 +51,57 @@ interface Answer{
 export default function New({params} : {params:{testId: string}}) {
 
     const api = useApi()
+    const user = useAuthStore(state => state.user)
 
     const testId = params.testId
+    const queryClient = useQueryClient()
 
     const questionsQuery = useQuery<LiveExamResponse>({
         queryFn: () => api.get(`/home/exams/${testId}/live`).then(res => res.data.data),
         queryKey: ['exams' , testId , 'live']
     })
+
+    const { sendMessage, lastMessage, readyState }
+        = useWebSocket(`http://localhost:4000/ws/live/${testId}` , {
+            protocols: [ user.token ?? "" ],
+        onError(e) {
+            console.log("error", e);
+
+        },
+        // retryOnError:false,
+        reconnectInterval: 10,
+    });
+
+    const connectionStatus = {
+        [ReadyState.CONNECTING]: 'Connecting',
+        [ReadyState.OPEN]: 'Open',
+        [ReadyState.CLOSING]: 'Closing',
+        [ReadyState.CLOSED]: 'Closed',
+        [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
+    }[readyState];
+    // console.log(lastMessage)
+
+    useEffect(() => {
+        if(lastMessage?.data) {
+            const data = JSON.parse(lastMessage.data)
+            switch (data.type) {
+                case "LIVE_EXAM_STATUS_UPDATED":
+                    liveExamStatusUpdated(data.payload.status)
+            }
+
+        }
+
+    }, [lastMessage , readyState]);
+
+    function liveExamStatusUpdated(status:"paused" | "finished" | 'live') {
+        queryClient.setQueryData(['exams' , testId , 'live'] , () => {
+            let data = questionsQuery.data
+            if(data) {
+                data.exam.live_status = status
+            }
+            return data
+        })
+    }
 
 
     const [answers , setAnswers] = useState<Answer[]>([])
@@ -82,6 +128,7 @@ export default function New({params} : {params:{testId: string}}) {
     }
 
     function selectNextQuestion() {
+        // sendMessage("hi man " , true)
         if(questionsQuery.data && questionsQuery.data.questions.length > 0 && selectedQuestion) {
             const questionIndex = questionsQuery.data.questions.findIndex(q => q.id == selectedQuestion.id)
             if(questionIndex > -1 && questionsQuery.data.questions[questionIndex + 1]) {
