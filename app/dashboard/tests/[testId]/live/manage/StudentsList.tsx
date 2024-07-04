@@ -47,7 +47,6 @@ export default function StudentsList({testId} : {testId: string}) {
                 }
             }
         },
-        // retryOnError:false,
         reconnectInterval: 10,
     });
 

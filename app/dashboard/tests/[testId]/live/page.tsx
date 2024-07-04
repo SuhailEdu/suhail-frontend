@@ -8,7 +8,16 @@ import {
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import Link from "next/link";
-import {ArrowBigLeft, ArrowBigRight, HomeIcon, PaperclipIcon, PenIcon} from "lucide-react";
+import {
+    ArrowBigLeft,
+    ArrowBigRight,
+    BadgeHelp,
+    HomeIcon,
+    PaperclipIcon,
+    PauseCircleIcon,
+    PenIcon,
+    ShieldCheck
+} from "lucide-react";
 import PrimaryButton from "@/components/shared/PrimaryButton";
 import {useApi} from "@/hooks/useApi";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
@@ -69,13 +78,11 @@ export default function New({params} : {params:{testId: string}}) {
         onError(e) {
             console.log("error", e);
         },
-        // onClose(e) {
-        //         console.log(e)
-        // },
         onMessage(m) {
             if(m?.data) {
+                console.log(m)
                 const data = JSON.parse(m.data)
-                switch (data.type) {
+                switch (data?.type) {
                     case "LIVE_EXAM_STATUS_UPDATED":
                         liveExamStatusUpdated(data.payload.status)
                 }
@@ -262,14 +269,26 @@ export default function New({params} : {params:{testId: string}}) {
                         </CustomBadge>
                     </span>
                 </div>
+                {questionsQuery.data.exam.live_status == 'live' && (
+
                 <PrimaryButton color={'base'} onClick={() => setIsSidebarOpen(true)}
                                className={"flex justify-between gap-2 items-center text-xl cursor-pointer"}>
                     <span><CiMenuBurger/></span>
                     <span>عرض الأسئلة</span>
                 </PrimaryButton>
+                )}
 
             </div>
-                {selectedQuestion !== null ? (
+                {questionsQuery.data.exam.live_status == 'paused'  && (
+                    <div className={"flex justify-center mt-4 items-center gap-4 flex-col"}>
+                        <PauseCircleIcon size={'40'}/>
+                        <div className={"text-xl tex-black"}>الاختبار متوقف مؤقتا</div>
+                    </div>
+
+                )}
+
+
+                {selectedQuestion !== null && questionsQuery.data.exam.live_status == 'live' && (
 
                 <div className="mt-20">
                     <div className={"text-2xl text-center"}>{selectedQuestion.title}</div>
@@ -304,14 +323,25 @@ export default function New({params} : {params:{testId: string}}) {
                     </div>
                 </div>
 
-                ): (
-                    <div>Noo</div>
+                )}
+                {selectedQuestion == null && questionsQuery.data.exam.live_status == 'live' && (
+                    <div className={"flex justify-center mt-4 items-center gap-4 flex-col"}>
+                        <BadgeHelp size={'40'}/>
+                        <div className={"text-xl tex-black"}>اختر سؤالا من قائمة الأسئلة</div>
+                    </div>
+                )}
+
+                {questionsQuery.data.exam.live_status == 'finished' && (
+                    <div className={"flex justify-center mt-4 items-center gap-4 flex-col"}>
+                        <ShieldCheck className={"text-primary"} size={'40'}/>
+                        <div className={"text-xl tex-black"}>لقد انتهى الاختبار</div>
+                    </div>
                 )}
             </div>
-            <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
-                <SheetContent side={"left"} dir={"rtl"}>
-                    <SheetHeader dir={"rtl"}>
-                        <SheetTitle className={"text-right"}>قائمة الأسئلة</SheetTitle>
+                    <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
+                        <SheetContent side={"left"} dir={"rtl"}>
+                            <SheetHeader dir={"rtl"}>
+                                <SheetTitle className={"text-right"}>قائمة الأسئلة</SheetTitle>
                         {questionsQuery.data && questionsQuery.data?.questions.length > 0 ? (
 
                         <div className={"mt-4"}>

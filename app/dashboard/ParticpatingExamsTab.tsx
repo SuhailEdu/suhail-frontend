@@ -1,5 +1,3 @@
-import DashboardHome from "@/app/dashboard/DashboardHome";
-import {getSession} from "@/auth";
 import {useApi} from "@/hooks/useApi";
 import {useQuery} from "@tanstack/react-query";
 import {Exam} from "@/types/exam";
@@ -14,6 +12,7 @@ type ParticipatingExamResource = {
     questions_count: string,
     created_at: string,
     updated_at: string,
+    live_status: boolean,
 }[]
 
 function ParticipatingExams({children}:any) {
