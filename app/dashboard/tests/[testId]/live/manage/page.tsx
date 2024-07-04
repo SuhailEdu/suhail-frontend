@@ -12,6 +12,7 @@ import {
     ArrowBigLeft,
     ArrowBigRight,
     HomeIcon,
+    LoaderIcon,
     PaperclipIcon,
     PauseIcon,
     PenIcon,
@@ -20,7 +21,7 @@ import {
 } from "lucide-react";
 import PrimaryButton from "@/components/shared/PrimaryButton";
 import {useApi} from "@/hooks/useApi";
-import {useQuery} from "@tanstack/react-query";
+import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {Sheet, SheetContent, SheetHeader, SheetTitle,} from "@/components/ui/sheet"
 import {CiMenuBurger} from "react-icons/ci";
 import StudentsList from "@/app/dashboard/tests/[testId]/live/manage/StudentsList";
@@ -51,7 +52,7 @@ interface LiveExamResponse {
         user_id: string,
         exam_title: string,
         status: string,
-        live_status: 'live' | 'paused' | 'finished',
+        live_status: 'live' | 'paused' | 'finished' | '',
         created_at: string,
         updated_at: string,
     },
@@ -71,6 +72,7 @@ interface Answer{
 export default function New({params} : {params:{testId: string}}) {
 
     const api = useApi()
+    const queryClient = useQueryClient()
 
     const testId = params.testId
 
@@ -79,8 +81,14 @@ export default function New({params} : {params:{testId: string}}) {
         queryKey: ['exams' , testId , 'live']
     })
 
+    console.log(questionsQuery.data?.exam.live_status)
+
     const [answers , setAnswers] = useState<Answer[]>([])
 
+    const [pauseLoading , setPauseLoading] = useState(false)
+    const [FinishLoading , setFinishLoading] = useState(false)
+
+    const [dropDownOpen , setDropDownOpen] = useState(false)
 
     const [isSidebarOpen , setIsSidebarOpen] = useState<boolean>(false)
     const [selectedQuestion , setSelectedQuestion] = useState<LiveQuestionResponse | null>(null)
@@ -202,6 +210,47 @@ export default function New({params} : {params:{testId: string}}) {
 
     }
 
+    async function updateExamStatus(status: 'paused' |  'live' | 'finished') {
+        setPauseLoading(true)
+        if(!questionsQuery.data) {
+            return
+        }
+
+        if(status === 'finished') {
+            setFinishLoading(true)
+        }
+
+        if(status === 'paused' || status === 'live') {
+            setPauseLoading(true)
+        }
+
+        console.log(questionsQuery.data.exam.id)
+
+        try {
+        const res = await api.post(`/home/exams/${questionsQuery.data.exam.id}/live/manage/update-status`, {
+            status,
+        })
+            if(res.status == 200) {
+                queryClient.setQueryData(['exams' , testId , 'live'] , () => {
+                    let data = questionsQuery.data
+                    data.exam.live_status = status
+                    return data
+                })
+            }
+        console.log(res)
+        } catch (e) {
+            console.log(e)
+        }
+
+        if(status === 'finished') {
+            setFinishLoading(false)
+        }
+
+        if(status === 'paused' || status === 'live') {
+            setPauseLoading(false)
+        }
+    }
+
     return (
         <div className={"container"}>
             <Breadcrumb className="inline-block border p-2 rounded-lg  ">
@@ -247,42 +296,106 @@ export default function New({params} : {params:{testId: string}}) {
                 <h1 className="scroll-m-20 flex justify-between items-center gap-4 text-4xl tracking-tight lg:text-5xl">
                     <span>ادارة الاختبار</span>
                     <span className={""}>
-                        <CustomBadge className={"inline-block"} type={getExamLiveStatusBadge()}>{getExamLiveStatus()}</CustomBadge>
+                        <CustomBadge className={""} type={getExamLiveStatusBadge()}>
+                            <span>{getExamLiveStatus()}</span>
+                        </CustomBadge>
                     </span>
                 </h1>
+                {questionsQuery.data && (
+                    <>
 
-                                <PrimaryButton color={'base'} onClick={() => setIsSidebarOpen(true)} className={"flex justify-between gap-2 items-center text-xl cursor-pointer"}>
-                    <span><CiMenuBurger/></span>
-                    <span>عرض الأسئلة</span>
-                </PrimaryButton>
-                <DropdownMenu dir={"rtl"}>
-                    <DropdownMenuTrigger>
-                        <PrimaryButton className={"flex justify-between items-center gap-2"}>
-
-                            <SettingsIcon size={'16'}/>
-                            <span>الاعدادات</span>
+                        <PrimaryButton color={'base'} onClick={() => setIsSidebarOpen(true)} className={"flex justify-between gap-2 items-center text-xl cursor-pointer"}>
+                            <span><CiMenuBurger/></span>
+                            <span>عرض الأسئلة</span>
                         </PrimaryButton>
+                        <DropdownMenu open={dropDownOpen} onOpenChange={setDropDownOpen} dir={"rtl"}>
+                            <DropdownMenuTrigger>
+                                <PrimaryButton className={"flex justify-between items-center gap-2"}>
 
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className={"px-2 "}>
-                        <DropdownMenuLabel>الخيارات</DropdownMenuLabel>
-                        <DropdownMenuSeparator/>
-                        <DropdownMenuItem className={"mb-1 cursor-pointer"}>
-                            <div className={"text-black  flex items-center gap-1"}>
-                                <span><PauseIcon size={'18'}/></span>
-                                <span>ايقاف الاختبار مؤقتا</span>
-                            </div>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className={"mb-1 cursor-pointer"}>
+                                    <SettingsIcon size={'16'}/>
+                                    <span>الاعدادات</span>
+                                </PrimaryButton>
 
-                            <div className={"text-red-500 hover:text-red-500 flex items-center gap-1"}>
-                                <span><StopCircle size={'18'}/></span>
-                                <span>انهاء الاختبار</span>
-                            </div>
-                        </DropdownMenuItem>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className={"px-2 "}>
+                                <DropdownMenuLabel>الخيارات</DropdownMenuLabel>
+                                <DropdownMenuSeparator/>
+                                {questionsQuery.data.exam.live_status == 'live' && (
 
-                    </DropdownMenuContent>
-                </DropdownMenu>
+                                    <DropdownMenuItem onClick={async(e) => {
+                                        e.preventDefault()
+                                        if(!pauseLoading) {
+                                            await updateExamStatus("paused")
+                                        }
+                                        setDropDownOpen(false)
+
+                                    }} className={"mb-1 cursor-pointer"}>
+                                        <div className={"text-black  flex items-center gap-1"}>
+                                            <span><PauseIcon size={'18'}/></span>
+                                            <span>ايقاف الاختبار مؤقتا</span>
+                                        </div>
+                                    </DropdownMenuItem>
+                                )}
+
+                                {questionsQuery.data.exam.live_status == 'paused' && (
+
+                                    <DropdownMenuItem onClick={async(e) => {
+                                        e.preventDefault()
+                                        if(!pauseLoading) {
+                                            await updateExamStatus("live")
+                                        }
+                                        setDropDownOpen(false)
+
+                                    }} className={"mb-1 cursor-pointer"}>
+                                        <div className={"text-black  flex items-center gap-1"}>
+                                            <span><PauseIcon size={'18'}/></span>
+                                            <span>استئناف الأختبار</span>
+                                        </div>
+                                    </DropdownMenuItem>
+                                )}
+
+                                {questionsQuery.data.exam.live_status == '' && (
+
+                                    <DropdownMenuItem onClick={async (e) => {
+                                        e.preventDefault()
+                                        if(!pauseLoading) {
+                                            await updateExamStatus("live")
+                                        }
+                                        setDropDownOpen(false)
+                                    }} className={"mb-1 cursor-pointer"}>
+                                        <div className={"text-black  flex items-center justify-between gap-1"}>
+                                            {pauseLoading ? <LoaderIcon className={"animate-spin mx-auto "} /> : (
+                                                <>
+                                            <span><PauseIcon size={'18'}/></span>
+                                            <span>
+                                                بدء الاختبار </span>
+                                                </>
+                                ) }
+                                        </div>
+                                    </DropdownMenuItem>
+                                )}
+                                {(questionsQuery.data.exam.live_status == 'paused'  || questionsQuery.data.exam.live_status == 'live')   && (
+
+                                <DropdownMenuItem onClick={async() => {
+                                        if(!pauseLoading) {
+                                            await updateExamStatus("finished")
+                                        }
+                                        setDropDownOpen(false)
+
+                                    }}  className={"mb-1 cursor-pointer"}>
+
+                                    <div className={"text-red-500 hover:text-red-500 flex items-center gap-1"}>
+                                        <span><StopCircle size={'18'}/></span>
+                                        <span>انهاء الاختبار</span>
+                                    </div>
+                                </DropdownMenuItem>
+                                )}
+
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </>
+                )}
+
 
             </div>
                 {selectedQuestion !== null ? (
