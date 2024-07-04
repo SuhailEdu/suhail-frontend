@@ -34,6 +34,7 @@ import {
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import CustomBadge from "@/components/CustomBadge";
+import {getExamLiveStatus, getExamLiveStatusBadge} from "@/helpers/liveTestHelper";
 
 
 interface LiveQuestionResponse {
@@ -174,41 +175,7 @@ export default function New({params} : {params:{testId: string}}) {
 
     }
 
-    function getExamLiveStatus() {
-        if(!questionsQuery.data) {
-            return ""
-        }
-        switch (questionsQuery.data.exam.live_status) {
-            case "finished":
-                return'منتهي'
 
-            case "live":
-                return'نشط'
-
-            case "paused":
-                return'متوقف'
-
-            default:
-                return'غير معروف'
-        }
-
-    }
-
-    function getExamLiveStatusBadge() {
-        if(!questionsQuery.data) {
-            return ""
-        }
-        switch (questionsQuery.data.exam.live_status) {
-            case "finished":
-                return'info'
-            case "live":
-                return'success'
-            case "paused":
-            default:
-                return'primary'
-        }
-
-    }
 
     async function updateExamStatus(status: 'paused' |  'live' | 'finished') {
         setPauseLoading(true)
@@ -253,6 +220,9 @@ export default function New({params} : {params:{testId: string}}) {
 
     return (
         <div className={"container"}>
+
+            {questionsQuery.data && (
+                <>
             <Breadcrumb className="inline-block border p-2 rounded-lg  ">
                 <BreadcrumbList>
                     <BreadcrumbItem>
@@ -296,8 +266,8 @@ export default function New({params} : {params:{testId: string}}) {
                 <h1 className="scroll-m-20 flex justify-between items-center gap-4 text-4xl tracking-tight lg:text-5xl">
                     <span>ادارة الاختبار</span>
                     <span className={""}>
-                        <CustomBadge className={""} type={getExamLiveStatusBadge()}>
-                            <span>{getExamLiveStatus()}</span>
+                        <CustomBadge className={""} type={getExamLiveStatusBadge(questionsQuery.data.exam.live_status)}>
+                            <span>{getExamLiveStatus(questionsQuery.data.exam.live_status)}</span>
                         </CustomBadge>
                     </span>
                 </h1>
@@ -469,6 +439,8 @@ export default function New({params} : {params:{testId: string}}) {
 
             </div>
 
+                </>
+            )}
         </div>
     )
 

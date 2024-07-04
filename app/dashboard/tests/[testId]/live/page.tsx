@@ -14,6 +14,8 @@ import {useApi} from "@/hooks/useApi";
 import {useQuery} from "@tanstack/react-query";
 import {Sheet, SheetContent, SheetHeader, SheetTitle,} from "@/components/ui/sheet"
 import {CiMenuBurger} from "react-icons/ci";
+import CustomBadge from "@/components/CustomBadge";
+import {getExamLiveStatus, getExamLiveStatusBadge} from "@/helpers/liveTestHelper";
 
 interface LiveQuestionResponse {
     id: number,
@@ -23,7 +25,21 @@ interface LiveQuestionResponse {
     created_at: string,
     updated_at: string,
     options:string[]
+
 }
+interface LiveExamResponse {
+    exam: {
+        id: string,
+        user_id: string,
+        exam_title: string,
+        status: string,
+        live_status: 'live' | 'paused' | 'finished' | '',
+        created_at: string,
+        updated_at: string,
+    },
+    questions: LiveQuestionResponse[]
+}
+
 interface Answer{
     id: number,
     answer: string
@@ -36,30 +52,29 @@ export default function New({params} : {params:{testId: string}}) {
 
     const testId = params.testId
 
-    const questionsQuery = useQuery<LiveQuestionResponse[]>({
+    const questionsQuery = useQuery<LiveExamResponse>({
         queryFn: () => api.get(`/home/exams/${testId}/live`).then(res => res.data.data),
         queryKey: ['exams' , testId , 'live']
     })
 
+
     const [answers , setAnswers] = useState<Answer[]>([])
 
-    console.log(questionsQuery.data)
 
-
-    const [isSidebarOpen , setIsSidebarOpen] = useState<boolean>(true)
+    const [isSidebarOpen , setIsSidebarOpen] = useState<boolean>(false)
     const [selectedQuestion , setSelectedQuestion] = useState<LiveQuestionResponse | null>(null)
 
     useEffect(() => {
-        if(questionsQuery.data && questionsQuery.data.length> 0) {
-            setSelectedQuestion(questionsQuery.data[0])
+        if(questionsQuery.data && questionsQuery.data.questions.length> 0) {
+            setSelectedQuestion(questionsQuery.data.questions[0])
         }
 
     }, []);
 
 
     function selectedOptionNumber():number {
-        if(questionsQuery.data && questionsQuery.data.length > 0 && selectedQuestion) {
-            const questionIndex = questionsQuery.data.findIndex(q => q.id == selectedQuestion.id)
+        if(questionsQuery.data && questionsQuery.data.questions.length > 0 && selectedQuestion) {
+            const questionIndex = questionsQuery.data.questions.findIndex(q => q.id == selectedQuestion.id)
             return questionIndex  == -1 ? 1 : questionIndex + 1
         }
         return 0
@@ -67,37 +82,34 @@ export default function New({params} : {params:{testId: string}}) {
     }
 
     function selectNextQuestion() {
-        if(questionsQuery.data && questionsQuery.data.length > 0 && selectedQuestion) {
-            const questionIndex = questionsQuery.data.findIndex(q => q.id == selectedQuestion.id)
-            if(questionIndex > -1 && questionsQuery.data[questionIndex + 1]) {
-                 setSelectedQuestion(questionsQuery.data[questionIndex + 1])
+        if(questionsQuery.data && questionsQuery.data.questions.length > 0 && selectedQuestion) {
+            const questionIndex = questionsQuery.data.questions.findIndex(q => q.id == selectedQuestion.id)
+            if(questionIndex > -1 && questionsQuery.data.questions[questionIndex + 1]) {
+                 setSelectedQuestion(questionsQuery.data.questions[questionIndex + 1])
                 return
 
             }
-            setSelectedQuestion(questionsQuery.data[0])
+            setSelectedQuestion(questionsQuery.data.questions[0])
         }
 
     }
 
     function selectPreviousQuestion() {
-        if(questionsQuery.data && questionsQuery.data.length > 0 && selectedQuestion) {
-            const questionIndex = questionsQuery.data.findIndex(q => q.id == selectedQuestion.id)
-            if(questionIndex > -1 && questionsQuery.data[questionIndex  - 1]) {
-                setSelectedQuestion(questionsQuery.data[questionIndex - 1])
+        if(questionsQuery.data && questionsQuery.data.questions.length > 0 && selectedQuestion) {
+            const questionIndex = questionsQuery.data.questions.findIndex(q => q.id == selectedQuestion.id)
+            if(questionIndex > -1 && questionsQuery.data.questions[questionIndex  - 1]) {
+                setSelectedQuestion(questionsQuery.data.questions[questionIndex - 1])
                 return
 
             }
-            setSelectedQuestion(questionsQuery.data[0])
+            setSelectedQuestion(questionsQuery.data.questions[0])
         }
 
     }
-
-
-    function handleAnswerChange(newAnswer:string) {
+    function updateSubmittedAnswer(newAnswer:string) {
         if(!selectedQuestion) {
             return
         }
-
         setAnswers(preAnswers => {
             if(!preAnswers.find(a => a.id == selectedQuestion.id )) {
                 return [
@@ -130,8 +142,33 @@ export default function New({params} : {params:{testId: string}}) {
 
     }
 
+
+
+    async function handleAnswerChange(newAnswer:string) {
+        if(!selectedQuestion || !questionsQuery.data ) {
+            return
+        }
+        try {
+            const res = await api.post(`/home/exams/${questionsQuery.data.exam.id}/live/store-answer`, {
+                question_id: selectedQuestion.id,
+                answer: newAnswer
+            })
+            updateSubmittedAnswer(newAnswer)
+
+        } catch (e) {
+            console.error(e)
+
+        }
+
+
+
+    }
+
     return (
         <div className={"container"}>
+            {questionsQuery.data && (
+                <>
+
             <Breadcrumb className="inline-block border p-2 rounded-lg  ">
                 <BreadcrumbList>
                     <BreadcrumbItem>
@@ -157,7 +194,7 @@ export default function New({params} : {params:{testId: string}}) {
                                 <PenIcon size={'18'}/>
                                 </span>
                                 <span>
-                                اختبار جديد
+                                {questionsQuery.data.exam.exam_title}
                                 </span>
                             </Link>
                         </BreadcrumbLink>
@@ -168,10 +205,17 @@ export default function New({params} : {params:{testId: string}}) {
             <div>
 
             <div className="my-12 pr-4 flex justify-between">
-                <h1 className="scroll-m-20 text-4xl font- tracking-tight lg:text-5xl">
-                    <span>المشاركة في الاختبار</span>
-                </h1>
-                <PrimaryButton color={'base'} onClick={() => setIsSidebarOpen(true)} className={"flex justify-between gap-2 items-center text-xl cursor-pointer"}>
+                <div className="scroll-m-20 flex justify-between gap-4 items-center  text-4xl font- tracking-tight lg:text-5xl">
+                    <span>{questionsQuery.data.exam.exam_title}</span>
+
+                    <span className={""}>
+                        <CustomBadge className={""} type={getExamLiveStatusBadge(questionsQuery.data.exam.live_status)}>
+                            <span>{getExamLiveStatus(questionsQuery.data.exam.live_status)}</span>
+                        </CustomBadge>
+                    </span>
+                </div>
+                <PrimaryButton color={'base'} onClick={() => setIsSidebarOpen(true)}
+                               className={"flex justify-between gap-2 items-center text-xl cursor-pointer"}>
                     <span><CiMenuBurger/></span>
                     <span>عرض الأسئلة</span>
                 </PrimaryButton>
@@ -206,7 +250,7 @@ export default function New({params} : {params:{testId: string}}) {
 
                     <div className={"mt-16 flex justify-center gap-12 items-center"}>
                         <ArrowBigRight onClick={selectPreviousQuestion} className={"cursor-pointer"} size={'29'}/>
-                        <span>{selectedOptionNumber()} / {questionsQuery.data?.length}</span>
+                        <span>{selectedOptionNumber()} / {questionsQuery.data?.questions.length}</span>
                         <ArrowBigLeft onClick={selectNextQuestion} className={"cursor-pointer"} size={'29'}/>
 
                     </div>
@@ -220,10 +264,10 @@ export default function New({params} : {params:{testId: string}}) {
                 <SheetContent side={"left"} dir={"rtl"}>
                     <SheetHeader dir={"rtl"}>
                         <SheetTitle className={"text-right"}>قائمة الأسئلة</SheetTitle>
-                        {questionsQuery.data && questionsQuery.data?.length > 0 ? (
+                        {questionsQuery.data && questionsQuery.data?.questions.length > 0 ? (
 
                         <div className={"mt-4"}>
-                            {questionsQuery.data.map(question => (
+                            {questionsQuery.data.questions.map(question => (
 
                         <div onClick={() => {
                             setSelectedQuestion(question)
@@ -249,6 +293,8 @@ export default function New({params} : {params:{testId: string}}) {
                     </SheetHeader>
                 </SheetContent>
             </Sheet>
+    </>
+)}
 
         </div>
     )
