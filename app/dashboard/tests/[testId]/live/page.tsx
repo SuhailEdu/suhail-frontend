@@ -69,6 +69,9 @@ export default function New({params} : {params:{testId: string}}) {
         onError(e) {
             console.log("error", e);
         },
+        // onClose(e) {
+        //         console.log(e)
+        // },
         onMessage(m) {
             if(m?.data) {
                 const data = JSON.parse(m.data)

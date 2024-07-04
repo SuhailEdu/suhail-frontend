@@ -1,5 +1,5 @@
 "use client"
-import React, {useEffect, useState} from 'react'
+import React, {useState} from 'react'
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -24,7 +24,6 @@ import {useApi} from "@/hooks/useApi";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {Sheet, SheetContent, SheetHeader, SheetTitle,} from "@/components/ui/sheet"
 import {CiMenuBurger} from "react-icons/ci";
-import StudentsList from "@/app/dashboard/tests/[testId]/live/manage/StudentsList";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -35,6 +34,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import CustomBadge from "@/components/CustomBadge";
 import {getExamLiveStatus, getExamLiveStatusBadge} from "@/helpers/liveTestHelper";
+import StudentsList from "@/app/dashboard/tests/[testId]/live/manage/StudentsList";
 
 
 interface LiveQuestionResponse {
@@ -79,8 +79,11 @@ export default function New({params} : {params:{testId: string}}) {
 
     const questionsQuery = useQuery<LiveExamResponse>({
         queryFn: () => api.get(`/home/exams/${testId}/live/manage/questions`).then(res => res.data.data),
-        queryKey: ['exams' , testId , 'live']
+        queryKey: ['exams' , testId , 'live' , 'manage'],
+        refetchOnWindowFocus: false
     })
+
+
 
     console.log(questionsQuery.data?.exam.live_status)
 
@@ -93,13 +96,6 @@ export default function New({params} : {params:{testId: string}}) {
 
     const [isSidebarOpen , setIsSidebarOpen] = useState<boolean>(false)
     const [selectedQuestion , setSelectedQuestion] = useState<LiveQuestionResponse | null>(null)
-
-    useEffect(() => {
-        if(questionsQuery.data && questionsQuery.data.questions.length> 0) {
-            setSelectedQuestion(questionsQuery.data.questions[0])
-        }
-
-    }, []);
 
 
     function selectedOptionNumber():number {
