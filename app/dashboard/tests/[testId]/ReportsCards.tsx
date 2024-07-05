@@ -87,8 +87,8 @@ export default function ReportsCards({exam , updateExam}:{exam:ExamData, updateE
     }>({
         exam_title:exam.exam_title,
         status:exam.status,
-        ip_range_start:null,
-        ip_range_end:null,
+        ip_range_start:exam.ip_range_start,
+        ip_range_end:exam.ip_range_end,
     });
 
     const [validationErrors , setValidationErrors] = useState<{
