@@ -285,7 +285,7 @@ export default function New({params} : {params:{testId: string}}) {
                         </CustomBadge>
                     </span>
                 </div>
-                {questionsQuery.data.exam.live_status == 'live' || questionsQuery.data.exam.is_ip_allowed && (
+                {questionsQuery.data.exam.live_status == 'live' && questionsQuery.data.exam.is_ip_allowed && (
 
                 <PrimaryButton color={'base'} onClick={() => setIsSidebarOpen(true)}
                                className={"flex justify-between gap-2 items-center text-xl cursor-pointer"}>
@@ -304,7 +304,7 @@ export default function New({params} : {params:{testId: string}}) {
                 )}
 
 
-                {selectedQuestion !== null && questionsQuery.data.exam.live_status == 'live' && (
+                {selectedQuestion !== null && questionsQuery.data.exam.live_status == 'live' && questionsQuery.data.exam.is_ip_allowed && (
 
                 <div className="mt-20">
                     <div className={"text-2xl text-center"}>{selectedQuestion.title}</div>
@@ -351,7 +351,7 @@ export default function New({params} : {params:{testId: string}}) {
                     <div className={"flex justify-center mt-4 items-center gap-4 flex-col"}>
                         <LockKeyhole size={'40'}/>
                         <div className={"text-xl tex-black"}>لا يمكنك الوصول للاختبار حاليا</div>
-                        <div className={"text-xl tex-black"}>  عنوان IP الخاص بك :   {clientIP}</div>
+                        <div className={"text-xl tex-black"}>  عنوان IP الخاص بك :   {clientIP !== "" ? clientIP : "..."}</div>
                     </div>
                 )}
 
@@ -362,7 +362,7 @@ export default function New({params} : {params:{testId: string}}) {
                     </div>
                 )}
             </div>
-                    {['paused' , 'live'].includes(questionsQuery.data.exam.live_status) && questionsQuery.data.exam.is_ip_allowed &&(
+                    {['paused' , 'live'].includes(questionsQuery.data.exam.live_status) && questionsQuery.data.exam.is_ip_allowed && (
 
                     <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
                         <SheetContent side={"left"} dir={"rtl"}>
