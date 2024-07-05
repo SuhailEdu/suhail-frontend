@@ -10,7 +10,7 @@ import {
 import Link from "next/link";
 import {HomeIcon, PaperclipIcon} from "lucide-react";
 import ReportsCards from "@/app/dashboard/tests/[testId]/ReportsCards";
-import {useQuery} from "@tanstack/react-query";
+import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {useApi} from "@/hooks/useApi";
 import {Exam} from "@/types/exam";
 import QuestionsTab from "@/app/dashboard/tests/[testId]/QuestionsTab";
@@ -20,28 +20,46 @@ type ExamQueryData =  Exam & {
     is_my_exam: boolean
 }
 type SelectedTap = 'students' | 'reports' | 'questions' | 'settings'
+type UpdatedExamProps = {
+    exam_title:string,
+    status:string,
+    ip_range_start:string,
+    ip_range_end:string,
+}
 
 export default function ShowTest ({params}: {params:{testId: string}})  {
     const api = useApi()
+
+    const queryClient = useQueryClient()
 
     const testQuery = useQuery<ExamQueryData>({
         queryFn:  () => api.get(`/home/exams/${params.testId}`).then(res => res.data.data),
         queryKey: ["exams" , params.testId]
     });
 
-    const [selectedOption, setSelectedOption] = useState<SelectedTap>(() => {
-        // const tab = searchParams.get('tab') ?? ""
-        // if( ['students' , 'reports' , 'questions' , 'settings'].includes(tab)) {
-        //     return tab as SelectedTap
-        // }
-        return "reports"
-
-    })
+    const [selectedOption, setSelectedOption] = useState<SelectedTap>('reports')
 
     console.log("here is test qeury" , testQuery.data)
 
     function isSelected(option: string) {
         return option == selectedOption ? 'border-black' : 'border-none'
+    }
+
+    function updateExam(newData :UpdatedExamProps) :void {
+        queryClient.setQueryData(["exams" , params.testId] , () => {
+            let data = testQuery.data
+            if(!data) {
+                return
+            }
+            data.exam_title = newData.exam_title
+            data.status = newData.status
+            data.ip_range_start = newData.ip_range_start
+            data.ip_range_end = newData.ip_range_end
+            console.log(data , newData)
+            return data
+        })
+
+
     }
 
 
@@ -110,11 +128,11 @@ export default function ShowTest ({params}: {params:{testId: string}})  {
                     )}
                     {selectedOption === 'reports' && (
 
-                        <ReportsCards/>
+                        <ReportsCards updateExam={updateExam} exam={testQuery.data}/>
                     )}
 
                     {selectedOption === 'students' && (
-                        <StudentsTab testId={params.testId} />
+                        <StudentsTab  testId={params.testId} />
                     )}
 
                 </div>

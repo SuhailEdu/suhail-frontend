@@ -1,6 +1,6 @@
-import {Label, TextInput} from "flowbite-react";
+import {Label} from "flowbite-react";
 import React from "react";
-import {Input, InputProps} from "@/components/ui/input";
+import {Input} from "@/components/ui/input";
 
 interface CustomTextInputProps {
     label?: string
@@ -47,13 +47,13 @@ export default function CustomTextInput({errors, size, labelClass, hint, label, 
             )}
 
             <Input color={errors ? 'failure' : 'default'}
-                   className={`focus:outline-none  ${errors && 'border border-red-500'}`}
+                   className={`  ${errors && 'border border-red-500'}`}
                    id={props.id} type={props.type} placeholder={props.placeholder}  {...props}/>
             {errors && (
                 <small className="text-red-500">{errors}</small>
             )}
             {!errors && hint && (
-                <small className="text-gray-600">{hint.children}</small>
+                <small className="text-gray-600">{hint}</small>
             )}
         </div>
     )

@@ -1,6 +1,3 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
-
 export interface Exam  {
   id: string,
   user_id: string,
@@ -10,6 +7,8 @@ export interface Exam  {
   updated_at: string,
   questions_count: number,
   participants_count: number,
+    ip_range_start: string,
+    ip_range_end: string,
   // questions: {
   //   title:string,
   //   type:string,

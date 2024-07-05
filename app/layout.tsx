@@ -1,15 +1,13 @@
-import type {GetServerSideProps, Metadata} from "next";
-import {Inter} from "next/font/google";
+import type {Metadata} from "next";
+import {Inter, Tajawal} from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layouts/Navbar";
 import Footer from "@/components/layouts/Footer";
-import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import React from "react";
 import ReactQueryProvider from "@/components/ReactQueryProvider";
 import AuthProvider from "@/providers/authProvider";
 import {getSession} from "@/auth";
-import useAuthStore from "@/stores/AuthStore";
-import {Tajawal} from 'next/font/google'
+import {Toaster} from "@/components/ui/toaster";
 
 const inter = Inter({subsets: ["latin"]});
 
@@ -46,6 +44,7 @@ export default async function RootLayout({
                 <main>
                     {children}
                 </main>
+                <Toaster />
                 <Footer />
             </div>
         </AuthProvider>
