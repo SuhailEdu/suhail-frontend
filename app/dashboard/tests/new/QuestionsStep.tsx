@@ -1,8 +1,8 @@
-import {ChevronDown, CrossIcon, PlusIcon, TimerIcon, XIcon} from "lucide-react";
+import {ChevronDown, PlusIcon, XIcon} from "lucide-react";
 import {forwardRef, useEffect, useImperativeHandle, useState} from 'react'
 import QuestionItem from "../../../../components/QuestionItem";
 import Badge from "@/components/CustomBadge";
-import {z, ZodError, ZodIssue, ZodParsedType} from "zod";
+import {z} from "zod";
 import PrimaryButton from "@/components/shared/PrimaryButton";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
 import {useApi} from "@/hooks/useApi";
@@ -64,7 +64,7 @@ const QuestionsStep = forwardRef(({
 
         }
 
-    }, [serverValidationError?.errorBelongsTo]);
+    }, [questions, serverValidationError.error, serverValidationError?.errorBelongsTo, setTooltipMessage]);
 
 
 

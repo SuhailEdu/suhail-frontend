@@ -1,4 +1,4 @@
-export default () => {
+export default function HomeStepsSection(){
     return (
         <section className="bg-gray-50 py-12 sm:py-16 lg:py-20 xl:py-24">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

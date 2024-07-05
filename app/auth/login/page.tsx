@@ -1,17 +1,10 @@
 'use client'
-import React, {FormEvent, FormEventHandler, FormHTMLAttributes, useEffect, useState} from "react";
-import axiosClient from "@/providers/axiosClient";
-import {useMutation} from "@tanstack/react-query";
-import Image from "next/image";
+import React, {useState} from "react";
 import CustomTextInput from "@/components/shared/CustomTextInput";
 import PrimaryButton from "@/components/shared/PrimaryButton";
 import Link from "next/link";
-import {AxiosError} from "axios";
 import {z} from "zod";
-import {redirect, useRouter} from "next/navigation";
-import {useFormState} from "react-dom";
 import {login} from "@/auth";
-import useAuthStore from "@/stores/AuthStore";
 
 
 export default function Login() {
@@ -37,7 +30,7 @@ export default function Login() {
 
 
 
-    async function submit(e: SubmitEvent) {
+    async function submit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
         setValidationErrors(defaultErrors)
 

@@ -1,7 +1,8 @@
 import Image from "next/image";
 import ManImage from "@/public/images/man.png"
 
-export default () => {
+export default function HomeOurMessageSection() {
+
     return (
         <div className="mx-auto my-12  max-w-6xl">
             <h2 className="mb-4 text-6xl text-center tracking-tight font-extrabold text-gray-900 dark:text-white">نساهم

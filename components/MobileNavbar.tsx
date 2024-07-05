@@ -18,7 +18,7 @@ interface RouteProps {
 
 }
 
-export default ({routeList}: RouteProps) => {
+export default function  MobileNavbar({routeList}: RouteProps)  {
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
 

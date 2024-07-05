@@ -1,12 +1,8 @@
-import {ArrowLeft, CrossIcon, HomeIcon, PlusIcon, TimerIcon, XIcon} from "lucide-react";
-import React, {useState, KeyboardEventHandler} from 'react'
-import QuestionItem from "../../../../components/QuestionItem";
-import Badge from "@/components/CustomBadge";
-import {isValid, z, ZodError, ZodIssue, ZodParsedType} from "zod";
+import {ArrowLeft, HomeIcon} from "lucide-react";
+import React from 'react'
 import PrimaryButton from "@/components/shared/PrimaryButton";
-import {Label} from "flowbite-react";
-import Select from "react-select";
-import CreatableSelect from 'react-select/creatable';
+import Image from "next/image";
+import CheckSvg from '@/public/images/svg/check.svg'
 
 interface Option {
     readonly label: string;
@@ -29,7 +25,7 @@ export default function TestCreatedStep() {
 
                 <div className={'text-center mx-auto'}>
 
-                    <img src={'/check.svg'} className={'text-center inline-block'} alt={'Check'}/>
+                    <Image src={CheckSvg} className={'text-center inline-block'} alt={'Check'}/>
 
                     <h3 className="mt-4 font-semibold text-2xl">مبروك ! تم انشاء اختبارك بنجاح</h3>
                     <h5 className="text-md text-slate-500 mt-2">سيتم ارسال دعوة لطلابك عبر البريد الالكتروني</h5>

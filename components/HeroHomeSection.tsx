@@ -4,7 +4,7 @@ import OrangeElement from '@/public/images/svg/OrangeElement.svg'
 import Image from "next/image";
 import Link from "next/link";
 
-export default () => {
+export default function HeroHomeSection ()  {
 
     return (
         <section className="bg-white flex items-center h-screen dark:bg-gray-900">

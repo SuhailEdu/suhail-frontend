@@ -228,7 +228,7 @@ export default function New({params} : {params:{testId: string}}) {
             getIpAddress()
         }
 
-    }, [questionsQuery.data]);
+    }, [clientIP, questionsQuery.data]);
 
     async function getIpAddress() {
         const res = await axios.get(`https://geolocation-db.com/json` , {
