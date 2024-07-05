@@ -13,6 +13,7 @@ import {
     ArrowBigRight,
     BadgeHelp,
     HomeIcon,
+    LockKeyhole,
     PaperclipIcon,
     PauseCircleIcon,
     PenIcon,
@@ -27,6 +28,7 @@ import CustomBadge from "@/components/CustomBadge";
 import {getExamLiveStatus, getExamLiveStatusBadge} from "@/helpers/liveTestHelper";
 import useWebSocket, {ReadyState} from "react-use-websocket";
 import useAuthStore from "@/stores/AuthStore";
+import axios from "axios";
 
 interface LiveQuestionResponse {
     id: number,
@@ -47,6 +49,7 @@ interface LiveExamResponse {
         live_status: 'live' | 'paused' | 'finished' | '',
         created_at: string,
         updated_at: string,
+        is_ip_allowed: boolean,
     },
     questions: LiveQuestionResponse[]
 }
@@ -64,6 +67,7 @@ export default function New({params} : {params:{testId: string}}) {
 
     const testId = params.testId
     const queryClient = useQueryClient()
+    const [clientIP , setClientIP] = useState("")
 
     const questionsQuery = useQuery<LiveExamResponse>({
         queryFn: () => api.get(`/home/exams/${testId}/live`).then(res => res.data.data),
@@ -219,6 +223,18 @@ export default function New({params} : {params:{testId: string}}) {
 
     }
 
+    useEffect(() => {
+        if(questionsQuery.data && questionsQuery.data.exam.is_ip_allowed === false && clientIP == '')  {
+            getIpAddress()
+        }
+
+    }, [questionsQuery.data]);
+
+    async function getIpAddress() {
+        const res = await axios.get(`https://geolocation-db.com/json/`)
+        setClientIP(res.data.IPv4)
+    }
+
     return (
         <div className={"container"}>
             {questionsQuery.data && (
@@ -269,7 +285,7 @@ export default function New({params} : {params:{testId: string}}) {
                         </CustomBadge>
                     </span>
                 </div>
-                {questionsQuery.data.exam.live_status == 'live' && (
+                {questionsQuery.data.exam.live_status == 'live' || questionsQuery.data.exam.is_ip_allowed && (
 
                 <PrimaryButton color={'base'} onClick={() => setIsSidebarOpen(true)}
                                className={"flex justify-between gap-2 items-center text-xl cursor-pointer"}>
@@ -324,10 +340,18 @@ export default function New({params} : {params:{testId: string}}) {
                 </div>
 
                 )}
-                {selectedQuestion == null && questionsQuery.data.exam.live_status == 'live' && (
+                {selectedQuestion == null && questionsQuery.data.exam.live_status == 'live' && questionsQuery.data.exam.is_ip_allowed && (
                     <div className={"flex justify-center mt-4 items-center gap-4 flex-col"}>
                         <BadgeHelp size={'40'}/>
                         <div className={"text-xl tex-black"}>اختر سؤالا من قائمة الأسئلة</div>
+                    </div>
+                )}
+
+                {!questionsQuery.data.exam.is_ip_allowed && (
+                    <div className={"flex justify-center mt-4 items-center gap-4 flex-col"}>
+                        <LockKeyhole size={'40'}/>
+                        <div className={"text-xl tex-black"}>لا يمكنك الوصول للاختبار حاليا</div>
+                        <div className={"text-xl tex-black"}>  عنوان IP الخاص بك :   {clientIP}</div>
                     </div>
                 )}
 
@@ -338,6 +362,8 @@ export default function New({params} : {params:{testId: string}}) {
                     </div>
                 )}
             </div>
+                    {['paused' , 'live'].includes(questionsQuery.data.exam.live_status) && questionsQuery.data.exam.is_ip_allowed &&(
+
                     <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
                         <SheetContent side={"left"} dir={"rtl"}>
                             <SheetHeader dir={"rtl"}>
@@ -371,6 +397,7 @@ export default function New({params} : {params:{testId: string}}) {
                     </SheetHeader>
                 </SheetContent>
             </Sheet>
+                    )}
     </>
 )}
 
