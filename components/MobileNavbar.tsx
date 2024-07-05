@@ -1,18 +1,12 @@
 'use client'
 import PrimaryButton from "@/components/shared/PrimaryButton";
-import RandomElement from '@/public/images/svg/RandomElement.svg'
-import OrangeElement from '@/public/images/svg/OrangeElement.svg'
-import Image from "next/image";
 import React, {useEffect, useState} from "react";
 
-import {
-    Sheet,
-    SheetContent,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-} from "@/components/ui/sheet";
+import {Sheet, SheetContent, SheetTrigger,} from "@/components/ui/sheet";
 import {Menu} from "lucide-react";
+import useAuthStore from "@/stores/AuthStore";
+import LogOutButton from "@/components/layouts/LogUserOUt";
+import Link from "next/link";
 
 interface RouteProps {
     href: string;
@@ -32,6 +26,8 @@ export default ({routeList}: RouteProps) => {
     useEffect(() => {
         setMounted(true)
     }, [])
+
+    const isLoggedIn = useAuthStore(state => state.user.isLoggedIn)
     return mounted && (
         <Sheet
             open={isOpen}
@@ -47,24 +43,22 @@ export default ({routeList}: RouteProps) => {
             </SheetTrigger>
 
             <SheetContent side={"left"}>
-                <SheetHeader>
-                    <SheetTitle className="font-bold text-xl">
-                        Shadcn/React
-                    </SheetTitle>
-                </SheetHeader>
                 <nav className="flex flex-col justify-center items-center gap-2 mt-4">
-                    {routeList.map(({href, label}: RouteProps) => (
-                        <a
-                            rel="noreferrer noopener"
+                    {isLoggedIn && routeList.map(({href, label}: RouteProps) => (
+                        <Link
                             key={label}
                             href={href}
                             onClick={() => setIsOpen(false)}
                             // className={buttonVariants({variant: "ghost"})}
                         >
                             {label}
-                        </a>
+                        </Link>
                     ))}
-                    <PrimaryButton href="/auth/register">انضم الينا</PrimaryButton>
+                    {isLoggedIn ? (
+                        <LogOutButton  />
+                    ): (
+                        <PrimaryButton href={'/auth/login'}>انضم الينا</PrimaryButton>
+                    )}
                     {/*<a
                         rel="noreferrer noopener"
                         href="https://github.com/leoMirandaa/shadcn-landing-page.git"

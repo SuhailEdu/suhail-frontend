@@ -231,7 +231,13 @@ export default function New({params} : {params:{testId: string}}) {
     }, [questionsQuery.data]);
 
     async function getIpAddress() {
-        const res = await axios.get(`https://geolocation-db.com/json/`)
+        const res = await axios.get(`https://geolocation-db.com/json` , {
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                "Access-Control-Allow-Origin": '*'
+            }
+        })
         setClientIP(res.data.IPv4)
     }
 

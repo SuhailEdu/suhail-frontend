@@ -9,6 +9,8 @@ export function getExamLiveStatus(liveStatus:'live' | 'finished' | 'paused' | ''
         case "paused":
             return'متوقف'
 
+        case "":
+            return'لم يبدأ بعد'
         default:
             return'غير معروف'
     }
@@ -20,7 +22,9 @@ export function getExamLiveStatusBadge(liveStatus:'live' | 'finished' | 'paused'
             return'info'
         case "live":
             return'success'
+
         case "paused":
+        case "":
         default:
             return'primary'
     }

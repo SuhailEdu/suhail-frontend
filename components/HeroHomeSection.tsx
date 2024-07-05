@@ -2,8 +2,10 @@ import PrimaryButton from "@/components/shared/PrimaryButton";
 import RandomElement from '@/public/images/svg/RandomElement.svg'
 import OrangeElement from '@/public/images/svg/OrangeElement.svg'
 import Image from "next/image";
+import Link from "next/link";
 
 export default () => {
+
     return (
         <section className="bg-white flex items-center h-screen dark:bg-gray-900">
             <div className="py-8 px-4 mx-auto max-w-screen-xl relative  lg:py-16 lg:px-12">
@@ -23,14 +25,20 @@ export default () => {
                 <div
                     className="flex relative z-10  gap-4  mb-8 lg:mb-16  justify-between sm:flex-row sm:justify-center sm:space-y-0 sm:space-x-4">
                     <PrimaryButton>
+                        <Link href={'auth/login'}>
+
                     <span className="my-auto text-xl">
-                    سجل الأن
+                    تسجيل الدخول
                     </span>
+                        </Link>
                     </PrimaryButton>
-                    <PrimaryButton>
+                    <PrimaryButton className={"bg-white border-primary border-2 text-primary"}>
+                        <Link href={'auth/register'}>
+
                     <span className="my-auto text-xl">
-                    سجل الأن
+                    انشاء حساب
                     </span>
+                        </Link>
                     </PrimaryButton>
 
                 </div>

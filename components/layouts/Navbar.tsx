@@ -1,17 +1,9 @@
 // 'use client'
-import {useEffect, useState} from 'react'
-import {Navbar} from "flowbite-react";
-import {Camera, CircleArrowLeft, Info, Menu} from 'lucide-react';
-import {
-    NavigationMenu,
-    NavigationMenuItem,
-    NavigationMenuList,
-} from "@/components/ui/navigation-menu";
+import {NavigationMenu, NavigationMenuItem, NavigationMenuList,} from "@/components/ui/navigation-menu";
 import PrimaryButton from "@/components/shared/PrimaryButton";
 import MobileNavbar from "@/components/MobileNavbar";
-import {getSession, logout} from "@/auth";
+import {getSession} from "@/auth";
 import LogOutButton from "@/components/layouts/LogUserOUt";
-import useAuthStore from "@/stores/AuthStore";
 
 const routeList: RouteProps[] = [
     {
