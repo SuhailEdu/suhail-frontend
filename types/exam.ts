@@ -9,6 +9,7 @@ export interface Exam  {
   participants_count: number,
     ip_range_start: string,
     ip_range_end: string,
+    live_status: '' | 'live' | 'paused' | 'finished',
   // questions: {
   //   title:string,
   //   type:string,

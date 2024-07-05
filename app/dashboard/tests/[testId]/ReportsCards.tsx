@@ -1,5 +1,5 @@
 import CustomTextInput from "@/components/shared/CustomTextInput";
-import {FileQuestionIcon, InfoIcon} from "lucide-react";
+import {InfoIcon} from "lucide-react";
 import {useState} from "react";
 import {Exam} from "@/types/exam";
 import {Label} from "@/components/ui/label";
@@ -371,13 +371,13 @@ export default function ReportsCards({exam , updateExam}:{exam:ExamData, updateE
                         />
                     </div>
                     <div className=" mt-4 text-lg     text-green-800">
-                        <CustomBadge className={"pt-4 bg-green-50 text-lg border border-green-500 text-green-500 flex justify-start items-start flex-col"}>
+                        <CustomBadge className={"pt-4 bg-blue-50 text-lg border border-blue-500 text-blue-500 flex justify-start items-start flex-col"}>
                             <div className="text-right">
-                                <span><FileQuestionIcon className={"text-right inline-block ml-2"} size={15}/></span>
+                                <span><InfoIcon className={"text-right inline-block ml-2"} size={15}/></span>
                                 <span>ما هو عنوان ال IP ؟</span>
                             </div>
 
-                            <div>تستخدم عناوين الIP لمنع المشاركين خارج شيكتك من الوصول الى الاختبار</div>
+                            <div>تستخدم عناوين الIP لمنع المشاركين خارج شبكتك من الوصول الى الاختبار</div>
 
                         </CustomBadge>
                     </div>

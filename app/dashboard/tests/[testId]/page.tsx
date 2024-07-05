@@ -15,6 +15,8 @@ import {useApi} from "@/hooks/useApi";
 import {Exam} from "@/types/exam";
 import QuestionsTab from "@/app/dashboard/tests/[testId]/QuestionsTab";
 import StudentsTab from "@/app/dashboard/tests/[testId]/StudentsTab";
+import {getExamLiveStatus, getExamLiveStatusBadge} from "@/helpers/liveTestHelper";
+import CustomBadge from "@/components/CustomBadge";
 
 type ExamQueryData =  Exam & {
     is_my_exam: boolean
@@ -49,14 +51,16 @@ export default function ShowTest ({params}: {params:{testId: string}})  {
         queryClient.setQueryData(["exams" , params.testId] , () => {
             let data = testQuery.data
             if(!data) {
-                return
+                return {
+                }
             }
-            data.exam_title = newData.exam_title
-            data.status = newData.status
-            data.ip_range_start = newData.ip_range_start
-            data.ip_range_end = newData.ip_range_end
-            console.log(data , newData)
-            return data
+            return {
+                ...data,
+                exam_title:newData.exam_title,
+                status:newData.status,
+                ip_range_start:newData.ip_range_start,
+                ip_range_end:newData.ip_range_end,
+            }
         })
 
 
@@ -98,9 +102,19 @@ export default function ShowTest ({params}: {params:{testId: string}})  {
                 <>
 
             <div className="my-12 pr-4">
-                <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+                <div className="scroll-m-20 flex justify-start gap-4 items-center  text-4xl font- tracking-tight lg:text-5xl">
                     <span>{testQuery.data.exam_title}</span>
-                </h1>
+                    <span className={""}>
+                        <CustomBadge type={getExamLiveStatusBadge(testQuery.data.live_status)}>
+                            <span>{getExamLiveStatus(testQuery.data.live_status)}. </span>
+                            {testQuery.data.live_status != 'finished' && (
+                                <Link href={testQuery.data.is_my_exam ? `/dashboard/tests/${testQuery.data.id}/live/manage` : `/dashboard/tests/${testQuery.data.id}/live`}
+                                      className={"underline cursor-pointer mr-2"}>الانتقال الى لوحة التحكم</Link>
+
+                            )}
+                        </CustomBadge>
+                    </span>
+                </div>
 
                 <div className="my-8 py-4">
                     <div className="my-8">
