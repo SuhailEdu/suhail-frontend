@@ -15,6 +15,7 @@ const inter = Inter({subsets: ["latin"]});
 export const metadata: Metadata = {
     title: "Suhail App",
     description: "Suhail App",
+    
 };
 // const queryClient = new QueryClient()
 
@@ -35,36 +36,36 @@ export default async function RootLayout({
 
     return (
         <html className={tajwalFont.className} dir="rtl" lang="ar">
-        <body >
-        <ReactQueryProvider>
-        <AuthProvider session={session}>
+            <body>
+            <ReactQueryProvider>
+                <AuthProvider session={session}>
 
-            <div className={`h-screen `}>
+                    <div className={`h-screen `}>
 
-            <Navbar/>
-                <NextTopLoader
-                    color="#2299DD"
-                    initialPosition={0.08}
-                    crawlSpeed={200}
-                    height={3}
-                    crawl={true}
-                    showSpinner={true}
-                    easing="ease"
-                    speed={200}
-                    shadow="0 0 10px #2299DD,0 0 5px #2299DD"
-                />
-                <main>
-                    {children}
-                </main>
-                <Toaster />
-                <Footer />
-            </div>
-        </AuthProvider>
+                        <Navbar/>
+                        <NextTopLoader
+                            color="#2299DD"
+                            initialPosition={0.08}
+                            crawlSpeed={200}
+                            height={3}
+                            crawl={true}
+                            showSpinner={true}
+                            easing="ease"
+                            speed={200}
+                            shadow="0 0 10px #2299DD,0 0 5px #2299DD"
+                        />
+                        <main>
+                            {children}
+                        </main>
+                        <Toaster/>
+                        <Footer/>
+                    </div>
+                </AuthProvider>
 
             </ReactQueryProvider>
             {/*</QueryClientProvider>*/}
-        </body>
+            </body>
         </html>
-    );
+);
 }
 
