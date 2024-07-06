@@ -4,14 +4,7 @@ import {ColumnDef} from "@tanstack/react-table";
 import CustomDataTable from "@/components/shared/CustomDataTable";
 import {useQuery} from "@tanstack/react-query";
 import {useApi} from "@/hooks/useApi";
-import {
-    Dialog, DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
+import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle,} from "@/components/ui/dialog"
 import {
     AlertDialog,
     AlertDialogAction,
@@ -21,7 +14,6 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import {
     DropdownMenu,
@@ -32,13 +24,17 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import CreatableSelect from "react-select/creatable";
-import React, {KeyboardEventHandler, useEffect, useState} from "react";
+import React, {KeyboardEventHandler, useState} from "react";
 import {z} from "zod";
-import {LoaderIcon, TrashIcon} from "lucide-react";
-import {Close} from "@radix-ui/react-dialog";
-import {BsThreeDots, BsThreeDotsVertical} from "react-icons/bs";
+import {LoaderIcon, PaperclipIcon, TrashIcon} from "lucide-react";
+import {BsThreeDotsVertical} from "react-icons/bs";
+import ParticipantAnswersDialog from "@/app/dashboard/tests/[testId]/ParticipantAnswersDialog";
+
 type Participant = {
+    id:string,
     email:string,
+    first_name:string,
+    last_name:string,
     status:string,
 }
  const columns: ColumnDef<Participant>[] = [
@@ -71,10 +67,14 @@ export default function StudentsTab({testId}:{testId:string}) {
     const [isSendingIvitations, setIsSendingIvitations] = useState<boolean>(false)
 
 
+
     const [isDeleteParticipantDialogOpen, setIsDeleteParticipantDialogOpen] = useState<boolean>(false)
     const [isDeletingParticipant, setIsDeletingParticipant] = useState<boolean>(false)
     const [participantEmailToDelete, setParticipantEmailToDelete] = useState<string>("")
     const [deleteParticipantValidationMessage, setDeleteParticipantValidationMessage] = useState<string>("")
+
+    const [selectedParticipantId, setSelectedParticipantId] = useState<string>("")
+    const [participantAsnwersDialogOpen, setParticipantAsnwersDialogOpen] = useState<boolean>(false)
 
     function formatInviteStatus(status:string) {
         switch (status) {
@@ -220,6 +220,12 @@ export default function StudentsTab({testId}:{testId:string}) {
 
     }
 
+    function openParticipantAnswersDialog(id:string) {
+        setSelectedParticipantId(id)
+        setParticipantAsnwersDialogOpen(true)
+
+    }
+
 
     return (
         <div className=" container">
@@ -249,6 +255,7 @@ export default function StudentsTab({testId}:{testId:string}) {
                     {participantsQuery.data && (
                         <CustomDataTable>
                             <CustomDataTable.Header>
+                                <CustomDataTable.HeaderRow>الاسم</CustomDataTable.HeaderRow>
                                 <CustomDataTable.HeaderRow>البريد الالكتروني</CustomDataTable.HeaderRow>
                                 <CustomDataTable.HeaderRow>حالة الدعوة</CustomDataTable.HeaderRow>
                                 <CustomDataTable.HeaderRow>الخيارات</CustomDataTable.HeaderRow>
@@ -256,7 +263,8 @@ export default function StudentsTab({testId}:{testId:string}) {
                             <CustomDataTable.Body isLoading={participantsQuery.isLoading} columnsLength={3} hasData={participantsQuery.data.length > 0}>
                                 {participantsQuery.data.map((p:Participant) => (
 
-                                <CustomDataTable.Row key={p.email}>
+                                <CustomDataTable.Row key={p.id}>
+                                    <CustomDataTable.Cell>{p.first_name} {p.last_name}</CustomDataTable.Cell>
                                     <CustomDataTable.Cell>{p.email}</CustomDataTable.Cell>
                                     <CustomDataTable.Cell>
                                         <CustomBadge type={formatInviteStatusClass(p.status)} >
@@ -271,6 +279,18 @@ export default function StudentsTab({testId}:{testId:string}) {
                                                 <DropdownMenuLabel>الخيارات</DropdownMenuLabel>
                                                 <DropdownMenuSeparator />
                                                 <DropdownMenuItem >
+                                                    <div onClick={() => openParticipantAnswersDialog(p.id)} className={" flex gap-1 cursor-pointer"}>
+                                                    <span>
+                                                        <PaperclipIcon size={'18'}/>
+                                                    </span>
+
+                                                        <span>
+                                                        عرض الاجابات
+                                                    </span>
+
+                                                    </div>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem >
                                                     <div onClick={() => handleDeleteParticipant(p.email)} className={"text-red-500 hover:text-red-500 flex gap-1 cursor-pointer"}>
                                                     <span>
                                                         <TrashIcon size={'18'}/>
@@ -282,6 +302,7 @@ export default function StudentsTab({testId}:{testId:string}) {
 
                                                     </div>
                                                 </DropdownMenuItem>
+
                                             </DropdownMenuContent>
                                         </DropdownMenu>
                                     </CustomDataTable.Cell>
@@ -390,6 +411,11 @@ export default function StudentsTab({testId}:{testId:string}) {
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
+            <ParticipantAnswersDialog
+                isOpen={participantAsnwersDialogOpen}
+                setIsOpen={setParticipantAsnwersDialogOpen}
+
+                testId={testId} participantId={selectedParticipantId} />
         </div>
 
     )
