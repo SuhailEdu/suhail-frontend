@@ -372,7 +372,7 @@ export default function New() {
                         )
                         }
 
-                        {!['info', 'testCreated'].includes(step) && (
+                        {!['info', 'testCreated' , 'invite'].includes(step) && (
 
                             <PrimaryButton disabled={isNextDisabled || stepButtonsLoading} onClick={handelPreviousStep}
                                            className="my-2 text-end">السابق</PrimaryButton>

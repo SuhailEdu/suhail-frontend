@@ -1,6 +1,3 @@
-import DashboardHome from "@/app/dashboard/DashboardHome";
-import {getSession} from "@/auth";
-
 
 async function DashboardLayout({children}:any) {
 

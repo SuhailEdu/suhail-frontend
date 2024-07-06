@@ -6,7 +6,6 @@ import {getSession} from "@/auth";
 export async function  middleware(request: NextRequest) {
     const session = await getSession()
     if (( request.nextUrl.pathname !== '/auth/login' && request.nextUrl.pathname !== '/auth/register') && !session.isLoggedIn ) {
-        console.log('session skdjfksdjf sdfjksdfj', session.isLoggedIn)
         return NextResponse.redirect(new URL('/auth/login', request.url))
     }
     if (( request.nextUrl.pathname === '/auth/login' || request.nextUrl.pathname === '/auth/register') && session.isLoggedIn ) {

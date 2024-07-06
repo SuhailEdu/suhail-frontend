@@ -38,7 +38,7 @@ export default async function RootLayout({
         <html className={tajwalFont.className} dir="rtl" lang="ar">
             <body>
             <ReactQueryProvider>
-                <AuthProvider session={session}>
+                <AuthProvider session={JSON.stringify(session)}>
 
                     <div className={`h-screen `}>
 

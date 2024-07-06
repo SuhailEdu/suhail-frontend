@@ -6,15 +6,16 @@ import {SessionData} from "@/session";
 
 interface Props {
     children: ReactNode;
-    session: SessionData;
+    session: string;
 }
 
 function AuthProvider({children, session}: Props) {
     const setAuthUser = useAuthStore( s => s.setAuthUser)
     const [mounted, setMounted] = React.useState(false);
-    useEffect(() => {
-        if(session.isLoggedIn) {
-            setAuthUser(session)
+    const parsedSession = JSON.parse(session) as SessionData;
+        useEffect(() => {
+        if(parsedSession.isLoggedIn) {
+            setAuthUser(parsedSession);
         }
         setMounted(true)
 
