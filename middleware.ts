@@ -1,7 +1,6 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import type {NextRequest} from 'next/server'
+import {NextResponse} from 'next/server'
 import {getSession} from "@/auth";
-import {next} from "sucrase/dist/types/parser/tokenizer";
 
 // This function can be marked `async` if using `await` inside
 export async function  middleware(request: NextRequest) {
