@@ -1,8 +1,5 @@
 import CustomTextInput from "@/components/shared/CustomTextInput";
 import {InfoIcon, MinusIcon} from "lucide-react";
-import {Label} from "@/components/ui/label";
-import {useState} from 'react'
-
 
 interface QuestionType {
     title: string,
@@ -26,24 +23,14 @@ interface Props {
     clearActiveQuestionTooltipError: () => void
 }
 
-export default function QuestionItem({
-                             question,
-                             handleQuestionTitleChange,
-                             handleOptionsChange,
-                             removeOption,
-                             titleError,
-                             optionsError,
-                             clearActiveQuestionTooltipError,
-                             ...props
-                         }: Props) {
-
+function QuestionItem({question, handleQuestionTitleChange, handleOptionsChange, removeOption, titleError, optionsError, clearActiveQuestionTooltipError, ...props}: Props) {
 
     return (
         <>
             <div className="w-full md:w-1/2 text-xl my-8 ">
 
                 <CustomTextInput
-                    size={'large'}
+                    inputSize={'large'}
                     required
                     label="عنوان السؤال"
                     id="full_name"
@@ -53,10 +40,10 @@ export default function QuestionItem({
                     errors={titleError}
                     onChange={(e) => {
                         clearActiveQuestionTooltipError()
-                        handleQuestionTitleChange(e.target.value)
+                        handleQuestionTitleChange(e.currentTarget.value)
                     }}
 
-                    // onBlur={e => validateTitle(e.target.value)}
+                    // onBlur={e => validateTitle(e.currentTarget.value)}
                     hint={<div className="mr-2 mt-1 flex flex-start items-center gap-1 text-green-800">
                         <span><InfoIcon size={15}/></span>
                         <span>اختر عنوانا مناسبا للسؤال</span>
@@ -84,7 +71,7 @@ export default function QuestionItem({
                                         handleOptionsChange(option.id, {
                                             ...option,
                                             title: option.title,
-                                            isCorrect: e.target.checked
+                                            isCorrect: e.currentTarget.checked
                                         })
 
                                     }}
@@ -94,7 +81,7 @@ export default function QuestionItem({
                                 <label htmlFor="default-radio-2"
                                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                                     <CustomTextInput
-                                        size={'small'}
+                                        inputSize={'small'}
                                         required
                                         id="full_name"
                                         type="text"
@@ -106,7 +93,7 @@ export default function QuestionItem({
                                             clearActiveQuestionTooltipError()
                                             handleOptionsChange(option.id, {
                                                 ...option,
-                                                title: e.target.value,
+                                                title: e.currentTarget.value,
                                                 isCorrect: option.isCorrect
                                             })
                                         }}
@@ -132,3 +119,5 @@ export default function QuestionItem({
         </>
     )
 }
+
+export default QuestionItem;

@@ -91,7 +91,7 @@ export default function Login() {
                                     value={data.email}
                                     onChange={(e) => setData(d => ({
                                         ...d,
-                                        email: e.target.value
+                                        email: e.currentTarget.value
                                     }))}
                                 />
 
@@ -104,7 +104,7 @@ export default function Login() {
                                     value={data.password}
                                     onChange={(e) => setData(d => ({
                                         ...d,
-                                        password: e.target.value
+                                        password: e.currentTarget.value
                                     }))}
                                 />
                                 <PrimaryButton disabled={isLoading} type="submit">{isLoading ? <LoaderIcon className={'animate-spin'} /> : "تأكيد"}</PrimaryButton>

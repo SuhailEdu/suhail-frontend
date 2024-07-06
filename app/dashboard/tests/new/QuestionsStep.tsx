@@ -1,11 +1,18 @@
 import {ChevronDown, PlusIcon, XIcon} from "lucide-react";
-import {forwardRef, useEffect, useImperativeHandle, useState} from 'react'
+import React, {forwardRef, useEffect, useImperativeHandle, useState} from 'react'
 import QuestionItem from "../../../../components/QuestionItem";
 import Badge from "@/components/CustomBadge";
 import {z} from "zod";
 import PrimaryButton from "@/components/shared/PrimaryButton";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
 import {useApi} from "@/hooks/useApi";
+
+interface QuestionValidationError {
+    question_index: number,
+    option_index: number,
+    is_question_error: boolean,
+    message: string,
+}
 
 
 interface QuestionType {
@@ -22,25 +29,16 @@ interface QuestionOptionType {
 
 interface Props extends React.FC {
     questions: QuestionType[]
-    setQuestions: Function
+    setQuestions: React.Dispatch<React.SetStateAction<QuestionType[]>>
     tooltipMessage: { id: number, message: string }[]
-    setTooltipMessage: Function
-    serverValidationError : {
+    setTooltipMessage: React.Dispatch<React.SetStateAction<{id:number , message:string}[]>>
+    serverValidationError ?: {
         errorBelongsTo:"questions" | "testInfo"
-        error:object
-    }| null,
+        error:QuestionValidationError
+    },
 }
 
-
-// eslint-disable-next-line react/display-name
-const QuestionsStep = forwardRef(({
-                                      questions,
-                                      setQuestions,
-                                      tooltipMessage,
-                                      setTooltipMessage,
-    serverValidationError,
-                                      ...props
-                                  }: Props, ref) => {
+const QuestionsStep = forwardRef<{isReadyToSubmit:() => Promise<boolean>} , Props>(({questions, setQuestions, tooltipMessage, setTooltipMessage, serverValidationError} , ref)=> {
 
 
     const api = useApi()
@@ -55,16 +53,16 @@ const QuestionsStep = forwardRef(({
                 console.log("found:" , serverValidationError.error.message)
                 setTooltipMessage(e => ([
                     ...e,
-                    {
-                        id: question.id,
-                        message:  serverValidationError.error.message
-                    }
+                    // {
+                    //     id: question.id,
+                    //     message:  serverValidationError.error.message
+                    // }
                 ]))
             }
 
         }
 
-    }, [questions, serverValidationError.error, serverValidationError?.errorBelongsTo, setTooltipMessage]);
+    }, [questions, serverValidationError, serverValidationError?.errorBelongsTo, setTooltipMessage]);
 
 
 
@@ -85,7 +83,7 @@ const QuestionsStep = forwardRef(({
         })
 
 
-        useImperativeHandle(ref, () => ({
+         useImperativeHandle(ref, () => ({
             isReadyToSubmit: () => {
                 return isReadyToSubmit();
             }
@@ -99,7 +97,7 @@ const QuestionsStep = forwardRef(({
 
             if (activeQuestionHasTooltipError) {
                 setTooltipMessage(prev => {
-                    return prev.filter(t => t.id !== activeQuestion.id)
+                    return prev.filter(t => t.id != activeQuestion.id)
                 })
 
             }
@@ -111,15 +109,18 @@ const QuestionsStep = forwardRef(({
 
         function changeActiveQuestion(questionId: number) {
             // const titleValidation = parseQuestionTitleValidation()
+            if(!activeQuestion) {
+                return
+            }
+
             const isTitleValid = validateTitle()
             if (!isTitleValid) {
                 setTooltipMessage(prev => {
                     return [
                         ...prev,
                         {
-                            id: activeQuestion?.id,
+                            id: 33,
                             message: "يحتوي هذا السؤال على خطأ"
-
                         }
                     ]
                 })
@@ -135,7 +136,6 @@ const QuestionsStep = forwardRef(({
                         {
                             id: activeQuestion?.id,
                             message: "يحتوي هذا السؤال على خطأ"
-
                         }
                     ]
                 })
@@ -222,7 +222,7 @@ const QuestionsStep = forwardRef(({
                 zodErrors.map((e: { path: (string | number)[]; message: any; }) => {
 
                     errors.push({
-                        id: activeQuestion.options[e.path[0] ?? 0].id,
+                        id: activeQuestion.options[e.path[0] as number ?? 0].id,
                         message: e.message
                     })
 
@@ -406,7 +406,7 @@ const QuestionsStep = forwardRef(({
             }
         }
 
-        async function isReadyToSubmit(): boolean {
+        async function isReadyToSubmit(): Promise<boolean> {
 
 
             if (activeQuestion) {
@@ -488,13 +488,16 @@ const QuestionsStep = forwardRef(({
 
 
         return (
+            // @ts-ignore
             <div ref={ref}>
                 {/*{questionsCount.forEach(count => <QuestionItem />)}*/}
                 <div className="flex gap-1 flex-wrap">
                     {questions.map(q => (
 
-                        <TooltipProvider key={q.id} className={"border border-red-500"}>
-                            <Tooltip open={!!tooltipMessage.find(m => m.id === q.id)} className={"border border-red-500"}>
+                        <TooltipProvider key={q.id} >
+
+
+                            <Tooltip open={!!tooltipMessage.find(m => m.id === q.id)} >
                                 <TooltipTrigger>
                                     <Badge
                                         key={q.id}

@@ -5,11 +5,10 @@ import {
     BreadcrumbItem,
     BreadcrumbLink,
     BreadcrumbList,
-    BreadcrumbPage,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import Link from "next/link";
-import {FileIcon, HomeIcon, InfoIcon, LoaderIcon, PenIcon} from "lucide-react";
+import {HomeIcon, LoaderIcon, PenIcon} from "lucide-react";
 import TestInfoStep from "@/app/dashboard/tests/new/TestInfoStep";
 import QuestionsStep from "@/app/dashboard/tests/new/QuestionsStep";
 import InviteStep from "@/app/dashboard/tests/new/InviteStep";
@@ -17,11 +16,18 @@ import TestCreatedStep from "@/app/dashboard/tests/new/TestCreatedStep";
 import PrimaryButton from "@/components/shared/PrimaryButton";
 import {useApi} from "@/hooks/useApi";
 import {useMutation} from "@tanstack/react-query";
+import {AxiosError} from "axios";
 
 interface QuestionType {
     title: string,
     id: number,
     options: QuestionOptionType[]
+}
+interface QuestionValidationError {
+    question_index: number,
+    option_index: number,
+    is_question_error: boolean,
+    message: string,
 }
 
 interface QuestionOptionType {
@@ -61,16 +67,23 @@ export default function New() {
     }[]>([])
 
 
-    const questionStepRef = useRef()
-    const testInfoStepRef = useRef()
-    const inviteStepRef = useRef()
+    const questionStepRef = useRef<{
+        isReadyToSubmit:  () => Promise<boolean>
+    }>()
+    const testInfoStepRef = useRef<{
+        isReadyToSubmit:  () => Promise<boolean>
+
+    }>()
+    const inviteStepRef =  useRef<HTMLDivElement>()
 
     const [stepButtonsLoading, setStepButtonsLoading] = useState(false)
-    const [createdExam, setCreatedExam] = useState<object>({})
+    const [createdExam, setCreatedExam] = useState<{
+        id:string
+    }| null>(null)
 
     const [serverValidationError , setServerValidationError] = useState<{
         errorBelongsTo: "questions" | "testInfo",
-        error : object
+        error : QuestionValidationError
     } | null>(null)
 
     const mutation = useMutation({
@@ -84,7 +97,9 @@ export default function New() {
             setStepButtonsLoading(false)
         },
         onError: (e) => {
-            if(e?.response.status === 422 && e?.response?.data?.validationError) {
+            if(e instanceof AxiosError) {
+
+            if(e?.response && e.response.status === 422 && e?.response?.data?.validationError) {
                 const validationError = e?.response?.data?.validationError
                 console.log(validationError)
                 if(validationError && validationError.questions) {
@@ -93,6 +108,7 @@ export default function New() {
                         error: validationError.questions
                     })
                 }
+            }
             }
         },
         onSuccess: (s) =>  {
@@ -108,11 +124,15 @@ export default function New() {
             setStepButtonsLoading(false)
         },
         onError: (e) => {
-            if(e?.response.status === 422 && e?.response?.data?.validationError) {
+            if(e instanceof AxiosError) {
+
+
+            if(e?.response && e.response.status === 422 && e?.response?.data?.validationError) {
                 const validationError = e?.response?.data?.validationError
                 if(validationError && validationError.emails && validationError.emails.length > 0 ) {
                     setInvitationEmailsError(validationError.emails)
                 }
+            }
             }
         },
         onSuccess: (s) =>  setStep("testCreated"),
@@ -157,6 +177,10 @@ export default function New() {
         }
 
         if (step == 'questions') {
+            // if(questionStepRef.current && questionStepRef.current ) {
+            //
+            // }
+
             const isReadyToSubmit = await questionStepRef.current?.isReadyToSubmit()
 
             if (isReadyToSubmit) {
@@ -215,7 +239,7 @@ export default function New() {
         return 'test'
     }
 
-    function handleChangeQuestions(questions) {
+    function handleChangeQuestions(questions:React.SetStateAction<QuestionType[]>) {
         setQuestions(questions)
 
     }
@@ -307,18 +331,23 @@ export default function New() {
 
                     {step == 'questions' &&
                         <QuestionsStep
-                            serverValidationError={serverValidationError && serverValidationError.errorBelongsTo == "questions" ? serverValidationError : null}
+
+                            serverValidationError={serverValidationError && serverValidationError.errorBelongsTo == "questions" ? serverValidationError : undefined}
+                            //@ts-ignore
                             ref={questionStepRef}
                             tooltipMessage={tooltipMessage}
                             setTooltipMessage={setTooltipMessage}
                             questions={questions}
-                            setQuestions={(questions) => handleChangeQuestions(questions) } key={"questions"}/>
+                            setQuestions={(questions) => handleChangeQuestions(questions) }
+                            // key={"questions"}
+                        />
 
 
                     }
                     {step == 'invite' &&
                         <InviteStep
                             validationError={invitationEmailsError ?? ""}
+                            //@ts-ignore
                             ref={inviteStepRef}
                             emails={studentsEmails} setEmails={setStudentsEmails} key={"questions"}
                             setNextButtonDisabled={setIsNextDisabled}/>}

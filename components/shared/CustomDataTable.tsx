@@ -1,20 +1,8 @@
 "use client"
 
-import {
-    ColumnDef,
-    flexRender,
-    getCoreRowModel,
-    useReactTable,
-} from "@tanstack/react-table"
+import {ColumnDef,} from "@tanstack/react-table"
 
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table"
 import React from "react";
 import {LoaderIcon} from "lucide-react";
 
@@ -106,7 +94,7 @@ CustomDataTable.Row = function HeaderRow ({children , ...props}: React.PropsWith
     )
 
 }
-CustomDataTable.Cell = function HeaderRow ({children , ...props}: React.HTMLProps<'td'>) {
+CustomDataTable.Cell = function HeaderRow ({children , ...props}: React.PropsWithChildren) {
     return (
         <TableCell {...props}>
             {children}

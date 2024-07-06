@@ -13,12 +13,8 @@ interface RouteProps {
     label: string;
 }
 
-interface RouteProps {
-    routeList: RouteProps[];
 
-}
-
-export default function  MobileNavbar({routeList}: RouteProps)  {
+export default function  MobileNavbar({routeList}: {routeList: RouteProps[]})  {
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
 

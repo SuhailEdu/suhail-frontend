@@ -14,6 +14,7 @@ import {
     BadgeHelp,
     HomeIcon,
     LockKeyhole,
+    Menu,
     PaperclipIcon,
     PauseCircleIcon,
     PenIcon,
@@ -23,7 +24,6 @@ import PrimaryButton from "@/components/shared/PrimaryButton";
 import {useApi} from "@/hooks/useApi";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {Sheet, SheetContent, SheetHeader, SheetTitle,} from "@/components/ui/sheet"
-import {CiMenuBurger} from "react-icons/ci";
 import CustomBadge from "@/components/CustomBadge";
 import {getExamLiveStatus, getExamLiveStatusBadge} from "@/helpers/liveTestHelper";
 import useWebSocket, {ReadyState} from "react-use-websocket";
@@ -295,7 +295,7 @@ export default function New({params} : {params:{testId: string}}) {
 
                 <PrimaryButton color={'base'} onClick={() => setIsSidebarOpen(true)}
                                className={"flex justify-between gap-2 items-center text-xl cursor-pointer"}>
-                    <span><CiMenuBurger/></span>
+                    <span><Menu/></span>
                     <span>عرض الأسئلة</span>
                 </PrimaryButton>
                 )}

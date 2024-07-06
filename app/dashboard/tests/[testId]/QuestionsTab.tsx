@@ -18,6 +18,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle
 } from "@/components/ui/alert-dialog";
+import {AxiosError} from "axios";
 
 type Question = {
     title: string,
@@ -84,8 +85,8 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
 
 
     function removeOption(id: number) {
-        setOptions(o => {
-           return options.filter(o => o.id != id)
+        setOptions(op=> {
+           return op.filter(o => o.id != id)
         })
 
     }
@@ -169,7 +170,7 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
             zodErrors.map((e: { path: (string | number)[]; message: any; }) => {
 
                 errors.push({
-                    id: options[e.path[0] ?? 0].id,
+                    id: options[e.path[0] as number ?? 0].id,
                     message: e.message
                 })
 
@@ -218,6 +219,8 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
             console.log(res)
 
         } catch (e) {
+            if(e instanceof AxiosError) {
+
             if(e?.response?.status === 422 && e?.response?.data?.validationError) {
                 const validationError = e.response.data.validationError
                 if(validationError && validationError.title) {
@@ -235,6 +238,7 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
                     ]))
                     // setTitleError(validationError.title)
                 }
+            }
             }
 
         }
@@ -298,6 +302,8 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
             console.log(res)
 
         } catch (e) {
+            if(e instanceof AxiosError) {
+
             if(e?.response?.status === 422 && e?.response?.data?.validationError) {
                 const validationError = e.response.data.validationError
                 if(validationError && validationError.title) {
@@ -322,6 +328,7 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
                     // setTitleError(validationError.title)
                 }
             }
+            }
 
         }
 
@@ -334,7 +341,7 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
         setIsDeleteQuestionDialogOpen(true)
     }
 
-    async function deleteConfirmedQuestion(e) {
+    async function deleteConfirmedQuestion(e:React.FormEvent<HTMLButtonElement>) {
         e.preventDefault()
         setIsDeletingQuestion(true)
         setDeleteQuestionValidationMessage("")
@@ -350,6 +357,8 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
             }
 
         } catch (e) {
+            if(e instanceof AxiosError) {
+
             if(e?.response?.status === 422 && e?.response?.data?.validationError) {
                 const validationError = e.response.data.validationError
                 console.log(validationError)
@@ -357,7 +366,7 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
                     setDeleteQuestionValidationMessage("حدث خطأ ما")
                 // }
             }
-
+            }
         }
 
         setIsDeletingQuestion(false)
@@ -376,7 +385,7 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
 
                     <span>
                     <CustomBadge type={"info"} >
-                        {questionsQuery?.data?.length ?? 0}
+                        {questionsQuery?.data?.questions.length ?? 0}
                         {" "}
                         سؤال
 
@@ -391,10 +400,10 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
 
             </div>
             <div className={"mt-20 "}>
-                {questionsQuery.data && questionsQuery.data.length ?(
+                {questionsQuery.data && questionsQuery.data.questions.length ?(
 
                 <Accordion className={"border rounded-lg"} type="single" collapsible>
-                    {questionsQuery.data &&  questionsQuery.data?.map((q , index) => (
+                    {questionsQuery.data &&  questionsQuery.data?.questions?.map((q , index) => (
 
                     <AccordionItem  value={q.title} key={q.title}>
                         <AccordionTrigger    className={"bg-slate-100 p-2 h-12"}>{index+1} - {q.title}</AccordionTrigger>
@@ -458,7 +467,7 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
                             <div className="w-full md:w-1/2 text-xl my-12 ">
 
                                 <CustomTextInput
-                                    size={'large'}
+                                    inputSize={'large'}
                                     required
                                     label="عنوان السؤال"
                                     id="full_name"
@@ -468,10 +477,10 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
                                     errors={titleError}
                                     onChange={(e) => {
                                         setTitleError("")
-                                        setQuestion(q => ({...q , title:e.target.value}))
+                                        setQuestion(q => ({...q , title:e.currentTarget.value}))
                                     }}
 
-                                    // onBlur={e => validateTitle(e.target.value)}
+                                    // onBlur={e => validateTitle(e.currentTarget.value)}
                                     hint={<div className="mr-2 mt-1 flex flex-start items-center gap-1 text-green-800">
                                         <span><InfoIcon size={15}/></span>
                                         <span>اختر عنوانا مناسبا للسؤال</span>
@@ -495,15 +504,14 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
                                                 <input
                                                     onChange={e => {
                                                         // setOptionsErrors([])
-                                                        console.log(e.target.checked , options)
+                                                        console.log(e.currentTarget.checked , options)
 
                                                         setOptions(prevOptions => {
                                                             return prevOptions.map(o => {
                                                                 if(o.id == option.id) {
-                                                                    console.log("foun" , e.target.value , e.target.checked)
                                                                     return {
                                                                         ...o,
-                                                                        is_correct: e.target.checked
+                                                                        is_correct: e.currentTarget.checked
                                                                     }
                                                                 }
                                                                 return {
@@ -523,7 +531,7 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
                                                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                                                     <CustomTextInput
                                                         htmlFor={option.id.toString()}
-                                                        size={'small'}
+                                                        inputSize={'small'}
                                                         required
                                                         id="full_name"
                                                         type="text"
@@ -538,7 +546,7 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
                                                                     if(o.id == option.id) {
                                                                         return {
                                                                             ...o,
-                                                                            option: e.target.value
+                                                                            option: e.currentTarget.value
                                                                         }
                                                                     }
                                                                     return o
@@ -618,7 +626,7 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <AlertDialogCancel>الغاء</AlertDialogCancel>
-                        <AlertDialogAction   onClick={deleteConfirmedQuestion} className={"bg-transparent"}>
+                        <AlertDialogAction  onClick={deleteConfirmedQuestion} className={"bg-transparent"}>
                             <PrimaryButton disabled={isDeletingQuestion} color={"danger"}>
                                 {isDeletingQuestion ?
                                     ( <span>

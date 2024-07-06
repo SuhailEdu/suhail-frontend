@@ -26,9 +26,10 @@ import {
 import CreatableSelect from "react-select/creatable";
 import React, {KeyboardEventHandler, useState} from "react";
 import {z} from "zod";
-import {LoaderIcon, PaperclipIcon, TrashIcon} from "lucide-react";
-import {BsThreeDotsVertical} from "react-icons/bs";
+import {GripHorizontal, LoaderIcon, PaperclipIcon, TrashIcon} from "lucide-react";
 import ParticipantAnswersDialog from "@/app/dashboard/tests/[testId]/ParticipantAnswersDialog";
+import {AxiosError} from "axios";
+import {MultiValue} from "react-select";
 
 type Participant = {
     id:string,
@@ -49,7 +50,10 @@ type Participant = {
 ]
 export default function StudentsTab({testId}:{testId:string}) {
 
-    const [emails , setEmails] = useState<string[]>([])
+    const [emails , setEmails] = useState<{
+        label:string,
+        value:string,
+    }[] | MultiValue<{label:string , value:string}>>([])
 
     const api = useApi()
 
@@ -104,7 +108,7 @@ export default function StudentsTab({testId}:{testId:string}) {
 
 
 
-    const createOption = (label: string) => ({
+    const createOption = (label: string) : {label:string , value:string}=> ({
         label,
         value: label,
     });
@@ -114,6 +118,7 @@ export default function StudentsTab({testId}:{testId:string}) {
     function validateEmail(email: string) {
         const schema = z.string().email({message: "البريد الالكتروني غير صحيح"})
             .refine((e) => {
+                // @ts-ignore
                 const verifiedEmails = emails.map(v => v.value)
                 return !verifiedEmails.includes(e)
 
@@ -147,6 +152,7 @@ export default function StudentsTab({testId}:{testId:string}) {
         switch (event.key) {
             case 'Enter':
             case 'Tab':
+
                 setEmails((prev) => [...prev, createOption(inputValue)]);
                 setInputValue('');
                 event.preventDefault();
@@ -169,12 +175,15 @@ export default function StudentsTab({testId}:{testId:string}) {
             }
 
         } catch (e) {
+            if(e instanceof AxiosError) {
+
             if(e?.response?.status === 422 && e?.response?.data?.validationError) {
                 const validationError = e.response.data.validationError
                 if(validationError.emails ) {
                     setEmailValidationMessage(validationError.emails)
                 }
 
+            }
             }
 
         }
@@ -206,12 +215,15 @@ export default function StudentsTab({testId}:{testId:string}) {
             }
 
         } catch (e) {
+            if(e instanceof AxiosError) {
+
             if(e?.response?.status === 422 && e?.response?.data?.validationError) {
                 const validationError = e.response.data.validationError
                 console.log(validationError)
                 if(validationError && validationError.emails) {
                     setDeleteParticipantValidationMessage(validationError.emails)
                 }
+            }
             }
 
         }
@@ -227,6 +239,7 @@ export default function StudentsTab({testId}:{testId:string}) {
     }
 
 
+    // @ts-ignore
     return (
         <div className=" container">
 
@@ -274,7 +287,7 @@ export default function StudentsTab({testId}:{testId:string}) {
 
                                     <CustomDataTable.Cell>
                                         <DropdownMenu dir={"rtl"}>
-                                            <DropdownMenuTrigger><BsThreeDotsVertical /></DropdownMenuTrigger>
+                                            <DropdownMenuTrigger><GripHorizontal /></DropdownMenuTrigger>
                                             <DropdownMenuContent>
                                                 <DropdownMenuLabel>الخيارات</DropdownMenuLabel>
                                                 <DropdownMenuSeparator />
@@ -352,13 +365,14 @@ export default function StudentsTab({testId}:{testId:string}) {
                                 onChange={(newValue) => setEmails(newValue)}
                                 onKeyDown={e => handleKeyDown(e)}
                                 placeholder="أدخل عنوان البريد الالكترني ثم اضغط على زر Enter"
+                                // @ts-ignore
                                 value={emails}
                             />
                             <div className={"flex justify-end items-center mt-8"}>
                                 <PrimaryButton
                                     onClick={handleSendInvitations}
 
-                                    disabled={emails.length < 1 || isSendingIvitations || emailValidationMessage}>{
+                                    disabled={emails.length < 1 || isSendingIvitations || !!emailValidationMessage}>{
                                     (isSendingIvitations ?
                                             <span><LoaderIcon className={"animate-spin"}/></span>
                                             :

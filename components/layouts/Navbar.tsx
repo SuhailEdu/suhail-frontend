@@ -13,7 +13,7 @@ const routeList: RouteProps[] = [
     },
 ];
 
-interface RouteProps {
+type RouteProps  = {
     href: string;
     label: string;
 }

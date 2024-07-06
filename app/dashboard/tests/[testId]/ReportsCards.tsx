@@ -256,14 +256,14 @@ export default function ReportsCards({exam , updateExam}:{exam:ExamData, updateE
                 <div className={"text-2xl"}>اعدادت الاختبار</div>
                 <div className={"mt-8 max-w-xl"}>
                     <CustomTextInput
-                        size={'large'}
+                        inputSize={'large'}
                         required
                         label="عنوان الاختبار"
                         id="full_name"
                         type="text"
                         errors={validationErrors.exam_title}
                         value={testData.exam_title}
-                        onChange={(e) => setData("exam_title", e.target.value)}
+                        onChange={(e) => setData("exam_title", e.currentTarget.value)}
                         hint={<div className="mr-2 mt-1 text-lg flex flex-start items-center gap-1 text-green-800">
                             <span><InfoIcon size={15}/></span>
                             <span>اختر عنوانا مناسبا لاختبارك</span>
@@ -313,12 +313,12 @@ export default function ReportsCards({exam , updateExam}:{exam:ExamData, updateE
                     <Label className={"text-lg"}>عناوين الIP</Label>
                     <div className={" flex justify-end flex-row-reverse gap-4"}>
                         <CustomTextInput
-                            size={'large'}
+                            inputSize={'large'}
                             id="full_name"
                             type="text"
                             errors={validationErrors.ip_range_start}
                             value={testData.ip_range_start ?? ""}
-                            onChange={(e) => setData("ip_range_start", e.target.value)}
+                            onChange={(e) => setData("ip_range_start", e.currentTarget.value)}
                             placeholder={"145.82.44.1"}
                             maxLength={15}
                             hint={<div className="mr-2 mt-1 text-lg flex flex-start items-center gap-1 text-green-800">
@@ -329,13 +329,13 @@ export default function ReportsCards({exam , updateExam}:{exam:ExamData, updateE
                         <span className={"text-4xl"}>/</span>
 
                         <CustomTextInput
-                            size={'large'}
+                            inputSize={'large'}
                             id="full_name"
                             type="text"
                             errors={validationErrors.ip_range_end}
                             value={testData.ip_range_end ?? ""}
                             maxLength={15}
-                            onChange={(e) => setData("ip_range_end", e.target.value)}
+                            onChange={(e) => setData("ip_range_end", e.currentTarget.value)}
                             placeholder={"145.82.44.255"}
                             hint={<div className="mr-2 mt-1 text-lg flex flex-start items-center gap-1 text-green-800">
                                 <span>الى</span>

@@ -39,7 +39,7 @@ export default function Register() {
 
 
 
-    async function submit(e: SubmitEvent) {
+    async function submit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
         setValidationErrors(defaultErrors)
 
@@ -100,7 +100,7 @@ export default function Register() {
                                         value={data.first_name}
                                         onChange={(e) => setData(d => ({
                                             ...d,
-                                            first_name: e.target.value
+                                            first_name: e.currentTarget.value
                                         }))}
                                     />
 
@@ -112,7 +112,7 @@ export default function Register() {
                                         value={data.last_name}
                                         onChange={(e) => setData(d => ({
                                             ...d,
-                                            last_name: e.target.value
+                                            last_name: e.currentTarget.value
                                         }))}
                                     />
                                 </div>
@@ -125,7 +125,7 @@ export default function Register() {
                                     value={data.email}
                                     onChange={(e) => setData(d => ({
                                         ...d,
-                                        email: e.target.value
+                                        email: e.currentTarget.value
                                     }))}
                                 />
 
@@ -138,7 +138,7 @@ export default function Register() {
                                     value={data.password}
                                     onChange={(e) => setData(d => ({
                                         ...d,
-                                        password: e.target.value
+                                        password: e.currentTarget.value
                                     }))}
                                 />
                                 <PrimaryButton type="submit">{isLoading ? <LoaderIcon className={'animate-spin'} /> : "تأكيد"}</PrimaryButton>

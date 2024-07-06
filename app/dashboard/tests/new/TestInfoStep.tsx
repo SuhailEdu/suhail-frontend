@@ -1,10 +1,10 @@
 import {InfoIcon} from "lucide-react";
-import {forwardRef, useImperativeHandle, useState} from 'react'
+import React, {forwardRef, useImperativeHandle, useState} from 'react'
 import {z} from "zod";
 import CustomTextInput from "@/components/shared/CustomTextInput";
 import {Label} from "@/components/ui/label";
 import {useApi} from "@/hooks/useApi";
-import {sleep} from "@tanstack/query-core/build/modern/utils";
+import {AxiosError} from "axios";
 
 
 type TestData = {
@@ -14,7 +14,7 @@ type TestData = {
 
 interface Props {
     testData: TestData
-    setTestData: (value: TestData) => TestData
+    setTestData: React.Dispatch<React.SetStateAction<TestData>>
 }
 
 const TestInfoStep = forwardRef(({testData, setTestData}: Props, ref) => {
@@ -31,7 +31,7 @@ const TestInfoStep = forwardRef(({testData, setTestData}: Props, ref) => {
         }));
 
 
-        async function isReadyToSubmit(): boolean {
+        async function isReadyToSubmit(): Promise<boolean> {
 
 
         const validationReady = validateTitle(testData.title)
@@ -47,16 +47,17 @@ const TestInfoStep = forwardRef(({testData, setTestData}: Props, ref) => {
                    exam_title: testData.title
                })
                return true
-               console.log("success" , res)
 
            } catch (e) {
+               if( e instanceof AxiosError) {
+
                if(e?.response?.status == 422) {
                    console.log("error" , e.response)
                    const error = e?.response?.data?.validationError?.exam_title
                    if(error) {
                        setTitleError(error)
                    }
-
+               }
                }
                return false
            }
@@ -93,11 +94,12 @@ const TestInfoStep = forwardRef(({testData, setTestData}: Props, ref) => {
         return (
             <>
                 <div
+                    //@ts-ignore
                     ref={ref}
                     className="w-full md:w-1/2 text-xl">
 
                     <CustomTextInput
-                        size={'large'}
+                        inputSize={'large'}
                         required
                         label="عنوان الاختبار"
                         id="full_name"
@@ -105,11 +107,11 @@ const TestInfoStep = forwardRef(({testData, setTestData}: Props, ref) => {
                         errors={titleError}
                         value={testData.title}
                         onChange={(e) => {
-                            validateTitle(e.target.value)
+                            validateTitle(e.currentTarget.value)
                             setTestData((values) => {
                                     return {
                                         ...values,
-                                        title: e.target.value
+                                        title: e.currentTarget.value
                                     }
                                 }
                             )

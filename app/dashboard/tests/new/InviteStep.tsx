@@ -1,12 +1,8 @@
-import {CrossIcon, PlusIcon, TimerIcon, XIcon} from "lucide-react";
-import React, {useState, KeyboardEventHandler, useEffect} from 'react'
-import QuestionItem from "../../../../components/QuestionItem";
-import Badge from "@/components/CustomBadge";
-import {isValid, z, ZodError, ZodIssue, ZodParsedType} from "zod";
-import PrimaryButton from "@/components/shared/PrimaryButton";
-import {Label} from "flowbite-react";
+import React, {KeyboardEventHandler, useEffect, useState} from 'react'
+import {z} from "zod";
 // import Select from "react-select";
 import CreatableSelect from 'react-select/creatable';
+import {MultiValue} from "react-select";
 
 interface Option {
     readonly label: string;
@@ -15,8 +11,9 @@ interface Option {
 
 interface Props extends  React.ComponentProps<'p'>{
     setNextButtonDisabled: Function
-    emails: readonly Option[]
-    setEmails: Function,
+    emails: MultiValue<Option>,
+    // setEmails: (prev : MultiValue<Option>) => MultiValue<Option>,
+    setEmails: React.Dispatch<React.SetStateAction<MultiValue<Option>>>
     validationError?: string
 }
 
@@ -71,7 +68,7 @@ export default function InviteStep ({emails, setEmails , validationError, ...pro
         switch (event.key) {
             case 'Enter':
             case 'Tab':
-                setEmails((prev) => [...prev, createOption(inputValue)]);
+                setEmails((prev) => [...prev , createOption(inputValue)]);
                 setInputValue('');
                 event.preventDefault();
         }

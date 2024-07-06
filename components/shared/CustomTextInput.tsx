@@ -1,26 +1,25 @@
 import {Label} from "flowbite-react";
-import React from "react";
+import React, {ReactNode} from "react";
 import {Input} from "@/components/ui/input";
 
 interface CustomTextInputProps {
     label?: string
     errors?: string
-    hint?: React.HTMLProps<'div'>
+    hint?: ReactNode
     labelClass?: string
-    size?: 'small' | 'medium' | 'large'
+    inputSize?: 'small' | 'medium' | 'large'
 }
 
 type Props = CustomTextInputProps & React.HTMLProps<HTMLInputElement>
 
-export default function CustomTextInput({errors, size, labelClass, hint, label, required, ...props}:
-                    Props)  {
+export default function CustomTextInput({errors, inputSize, labelClass, hint, label, required, ...props}: Props)  {
 
     function getSize() {
-        if (size == undefined) {
+        if (inputSize == undefined) {
             return ''
 
         }
-        switch (size) {
+        switch (inputSize) {
             case 'small':
                 return 'text-md'
             case 'medium':

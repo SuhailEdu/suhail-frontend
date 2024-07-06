@@ -2,7 +2,7 @@ export interface Exam  {
   id: string,
   user_id: string,
   exam_title: string,
-  status: string,
+  status: 'public' | 'private',
   created_at: string,
   updated_at: string,
   questions_count: number,
