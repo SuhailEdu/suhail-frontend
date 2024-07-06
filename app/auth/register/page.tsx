@@ -1,20 +1,16 @@
 'use client'
-import React, {FormEvent, FormEventHandler, FormHTMLAttributes, useEffect, useState} from "react";
-import axiosClient from "@/providers/axiosClient";
-import {useMutation} from "@tanstack/react-query";
-import Image from "next/image";
+import React, {useState} from "react";
 import CustomTextInput from "@/components/shared/CustomTextInput";
 import PrimaryButton from "@/components/shared/PrimaryButton";
 import Link from "next/link";
-import {AxiosError} from "axios";
 import {z} from "zod";
-import {redirect, useRouter} from "next/navigation";
-import {useFormState} from "react-dom";
-import {login, register} from "@/auth";
-import useAuthStore from "@/stores/AuthStore";
+import {register} from "@/auth";
+import {LoaderIcon} from "lucide-react";
 
 
 export default function Register() {
+
+    const [isLoading , setIsLoading] = useState(false)
 
 
     const registerSchema = z.object({
@@ -59,6 +55,8 @@ export default function Register() {
             return
         }
 
+        setIsLoading(true)
+
             const res = await register(data)
 
         if (!res?.isOk && res?.status == 422) {
@@ -67,13 +65,11 @@ export default function Register() {
                 ...prevErrors,
                 ...res.errors.validationError
             }))
+            setIsLoading(false)
             return
         }
 
-        if(res?.status == 200) {
-
-        }
-        console.log(res)
+        setIsLoading(false)
 
     }
 
@@ -145,12 +141,13 @@ export default function Register() {
                                         password: e.target.value
                                     }))}
                                 />
-                                <PrimaryButton type="submit">تأكيد</PrimaryButton>
+                                <PrimaryButton type="submit">{isLoading ? <LoaderIcon className={'animate-spin'} /> : "تأكيد"}</PrimaryButton>
                             </form>
                             <p
                                 className="mt-4 text-sm text-gray-500 dark:text-gray-400">لديك حساب بالفعل؟
                                 {" "}
                                 <Link
+                                    prefetch={false}
                                     href="/auth/login"
                                     className="font-medium text-blue-600 hover:underline dark:text-blue-500">
                                     تسجيل الدخول

@@ -30,16 +30,20 @@ type Option = {
     is_correct: boolean,
 }
 type QuestionResponse = {
-    id:string,
-    title:string,
-    type:string,
-    created_at:string,
-    updated_at:string,
-    options: {
-        option:string,
-        is_correct:boolean,
+    live_status: string,
+    questions: {
+        id:string,
+        title:string,
+        type:string,
+        created_at:string,
+        updated_at:string,
+        options: {
+            option:string,
+            is_correct:boolean,
+        }[]
+
     }[]
-}[]
+}
 
 export default function QuestionsTab({ testId , isMyExam} : { testId:string , isMyExam?:boolean }) {
 
@@ -108,10 +112,10 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
                     return true
                 }
                 const titles = questionsQuery.data
+                    .questions
                     .filter(q => {
                         if(dialogMode === "create") {
                             return true
-
                         }
                         return q.id != questionToUpdate;
                     })
@@ -238,12 +242,12 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
     }
 
     function openUpdateQuestionDialog(questionId:string) {
-        if(!questionsQuery.data||  questionsQuery.data?.length < 1) {
+        if(!questionsQuery.data||  questionsQuery.data?.questions.length < 1) {
             return
 
         }
 
-        const q = questionsQuery.data.find(q  => q.id == questionId)
+        const q = questionsQuery.data.questions.find(q  => q.id == questionId)
         if(q) {
 
             setQuestion({

@@ -5,10 +5,12 @@ import PrimaryButton from "@/components/shared/PrimaryButton";
 import Link from "next/link";
 import {z} from "zod";
 import {login} from "@/auth";
+import {LoaderIcon} from "lucide-react";
 
 
 export default function Login() {
 
+    const [isLoading , setIsLoading] = useState(false)
 
     const loginSchema = z.object({
         email: z.string().email(),
@@ -32,6 +34,7 @@ export default function Login() {
 
     async function submit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
+
         setValidationErrors(defaultErrors)
 
         const s = loginSchema.safeParse(data)
@@ -46,6 +49,8 @@ export default function Login() {
             return
         }
 
+        setIsLoading(true)
+
             const res = await login(data)
 
         if (!res?.isOk && res?.status == 422) {
@@ -53,14 +58,11 @@ export default function Login() {
                 ...prevErrors,
                 ...res.errors.validationError
             }))
+            setIsLoading(false)
             return
         }
 
-        if(res?.status == 200) {
-
-        }
-        console.log(res)
-
+        setIsLoading(false)
     }
 
     return (
@@ -105,14 +107,16 @@ export default function Login() {
                                         password: e.target.value
                                     }))}
                                 />
-                                <PrimaryButton type="submit">تأكيد</PrimaryButton>
+                                <PrimaryButton disabled={isLoading} type="submit">{isLoading ? <LoaderIcon className={'animate-spin'} /> : "تأكيد"}</PrimaryButton>
                             </form>
                             <p
                                 className="mt-4 text-sm text-gray-500 dark:text-gray-400">ليس لديك حساب بعد ؟
                                 {" "}
                                 <Link
+                                    prefetch={false}
                                     href="/auth/register"
-                                    className="font-medium text-blue-600 hover:underline dark:text-blue-500">أنشاء حساب
+                                    className="font-medium text-blue-600 hover:underline dark:text-blue-500">
+                                    أنشاء حساب
                                     جديد</Link>.</p>
                         </div>
                     </div>

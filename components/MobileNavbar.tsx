@@ -57,7 +57,7 @@ export default function  MobileNavbar({routeList}: RouteProps)  {
                     {isLoggedIn ? (
                         <LogOutButton  />
                     ): (
-                        <PrimaryButton href={'/auth/login'}>انضم الينا</PrimaryButton>
+                        <PrimaryButton prefetch={false} href={'/auth/login'}>انضم الينا</PrimaryButton>
                     )}
                     {/*<a
                         rel="noreferrer noopener"

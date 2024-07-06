@@ -4,7 +4,8 @@ import {cn} from "@/lib/utils";
 import React from "react";
 
 interface Props extends React.ComponentProps<'button'> {
-    href?: string
+    href?: string,
+    prefetch?: boolean,
     color? :"primary" | "danger" | 'base'
 }
 

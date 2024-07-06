@@ -8,6 +8,7 @@ import ReactQueryProvider from "@/components/ReactQueryProvider";
 import AuthProvider from "@/providers/authProvider";
 import {getSession} from "@/auth";
 import {Toaster} from "@/components/ui/toaster";
+import NextTopLoader from "nextjs-toploader";
 
 const inter = Inter({subsets: ["latin"]});
 
@@ -41,6 +42,17 @@ export default async function RootLayout({
             <div className={`h-screen `}>
 
             <Navbar/>
+                <NextTopLoader
+                    color="#2299DD"
+                    initialPosition={0.08}
+                    crawlSpeed={200}
+                    height={3}
+                    crawl={true}
+                    showSpinner={true}
+                    easing="ease"
+                    speed={200}
+                    shadow="0 0 10px #2299DD,0 0 5px #2299DD"
+                />
                 <main>
                     {children}
                 </main>

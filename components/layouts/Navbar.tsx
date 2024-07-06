@@ -4,6 +4,7 @@ import PrimaryButton from "@/components/shared/PrimaryButton";
 import MobileNavbar from "@/components/MobileNavbar";
 import {getSession} from "@/auth";
 import LogOutButton from "@/components/layouts/LogUserOUt";
+import Link from "next/link";
 
 const routeList: RouteProps[] = [
     {
@@ -27,34 +28,34 @@ export default async function LayoutNavbar() {
             <NavigationMenu className="mx-auto">
                 <NavigationMenuList className="container h-14 px-4 w-screen flex flex-row-reverse justify-between ">
                     <NavigationMenuItem className="font-bold flex">
-                        <a
+                        <Link
+                            prefetch={false}
                             rel="noreferrer noopener"
                             href="/"
                             className="ml-2 font-bold text-xl flex"
                         >
                             {/*<LogoIcon/>*/}
-                            سهيل
-                        </a>
+                            منصة سهيل الذكية
+                        </Link>
                     </NavigationMenuItem>
 
                     {/* mobile */}
                     <span className="flex md:hidden">
                         <MobileNavbar routeList={routeList}/>
 
-
           </span>
 
                     {/* desktop */}
                     <nav className="hidden md:flex gap-2">
                         {routeList.map((route: RouteProps, i) => (
-                            <a
+                            <Link
                                 rel="noreferrer noopener"
                                 href={route.href}
                                 key={i}
                                 className={`text-[17px] `}
                             >
                                 {route.label}
-                            </a>
+                            </Link>
                         ))}
                     </nav>
 
@@ -62,7 +63,7 @@ export default async function LayoutNavbar() {
                         {session.isLoggedIn ? (
                             <LogOutButton />
                             ): (
-                            <PrimaryButton href={'/auth/login'}>انضم الينا</PrimaryButton>
+                            <PrimaryButton prefetch={false}  href={'/auth/login'}>انضم الينا</PrimaryButton>
                         )}
 
                     </div>
