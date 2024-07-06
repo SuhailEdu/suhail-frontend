@@ -40,10 +40,9 @@ function QuestionItem({question, handleQuestionTitleChange, handleOptionsChange,
                     errors={titleError}
                     onChange={(e) => {
                         clearActiveQuestionTooltipError()
-                        handleQuestionTitleChange(e.currentTarget.value)
+                        handleQuestionTitleChange(e.target.value)
                     }}
 
-                    // onBlur={e => validateTitle(e.currentTarget.value)}
                     hint={<div className="mr-2 mt-1 flex flex-start items-center gap-1 text-green-800">
                         <span><InfoIcon size={15}/></span>
                         <span>اختر عنوانا مناسبا للسؤال</span>
@@ -71,7 +70,7 @@ function QuestionItem({question, handleQuestionTitleChange, handleOptionsChange,
                                         handleOptionsChange(option.id, {
                                             ...option,
                                             title: option.title,
-                                            isCorrect: e.currentTarget.checked
+                                            isCorrect: e.target.checked
                                         })
 
                                     }}
@@ -93,7 +92,7 @@ function QuestionItem({question, handleQuestionTitleChange, handleOptionsChange,
                                             clearActiveQuestionTooltipError()
                                             handleOptionsChange(option.id, {
                                                 ...option,
-                                                title: e.currentTarget.value,
+                                                title: e.target.value,
                                                 isCorrect: option.isCorrect
                                             })
                                         }}

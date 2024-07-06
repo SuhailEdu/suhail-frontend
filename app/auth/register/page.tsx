@@ -100,7 +100,7 @@ export default function Register() {
                                         value={data.first_name}
                                         onChange={(e) => setData(d => ({
                                             ...d,
-                                            first_name: e.currentTarget.value
+                                            first_name: e.target.value
                                         }))}
                                     />
 
@@ -112,7 +112,7 @@ export default function Register() {
                                         value={data.last_name}
                                         onChange={(e) => setData(d => ({
                                             ...d,
-                                            last_name: e.currentTarget.value
+                                            last_name: e.target.value
                                         }))}
                                     />
                                 </div>
@@ -125,7 +125,7 @@ export default function Register() {
                                     value={data.email}
                                     onChange={(e) => setData(d => ({
                                         ...d,
-                                        email: e.currentTarget.value
+                                        email: e.target.value
                                     }))}
                                 />
 
@@ -138,7 +138,7 @@ export default function Register() {
                                     value={data.password}
                                     onChange={(e) => setData(d => ({
                                         ...d,
-                                        password: e.currentTarget.value
+                                        password: e.target.value
                                     }))}
                                 />
                                 <PrimaryButton type="submit">{isLoading ? <LoaderIcon className={'animate-spin'} /> : "تأكيد"}</PrimaryButton>

@@ -477,10 +477,9 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
                                     errors={titleError}
                                     onChange={(e) => {
                                         setTitleError("")
-                                        setQuestion(q => ({...q , title:e.currentTarget.value}))
+                                        setQuestion(q => ({...q , title:e.target.value}))
                                     }}
 
-                                    // onBlur={e => validateTitle(e.currentTarget.value)}
                                     hint={<div className="mr-2 mt-1 flex flex-start items-center gap-1 text-green-800">
                                         <span><InfoIcon size={15}/></span>
                                         <span>اختر عنوانا مناسبا للسؤال</span>
@@ -504,14 +503,14 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
                                                 <input
                                                     onChange={e => {
                                                         // setOptionsErrors([])
-                                                        console.log(e.currentTarget.checked , options)
+                                                        console.log(e.target.checked , options)
 
                                                         setOptions(prevOptions => {
                                                             return prevOptions.map(o => {
                                                                 if(o.id == option.id) {
                                                                     return {
                                                                         ...o,
-                                                                        is_correct: e.currentTarget.checked
+                                                                        is_correct: e.target.checked
                                                                     }
                                                                 }
                                                                 return {
@@ -530,6 +529,7 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
                                                 <label htmlFor="default-radio-2"
                                                        className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                                                     <CustomTextInput
+                                                        //@ts-ignore
                                                         htmlFor={option.id.toString()}
                                                         inputSize={'small'}
                                                         required
@@ -546,7 +546,7 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
                                                                     if(o.id == option.id) {
                                                                         return {
                                                                             ...o,
-                                                                            option: e.currentTarget.value
+                                                                            option: e.target.value
                                                                         }
                                                                     }
                                                                     return o

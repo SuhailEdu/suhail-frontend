@@ -263,7 +263,7 @@ export default function ReportsCards({exam , updateExam}:{exam:ExamData, updateE
                         type="text"
                         errors={validationErrors.exam_title}
                         value={testData.exam_title}
-                        onChange={(e) => setData("exam_title", e.currentTarget.value)}
+                        onChange={(e) => setData("exam_title", e.target.value)}
                         hint={<div className="mr-2 mt-1 text-lg flex flex-start items-center gap-1 text-green-800">
                             <span><InfoIcon size={15}/></span>
                             <span>اختر عنوانا مناسبا لاختبارك</span>
@@ -318,7 +318,7 @@ export default function ReportsCards({exam , updateExam}:{exam:ExamData, updateE
                             type="text"
                             errors={validationErrors.ip_range_start}
                             value={testData.ip_range_start ?? ""}
-                            onChange={(e) => setData("ip_range_start", e.currentTarget.value)}
+                            onChange={(e) => setData("ip_range_start", e.target.value)}
                             placeholder={"145.82.44.1"}
                             maxLength={15}
                             hint={<div className="mr-2 mt-1 text-lg flex flex-start items-center gap-1 text-green-800">
@@ -335,7 +335,7 @@ export default function ReportsCards({exam , updateExam}:{exam:ExamData, updateE
                             errors={validationErrors.ip_range_end}
                             value={testData.ip_range_end ?? ""}
                             maxLength={15}
-                            onChange={(e) => setData("ip_range_end", e.currentTarget.value)}
+                            onChange={(e) => setData("ip_range_end", e.target.value)}
                             placeholder={"145.82.44.255"}
                             hint={<div className="mr-2 mt-1 text-lg flex flex-start items-center gap-1 text-green-800">
                                 <span>الى</span>

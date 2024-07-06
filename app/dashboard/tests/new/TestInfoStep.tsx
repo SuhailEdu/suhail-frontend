@@ -107,11 +107,11 @@ const TestInfoStep = forwardRef(({testData, setTestData}: Props, ref) => {
                         errors={titleError}
                         value={testData.title}
                         onChange={(e) => {
-                            validateTitle(e.currentTarget.value)
+                            validateTitle(e.target.value)
                             setTestData((values) => {
                                     return {
                                         ...values,
-                                        title: e.currentTarget.value
+                                        title: e.target.value
                                     }
                                 }
                             )

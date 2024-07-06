@@ -10,7 +10,7 @@ interface CustomTextInputProps {
     inputSize?: 'small' | 'medium' | 'large'
 }
 
-type Props = CustomTextInputProps & React.HTMLProps<HTMLInputElement>
+type Props = CustomTextInputProps & React.InputHTMLAttributes<HTMLInputElement>
 
 export default function CustomTextInput({errors, inputSize, labelClass, hint, label, required, ...props}: Props)  {
 
