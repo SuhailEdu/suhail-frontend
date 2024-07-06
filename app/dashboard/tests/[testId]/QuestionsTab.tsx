@@ -18,7 +18,8 @@ import {
     AlertDialogHeader,
     AlertDialogTitle
 } from "@/components/ui/alert-dialog";
-import {AxiosError} from "axios";
+import {AxiosError, isAxiosError} from "axios";
+import {ValidationError} from "@/types/errors";
 
 type Question = {
     title: string,
@@ -44,6 +45,14 @@ type QuestionResponse = {
         }[]
 
     }[]
+}
+
+interface SubmitQuestionValidationError   {
+    question_index: number,
+    option_index?: number,
+    is_question_error:boolean,
+    message: string,
+
 }
 
 export default function QuestionsTab({ testId , isMyExam} : { testId:string , isMyExam?:boolean }) {
@@ -191,12 +200,10 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
         }
         const isTitleValid = validateTitle()
         if (!isTitleValid) {
-            console.log('failed')
             return
         }
         const isOptionsValid = validateOptions()
         if (!isOptionsValid) {
-            console.log('failed2')
             return
 
         }
@@ -204,7 +211,7 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
         try {
             const res = await api.post(`/home/exams/${testId}/questions` , {
                 question: {
-                    title: question.title,
+                    // title: question.title,
                     type: "options",
                     options: options
                 }
@@ -218,27 +225,28 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
             }
             console.log(res)
 
-        } catch (e) {
-            if(e instanceof AxiosError) {
+        } catch (e:unknown) {
+            if(isAxiosError<ValidationError<SubmitQuestionValidationError>>(e) && e.response) {
+                console.log(e.response.status , e.response.data.error)
 
-            if(e?.response?.status === 422 && e?.response?.data?.validationError) {
-                const validationError = e.response.data.validationError
-                if(validationError && validationError.title) {
-                    setTitleError(validationError.title)
-                }
 
-                if(validationError && validationError.question_index !== null) {
-                    console.log(validationError)
-                    setOptionsErrors(prevErrors => ([
-                        ...prevErrors,
-                        {
-                            id: options[0]?.id,
-                            message: validationError.message
-                        }
-                    ]))
-                    // setTitleError(validationError.title)
-                }
-            }
+            // if(e?.response?.status === 422 && e?.response?.data?.validationError) {
+            //     const validationError = e.response.data.validationError
+            //     if(validationError && validationError.title) {
+            //         setTitleError(validationError.title)
+            //     }
+            //
+            //     if(validationError && validationError.question_index !== null) {
+            //         console.log(validationError)
+            //         setOptionsErrors(prevErrors => ([
+            //             ...prevErrors,
+            //             {
+            //                 id: options[0]?.id,
+            //                 message: validationError.message
+            //             }
+            //         ]))
+            //     }
+            // }
             }
 
         }
@@ -329,6 +337,8 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
                 }
             }
             }
+
+            console.log(e)
 
         }
 
