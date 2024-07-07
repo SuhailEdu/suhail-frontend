@@ -123,7 +123,8 @@ export default function ShowTest ({params}: {params:{testId: string}})  {
                                    className={`border-b-2 ${isSelected('reports')} px-4 cursor-pointer`}>الاحصائيات</p>
 
                             <p onClick={() => setSelectedOption('questions')}
-                               className={`border-b-2 ${isSelected('questions')} px-4 cursor-pointer`}>أسئلة
+                               className={`border-b-2 ${isSelected('questions')} px-4 cursor-pointer`}>
+                                أسئلة
                                 الاختبار</p>
 
                             {testQuery.data.is_my_exam && (

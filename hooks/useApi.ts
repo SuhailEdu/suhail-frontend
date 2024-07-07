@@ -1,28 +1,36 @@
-import axios from "axios";
+import axios, {InternalAxiosRequestConfig} from "axios";
 import useAuthStore from "@/stores/AuthStore";
-
-//
+import {useEffect} from "react";
 
 export function useApi() {
 
 axios.defaults.headers["Content-Type"] = "application/json";
 axios.defaults.headers["Accept"] = 'application/json'
-axios.defaults.headers["Access-Control-Allow-Origin"] = "*";
-  // axios.defaults.baseURL = "http://134.122.87.199:4000";
-  // axios.defaults.baseURL = process.env.API_URL;
-  // axios.defaults.baseURL = "https://suhail.lilash.dev";
-  axios.defaults.baseURL = "http://127.0.0.1:4000";
+axios.defaults.baseURL = "http://127.0.0.1:4000";
 
 
-  const token = useAuthStore(state => state.user.token);
 
-  axios.interceptors.request.use(function (config) {
-    console.log(token)
-    if(token) {
-      config.headers.Authorization =  `Bearer ${token}`;
+  const user = useAuthStore(state => state.user);
+
+  useEffect(() => {
+
+    const reqInterceptor = axios.interceptors.request.use( (config:InternalAxiosRequestConfig) => {
+      console.log('interceptor token:'  ,user.token)
+      if(user.isLoggedIn) {
+        config.headers.Authorization =  `Bearer ${user.token}`;
+      }
+      return config;
+    })
+
+    return () => {
+      axios.interceptors.request.eject(reqInterceptor);
+
     }
-    return config;
-  });
+
+  }, [user.isLoggedIn]);
+
+
+
 
   return axios
 

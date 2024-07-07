@@ -49,7 +49,7 @@ export default function ParticipantAnswersDialog({testId , participantId , isOpe
     } )
 
     useEffect(() => {
-        if(answers.status == "success") {
+        if(answers.status == "success" && answers.data && answers.data.length > 0) {
 
             // answers.data.map(a => {
                 const correct = answers.data

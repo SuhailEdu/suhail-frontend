@@ -82,24 +82,33 @@ export const login = async (
     formData:loginData
 ): Promise<{
     isOk:boolean,
-    validation_errors:LoginValidationError,
-    validation_code: string
+    validation_errors?:LoginValidationError,
+    validation_code?: string,
+    session?: string
 } | undefined> => {
 
     const session = await getSession();
 
     try {
-        const res = await axiosClient.post('/auth/login' , {...formData})
+        const res = await axiosClient.post<{id:string,email:string,first_name:string , last_name:string , token:string}>
+        ('/auth/login' , {...formData})
         session.isLoggedIn = true;
-        console.log(res.data)
         session.id = res.data.id
         session.email = res.data.email
         session.firstName = res.data.first_name
         session.lastName = res.data.last_name
         session.token = res.data.token
-        console.log('no errors' , res.data)
+
+
+        console.log("new token:")
+        console.log(res.data.token)
 
         await session.save();
+        return {
+            isOk:true,
+            session: JSON.stringify(session)
+        }
+
     }
     catch (e:any) {
         if (!isAxiosError<ValidationError>(e)|| !e.response) {
@@ -114,6 +123,7 @@ export const login = async (
         };
 
     }
+    // redirect('/dashboard'  );
 
 
 

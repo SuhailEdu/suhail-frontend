@@ -79,7 +79,7 @@ export default function StudentsList({testId} : {testId: string}) {
     return (
         <div className={""}>
             <div className={"text-xl my-4"}>المشاركين</div>
-            { participantsQuery.data  && participantsQuery.data.length > 0 && (
+            { participantsQuery.status == 'success' && (
                 <CustomDataTable>
                             <CustomDataTable.Header>
                                 <CustomDataTable.HeaderRow>الاسم </CustomDataTable.HeaderRow>
@@ -88,7 +88,6 @@ export default function StudentsList({testId} : {testId: string}) {
                             </CustomDataTable.Header>
                             <CustomDataTable.Body isLoading={participantsQuery.isLoading} columnsLength={3} hasData={participantsQuery.data.length > 0}>
                                 {participantsQuery.data.map((p) => (
-
                                 <CustomDataTable.Row key={p.id}>
                                     <CustomDataTable.Cell>{p.first_name} {p.last_name}</CustomDataTable.Cell>
                                     <CustomDataTable.Cell>{p.email}</CustomDataTable.Cell>

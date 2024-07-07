@@ -6,7 +6,7 @@ import Link from "next/link";
 import {z} from "zod";
 import {register} from "@/auth";
 import {LoaderIcon} from "lucide-react";
-import {GENERIC_VALIDATION_ERROR} from "@/types/errors";
+import {GENERIC_VALIDATION_ERROR_KEY} from "@/types/errors";
 
 
 export default function Register() {
@@ -61,7 +61,7 @@ export default function Register() {
             const res = await register(data)
 
 
-        if(res != undefined && !res.isOk  && res.validation_code == GENERIC_VALIDATION_ERROR) {
+        if(res != undefined && !res.isOk  && res.validation_code == GENERIC_VALIDATION_ERROR_KEY) {
             setValidationErrors(prevState => ({
                 ...prevState,
                 ...res.validation_errors

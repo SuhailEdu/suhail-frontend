@@ -6,8 +6,9 @@ import Link from "next/link";
 import {z} from "zod";
 import {login} from "@/auth";
 import {LoaderIcon} from "lucide-react";
-import {GENERIC_VALIDATION_ERROR} from "@/types/errors";
+import {GENERIC_VALIDATION_ERROR_KEY} from "@/types/errors";
 import {useRouter} from "next/navigation";
+import useAuthStore from "@/stores/AuthStore";
 
 interface LoginValidationError {
     email: string[],
@@ -18,6 +19,7 @@ export default function Login() {
 
     const [isLoading , setIsLoading] = useState(false)
     const router = useRouter()
+    const setAuthUser = useAuthStore(state => state.setAuthUser)
 
     const loginSchema = z.object({
         email: z.string().email(),
@@ -59,15 +61,17 @@ export default function Login() {
         setIsLoading(true)
 
             const res = await login(data)
-        if(res != undefined && !res.isOk  && res.validation_code == GENERIC_VALIDATION_ERROR) {
+
+        if(res != undefined && !res.isOk  && res.validation_code == GENERIC_VALIDATION_ERROR_KEY) {
             setValidationErrors(prevState => ({
                 ...prevState,
                 ...res.validation_errors
             }))
         }
-
-        if(res?.isOk === true) {
-            router.push("/login")
+        if(res != undefined && res.isOk && res.session ) {
+            console.log(res.session)
+            setAuthUser(JSON.parse(res.session))
+            router.push("/dashboard")
         }
 
 

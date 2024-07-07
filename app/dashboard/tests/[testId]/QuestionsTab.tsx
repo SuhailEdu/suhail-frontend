@@ -19,7 +19,7 @@ import {
     AlertDialogTitle
 } from "@/components/ui/alert-dialog";
 import {AxiosError, isAxiosError} from "axios";
-import {GENERIC_VALIDATION_ERROR, QUESTIONS_VALIDATION_ERROR, ValidationError} from "@/types/errors";
+import {GENERIC_VALIDATION_ERROR_KEY, QUESTIONS_VALIDATION_ERROR_KEY, ValidationError} from "@/types/errors";
 import {useToast} from "@/components/ui/use-toast";
 
 type Question = {
@@ -249,11 +249,11 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
             if(isAxiosError<ValidationError>(e) && e.response) {
                 console.log(e.response.data.validation_code)
                 switch (e.response.data.validation_code){
-                    case GENERIC_VALIDATION_ERROR:
+                    case GENERIC_VALIDATION_ERROR_KEY:
                         handleServerGenericValidationError(e.response.data.validation_errors as SubmitGenericValidationError)
 
                         break
-                    case QUESTIONS_VALIDATION_ERROR:
+                    case QUESTIONS_VALIDATION_ERROR_KEY:
                         handleServerQuestionsError(e.response.data.validation_errors as SubmitQuestionValidationError )
                         break
                     default:

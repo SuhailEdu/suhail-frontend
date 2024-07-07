@@ -26,7 +26,7 @@ export default function PrimaryButton ({href, className,color ,  ...props}: Prop
     }
 
     return href ? (
-            <Link href={href}>
+            <Link prefetch={false} href={href}>
 
                 <Button className={` ${getColor()}  ${className}`}
                         {...props}

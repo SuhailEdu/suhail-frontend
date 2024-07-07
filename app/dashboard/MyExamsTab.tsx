@@ -16,8 +16,6 @@ function MyExamsTab({children}:any) {
         queryKey: ["exams"]
     })
 
-    console.log(query.data)
-
     return (
         <div className="my-8">
             {query.isLoading ? <div className="flex justify-center items-center">

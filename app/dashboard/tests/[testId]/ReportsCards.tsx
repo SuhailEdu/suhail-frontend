@@ -9,7 +9,7 @@ import {useApi} from "@/hooks/useApi";
 import CustomBadge from "@/components/CustomBadge";
 import {useToast} from "@/components/ui/use-toast";
 import {isAxiosError} from "axios";
-import {GENERIC_VALIDATION_ERROR, GenericValidationError, ValidationError} from "@/types/errors";
+import {GENERIC_VALIDATION_ERROR_KEY, GenericValidationError, ValidationError} from "@/types/errors";
 import {useRouter} from "next/navigation";
 import {
     AlertDialog,
@@ -185,7 +185,7 @@ export default function ReportsCards({exam , updateExam}:{exam:ExamData, updateE
         } catch (e:any) {
             if(isAxiosError<ValidationError>(e) && e.response) {
                 const errors = e.response.data as GenericValidationError<UpdateExamValidationError>
-                if(errors.validation_code === GENERIC_VALIDATION_ERROR) {
+                if(errors.validation_code === GENERIC_VALIDATION_ERROR_KEY) {
                     console.log(errors.validation_code)
                     setValidationErrors(prevState => ({
                         ...prevState,

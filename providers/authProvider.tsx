@@ -15,6 +15,7 @@ function AuthProvider({children, session}: Props) {
     const parsedSession = JSON.parse(session) as SessionData;
         useEffect(() => {
         if(parsedSession.isLoggedIn) {
+            console.log('auth provider token: ' , parsedSession.token);
             setAuthUser(parsedSession);
         }
         setMounted(true)

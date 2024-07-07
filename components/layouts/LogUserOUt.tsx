@@ -5,14 +5,18 @@ import useAuthStore from "@/stores/AuthStore";
 import {useEffect, useState} from "react";
 import {LoaderCircle} from "lucide-react";
 import {useRouter} from "next/navigation";
+import {useQueryClient} from "@tanstack/react-query";
 
 export default  function LogOutButton() {
     const logoutClient = useAuthStore(state => state.logout);
     const router = useRouter()
+    const queryClient = useQueryClient();
 
     async function logUserOut() {
         await logout()
         logoutClient()
+        queryClient.removeQueries()
+
         router.replace("/auth/login")
 
     }
