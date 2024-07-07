@@ -10,9 +10,8 @@ export function getExamLiveStatus(liveStatus:'live' | 'finished' | 'paused' | ''
             return'متوقف'
 
         case "":
-            return'لم يبدأ بعد'
         default:
-            return'غير معروف'
+            return'لم يبدأ بعد'
     }
 
 }
