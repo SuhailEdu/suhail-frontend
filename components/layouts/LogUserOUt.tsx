@@ -15,9 +15,9 @@ export default  function LogOutButton() {
     async function logUserOut() {
         await logout()
         logoutClient()
-        queryClient.removeQueries()
 
-        router.replace("/auth/login")
+        router.replace("/auth/login" )
+        queryClient.removeQueries()
 
     }
 

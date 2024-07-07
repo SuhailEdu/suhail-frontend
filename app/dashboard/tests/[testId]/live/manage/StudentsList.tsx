@@ -24,7 +24,7 @@ export default function StudentsList({testId} : {testId: string}) {
     const queryClient = useQueryClient()
 
     const { sendMessage, lastMessage, readyState }
-        = useWebSocket(`http://localhost:4000/ws/live/${testId}/manage` , {
+        = useWebSocket(`https://suhail.lilash.dev/ws/live/${testId}/manage` , {
         protocols: [ user.token ?? "" ],
         onError(e) {
             console.log("error", e);

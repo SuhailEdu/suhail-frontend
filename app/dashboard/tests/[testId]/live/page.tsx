@@ -77,7 +77,7 @@ export default function New({params} : {params:{testId: string}}) {
     })
 
     const { sendMessage, lastMessage, readyState }
-        = useWebSocket(`http://localhost:4000/ws/live/${testId}` , {
+        = useWebSocket(`https://suhail.lilash.dev/ws/live/${testId}` , {
             protocols: [ user.token ?? "" ],
         onError(e) {
             console.log("error", e);
