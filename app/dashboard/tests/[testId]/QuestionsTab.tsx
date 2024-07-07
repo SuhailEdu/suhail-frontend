@@ -18,8 +18,9 @@ import {
     AlertDialogHeader,
     AlertDialogTitle
 } from "@/components/ui/alert-dialog";
-import {AxiosError} from "axios";
-import {isServerValidationError} from "@/types/errors";
+import {AxiosError, isAxiosError} from "axios";
+import {GENERIC_VALIDATION_ERROR, QUESTIONS_VALIDATION_ERROR, ValidationError} from "@/types/errors";
+import {useToast} from "@/components/ui/use-toast";
 
 type Question = {
     title: string,
@@ -48,10 +49,18 @@ type QuestionResponse = {
 }
 
 interface SubmitQuestionValidationError   {
+
     question_index: number,
     option_index?: number,
     is_question_error:boolean,
     message: string,
+
+}
+
+interface SubmitGenericValidationError   {
+    exam_title:string[],
+    questions:string[],
+    status:string[],
 
 }
 
@@ -71,11 +80,15 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
         type: "options",
     })
 
+    const {toast} = useToast()
+
 
     const questionsQuery = useQuery<QuestionResponse>({
         queryFn:  () => api.get(`/home/exams/${testId}/questions`).then(res => res.data.data),
         queryKey: ["exams" , testId , 'questions']
     });
+
+    console.log(questionsQuery.data)
 
     const [options , setOptions] = useState<Option[]>(
         [
@@ -209,25 +222,55 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
         }
 
         try {
-            const res = await api.post(`/home/exams/${testId}/questions` , {
-                question: {
-                    // title: question.title,
-                    type: "options",
-                    options: options
+            const res = await api.post(`/home/exams/${testId}/questions` ,
+                {
+                    question: {
+                        title: question.title,
+                        type: "options",
+                            options: options
+                    }
                 }
-            })
+
+            )
 
             if(res.status === 200) {
                 setIsSubmittingQuestion(false)
                 setIsNewQuestionDialogOpen(false)
                 await questionsQuery.refetch()
+                toast({
+                    title: "تم اضافة السؤال"
+                })
+
 
             }
             console.log(res)
 
         } catch (e:unknown) {
-            if(isServerValidationError<SubmitQuestionValidationError>(e) && e.response) {
-                console.log(e.response)
+            if(isAxiosError<ValidationError>(e) && e.response) {
+                console.log(e.response.data.validation_code)
+                switch (e.response.data.validation_code){
+                    case GENERIC_VALIDATION_ERROR:
+                        const errors = e.response.data.validation_errors as SubmitGenericValidationError
+                        if(errors.exam_title) {
+                            setTitleError(errors.exam_title[0])
+                        }
+                        if(errors.status) {
+                            setTitleError(errors.status[0])
+                        }
+
+                        if(errors.questions) {
+                            setTitleError(errors.questions[0])
+                        }
+
+                        break
+                    case QUESTIONS_VALIDATION_ERROR:
+                        handleServerQuestionsError(e.response.data.validation_errors as SubmitQuestionValidationError )
+                        break
+                    default:
+                        console.log(e.response.data)
+                        break
+                }
+
 
 
             // if(e?.response?.status === 422 && e?.response?.data?.validationError) {
@@ -250,6 +293,24 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
             }
 
         }
+
+    }
+
+    function handleServerQuestionsError(error : SubmitQuestionValidationError) {
+        console.log(error)
+        if(error.is_question_error) {
+            setTitleError(error.message)
+        } else {
+            setOptionsErrors(prevState => ([
+                ...prevState,
+            {
+                id:options[0].id,
+                message: error.message
+            }
+            ]))
+
+        }
+
 
     }
 
