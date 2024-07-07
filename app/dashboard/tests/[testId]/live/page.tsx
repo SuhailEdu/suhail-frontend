@@ -282,7 +282,7 @@ export default function New({params} : {params:{testId: string}}) {
                 <>
             <div>
 
-            <div className="my-12 pr-4 flex justify-between">
+            <div className="my-12 pr-4 flex justify-between flex-wrap gap-4">
                 <div className="scroll-m-20 flex justify-between gap-4 items-center  text-4xl font- tracking-tight lg:text-5xl">
                     <span>{questionsQuery.data.exam.exam_title}</span>
 

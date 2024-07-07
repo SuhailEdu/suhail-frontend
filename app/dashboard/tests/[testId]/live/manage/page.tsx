@@ -261,7 +261,7 @@ function New({params} : {params:{testId: string}}) {
 
             <div>
 
-            <div className="my-12 pr-4 flex justify-between">
+            <div className="my-12 pr-4 flex justify-between flex-wrap gap-4">
                 <h1 className="scroll-m-20 flex justify-between items-center gap-4 text-4xl tracking-tight lg:text-5xl">
                     <span>ادارة الاختبار</span>
                     <span className={""}>
