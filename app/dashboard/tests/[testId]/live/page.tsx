@@ -30,6 +30,8 @@ import useWebSocket, {ReadyState} from "react-use-websocket";
 import useAuthStore from "@/stores/AuthStore";
 import axios from "axios";
 import TestSkeleton from "@/app/dashboard/tests/[testId]/TestSkeleton";
+import {useToast} from "@/components/ui/use-toast";
+import {ToastAction} from "@/components/ui/toast";
 
 interface LiveQuestionResponse {
     id: number,
@@ -118,6 +120,8 @@ export default function New({params} : {params:{testId: string}}) {
 
 
     const [answers , setAnswers] = useState<Answer[]>([])
+    const [submittingAnswer , setSubmittingAnswer] = useState<boolean>(false)
+    const {toast} = useToast()
 
 
     const [isSidebarOpen , setIsSidebarOpen] = useState<boolean>(false)
@@ -208,18 +212,26 @@ export default function New({params} : {params:{testId: string}}) {
         if(!selectedQuestion || !questionsQuery.data ) {
             return
         }
+        setSubmittingAnswer(true)
         try {
             const res = await api.post(`/home/exams/${questionsQuery.data.exam.id}/live/store-answer`, {
                 question_id: selectedQuestion.id,
-                answer: newAnswer
+                 answer: newAnswer
             })
             updateSubmittedAnswer(newAnswer)
 
         } catch (e) {
-            console.error(e)
+            toast({
+               variant: 'destructive',
+                title: " أه, حدث خطأ ما",
+                description: "لم نتمكن من حفظ أجابتك . لا تقلق , بأمكانك المحاولة مجددا . اذا استمرت المشكلة أعد تحميل الصفخة.",
+                action: <ToastAction  altText="اعادة المحاولة">اعادة المحاولة</ToastAction>,
 
+            })
+            console.error(e)
         }
 
+        setSubmittingAnswer(true)
 
 
     }

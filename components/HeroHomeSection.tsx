@@ -18,13 +18,13 @@ export default function HeroHomeSection ()  {
                 <div className="flex justify-center mb-8">
 
                     <div
-                        className="inline-flex justify-between  items-center py-1 px-1 pr-4 mb-7 text-sm text-gray-700 bg-gray-100 rounded-full dark:bg-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
+                        className="inline-flex justify-between  items-center py-1  pr-4 mb-7 text-sm text-gray-700 bg-gray-100 rounded-full dark:bg-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
                         role="alert">
                         <span
                             className="text-sm bg-primary  rounded-full text-white px-4 py-1.5 ml-2 ">انطلقنا</span>
                         <ChevronLeftIcon />
                         <span
-                            className="ml-2 text-md font-medium">منصى سهيل انطلقت ! أنشئ حسابك</span>
+                            className="ml-2 text-md font-medium">منصة سهيل انطلقت ! أنشئ حسابك</span>
 
                     </div>
                 </div>
