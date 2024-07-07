@@ -265,7 +265,6 @@ export default function StudentsTab({testId}:{testId:string}) {
             </div>
             <div className={"mt-20 "}>
                 <div className={""}>
-                    {participantsQuery.data && (
                         <CustomDataTable>
                             <CustomDataTable.Header>
                                 <CustomDataTable.HeaderRow>الاسم</CustomDataTable.HeaderRow>
@@ -273,8 +272,8 @@ export default function StudentsTab({testId}:{testId:string}) {
                                 <CustomDataTable.HeaderRow>حالة الدعوة</CustomDataTable.HeaderRow>
                                 <CustomDataTable.HeaderRow>الخيارات</CustomDataTable.HeaderRow>
                             </CustomDataTable.Header>
-                            <CustomDataTable.Body isLoading={participantsQuery.isLoading} columnsLength={3} hasData={participantsQuery.data.length > 0}>
-                                {participantsQuery.data.map((p:Participant) => (
+                            <CustomDataTable.Body isLoading={participantsQuery.isLoading} columnsLength={3} hasData={!!participantsQuery.data}>
+                                {participantsQuery.status == 'success' && participantsQuery.data &&  participantsQuery.data.map((p:Participant) => (
 
                                 <CustomDataTable.Row key={p.id}>
                                     <CustomDataTable.Cell>{p.first_name} {p.last_name}</CustomDataTable.Cell>
@@ -325,8 +324,6 @@ export default function StudentsTab({testId}:{testId:string}) {
                             </CustomDataTable.Body>
 
                         </CustomDataTable>
-                        // <CustomDataTable columns={columns} data={participantsQuery.data} />
-                    )}
                 </div>
 
             </div>

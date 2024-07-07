@@ -29,6 +29,7 @@ import {getExamLiveStatus, getExamLiveStatusBadge} from "@/helpers/liveTestHelpe
 import useWebSocket, {ReadyState} from "react-use-websocket";
 import useAuthStore from "@/stores/AuthStore";
 import axios from "axios";
+import TestSkeleton from "@/app/dashboard/tests/[testId]/TestSkeleton";
 
 interface LiveQuestionResponse {
     id: number,
@@ -243,8 +244,6 @@ export default function New({params} : {params:{testId: string}}) {
 
     return (
         <div className={"container"}>
-            {questionsQuery.data && (
-                <>
 
             <Breadcrumb className="inline-block border p-2 rounded-lg  ">
                 <BreadcrumbList>
@@ -271,7 +270,7 @@ export default function New({params} : {params:{testId: string}}) {
                                 <PenIcon size={'18'}/>
                                 </span>
                                 <span>
-                                {questionsQuery.data.exam.exam_title}
+                                {questionsQuery.data && questionsQuery.status == 'success' ? questionsQuery.data.exam.exam_title : ""}
                                 </span>
                             </Link>
                         </BreadcrumbLink>
@@ -279,6 +278,8 @@ export default function New({params} : {params:{testId: string}}) {
                 </BreadcrumbList>
             </Breadcrumb>
 
+            {questionsQuery.status == "success" && (
+                <>
             <div>
 
             <div className="my-12 pr-4 flex justify-between">
@@ -406,6 +407,12 @@ export default function New({params} : {params:{testId: string}}) {
                     )}
     </>
 )}
+
+            {questionsQuery.isLoading && (
+                <>
+                    <TestSkeleton />
+                </>
+            )}
 
         </div>
     )

@@ -21,6 +21,7 @@ import {
 import {AxiosError, isAxiosError} from "axios";
 import {GENERIC_VALIDATION_ERROR_KEY, QUESTIONS_VALIDATION_ERROR_KEY, ValidationError} from "@/types/errors";
 import {useToast} from "@/components/ui/use-toast";
+import {Skeleton} from "@/components/ui/skeleton";
 
 type Question = {
     title: string,
@@ -456,10 +457,9 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
 
             </div>
             <div className={"mt-20 "}>
-                {questionsQuery.data && questionsQuery.data.questions.length ?(
 
                 <Accordion className={"border rounded-lg"} type="single" collapsible>
-                    {questionsQuery.data &&  questionsQuery.data?.questions?.map((q , index) => (
+                    {questionsQuery &&  questionsQuery.data?.questions?.map((q , index) => (
 
                     <AccordionItem  value={q.title} key={q.title}>
                         <AccordionTrigger    className={"bg-slate-100 p-2 h-12"}>{index+1} - {q.title}</AccordionTrigger>
@@ -508,11 +508,16 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
                         </AccordionContent>
                     </AccordionItem>
                         ))}
+                    {questionsQuery.isLoading && (
+                        <>
+                            <Skeleton className="h-4 w-full" />
+                            <Skeleton className="h-4 w-full" />
+                            <Skeleton className="h-4 w-full" />
+                            <Skeleton className="h-4 w-full" />
+                        </>
+                    )}
                 </Accordion>
 
-                ): (
-                    <div>Empty</div>
-                ) }
 
             </div>
 

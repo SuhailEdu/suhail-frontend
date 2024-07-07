@@ -37,6 +37,7 @@ import {
 import CustomBadge from "@/components/CustomBadge";
 import {getExamLiveStatus, getExamLiveStatusBadge} from "@/helpers/liveTestHelper";
 import StudentsList from "@/app/dashboard/tests/[testId]/live/manage/StudentsList";
+import TestSkeleton from "@/app/dashboard/tests/[testId]/TestSkeleton";
 
 
 interface LiveQuestionResponse {
@@ -440,7 +441,7 @@ function New({params} : {params:{testId: string}}) {
                         </div>
 
                         ) : (
-                           <div>No</div>
+                           <div>No Data</div>
                             )}
                     </SheetHeader>
                 </SheetContent>
@@ -453,6 +454,7 @@ function New({params} : {params:{testId: string}}) {
 
                 </>
             )}
+            {questionsQuery.isLoading && <TestSkeleton />}
         </div>
     )
 
