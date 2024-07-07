@@ -4,7 +4,7 @@ import {ColumnDef,} from "@tanstack/react-table"
 
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table"
 import React from "react";
-import {LoaderIcon} from "lucide-react";
+import {Skeleton} from "@/components/ui/skeleton";
 
 interface CustomTextInputProps {
     label?: string
@@ -56,8 +56,15 @@ CustomDataTable.Body = function HeaderRow ({children , isLoading , hasData , col
     if(isLoading) {
         return <TableBody>
             <TableRow>
-                <TableCell colSpan={columnsLength} className="h-24">
-                        <LoaderIcon className={"animate-spin mx-auto"} />
+                <TableCell colSpan={columnsLength} className="h-full w-full">
+                        {/*<LoaderIcon className={"animate-spin mx-auto"} />*/}
+                    <Skeleton className="h-4 w-full" />
+                </TableCell>
+            </TableRow>
+            <TableRow>
+                <TableCell colSpan={columnsLength} className="h-24 w-full">
+                    {/*<LoaderIcon className={"animate-spin mx-auto"} />*/}
+                    <Skeleton className="h-4 w-full" />
                 </TableCell>
             </TableRow>
 

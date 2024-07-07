@@ -3,6 +3,7 @@ import RandomElement from '@/public/images/svg/RandomElement.svg'
 import OrangeElement from '@/public/images/svg/OrangeElement.svg'
 import Image from "next/image";
 import Link from "next/link";
+import {ChevronLeftIcon} from "lucide-react";
 
 export default function HeroHomeSection ()  {
 
@@ -14,14 +15,24 @@ export default function HeroHomeSection ()  {
                     <Image className="w-28 h-auto " alt={""} src={OrangeElement}/>
                 </div>
 
+                <div className="flex justify-center mb-8">
 
-                <h1 className="mb-4 relative z-10 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">اختبر
-                    طلابك بكفاءة مع منصة
-                    سهيل
-                </h1>
-                <p className="mb-8 text-center text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">تجربة
-                    سهلة ومرنة لإدارة الاختبارات الإلكترونية
-                </p>
+                    <div
+                        className="inline-flex justify-between  items-center py-1 px-1 pr-4 mb-7 text-sm text-gray-700 bg-gray-100 rounded-full dark:bg-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
+                        role="alert">
+                        <span
+                            className="text-sm bg-primary  rounded-full text-white px-4 py-1.5 ml-2 ">انطلقنا</span>
+                        <ChevronLeftIcon />
+                        <span
+                            className="ml-2 text-md font-medium">منصى سهيل انطلقت ! أنشئ حسابك</span>
+
+                    </div>
+                </div>
+
+                <h1 className="mb-4 relative z-10 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">منصة
+                    سهيل: اختبارات إلكترونية بلمسة إبداع</h1>
+                <p className="mb-8 text-center text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">صمم
+                    اختبارات إلكترونية مخصصة تناسب احتياجاتك مع منصة سهيل سهلة الاستخدام</p>
                 <div
                     className="flex relative z-10  gap-4  mb-8 lg:mb-16  justify-between sm:flex-row sm:justify-center sm:space-y-0 sm:space-x-4">
                     <PrimaryButton>

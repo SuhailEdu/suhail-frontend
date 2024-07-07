@@ -8,7 +8,7 @@ import {
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import Link from "next/link";
-import {HomeIcon, PaperclipIcon} from "lucide-react";
+import {HomeIcon, LucideFileQuestion, PaperclipIcon, SettingsIcon} from "lucide-react";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {useApi} from "@/hooks/useApi";
 import {Exam} from "@/types/exam";
@@ -18,6 +18,7 @@ import {getExamLiveStatus, getExamLiveStatusBadge} from "@/helpers/liveTestHelpe
 import QuestionsTab from "@/app/dashboard/tests/[testId]/QuestionsTab";
 import ReportsCards from "@/app/dashboard/tests/[testId]/ReportsCards";
 import StudentsTab from "@/app/dashboard/tests/[testId]/StudentsTab";
+import {IoMdPeople} from "react-icons/io";
 
 type ExamQueryData =  Exam & {
     is_my_exam: boolean
@@ -124,17 +125,29 @@ export default function ShowTest ({params}: {params:{testId: string}})  {
                 <div className="my-8 py-4">
                     <div className="my-8">
                         <div className='flex justify-start border-b-2 '>
-                                <p onClick={() => setSelectedOption('reports')}
-                                   className={ `border-b-2 ${isSelected("reports")}  px-4 cursor-pointer`}>الاحصائيات</p>
+                            <p onClick={() => setSelectedOption('reports')}
+                               className={`border-b-2 ${isSelected("reports")}  px-4 cursor-pointer`}>
+                                <span><SettingsIcon className={"inline-block ml-2"}/></span>
+                                <span>الاحصائيات</span>
+                                </p>
 
                             <p onClick={() => setSelectedOption('questions')}
                                className={`border-b-2 ${isSelected('questions')} px-4 cursor-pointer`}>
+
+                                <span><LucideFileQuestion className={"inline-block ml-2"}/></span>
+                                <span>
                                 أسئلة
-                                الاختبار</p>
+                                الاختبار
+</span>
+                            </p>
 
                             {testQuery.data.is_my_exam && (
                                 <p onClick={() => setSelectedOption('students')}
-                                   className={`border-b-2 ${isSelected('students')} px-4 cursor-pointer`}>الطلاب</p>
+                                   className={`border-b-2 ${isSelected('students')} px-4 cursor-pointer`}>
+
+                                    <span><IoMdPeople className={"inline-block ml-2"}/></span>
+                                    <span>الطلاب</span>
+                                </p>
 
                             )}
                         </div>
@@ -143,7 +156,7 @@ export default function ShowTest ({params}: {params:{testId: string}})  {
                 </div>
 
                 <div>
-                    {selectedOption === 'questions' && (
+                {selectedOption === 'questions' && (
                         <QuestionsTab isMyExam={testQuery.data.is_my_exam} testId={params.testId} />
                     )}
                     {selectedOption === 'reports' && (

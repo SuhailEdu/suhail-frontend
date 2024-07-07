@@ -140,7 +140,7 @@ const TestInfoStep = forwardRef(({testData, setTestData}: Props, ref) => {
                             <h3>اختبار عام</h3>
                             <p className="text-sm flex gap-2">
                                 <InfoIcon size={15}/>
-                                يمكن لأي شخض الانضمام
+                                يمكن لأي شخص الانضمام
                             </p>
 
                         </div>
