@@ -2,6 +2,8 @@ import {FileIcon, InfoIcon} from "lucide-react";
 import {useRouter} from "next/navigation";
 import CustomBadge from "@/components/CustomBadge";
 import {Exam} from "@/types/exam";
+import Link from "next/link";
+
 type ParticipatingExamResource = {
     id: string,
     exam_title: string,
@@ -14,7 +16,7 @@ export default function ExamCard ({exam , type} : {exam: Exam |ParticipatingExam
     const router = useRouter()
     return (
 
-        <div onClick={() => router.push(`/dashboard/tests/${exam.id}`)}
+        <Link prefetch={false} href={type == "my" ? `/dashboard/tests/${exam.id}` : `/dashboard/tests/${exam.id}/live`}
              className="rounded-lg hover:bg-gray-100 cursor-pointer border bg-card text-card-foreground shadow-sm p-6  ">
 
             <h2 className="mt-10 scroll-m-20 flex justify-start gap-2  pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
@@ -49,7 +51,7 @@ export default function ExamCard ({exam , type} : {exam: Exam |ParticipatingExam
                 </span>
                 </CustomBadge>
             </div>
-        </div>
+        </Link>
 
     )
 }
