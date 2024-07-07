@@ -1,6 +1,6 @@
 import CustomTextInput from "@/components/shared/CustomTextInput";
-import {InfoIcon, MessageCircleQuestion, UsersRound} from "lucide-react";
-import {useState} from "react";
+import {InfoIcon, LoaderIcon, MessageCircleQuestion, UsersRound} from "lucide-react";
+import React, {useState} from "react";
 import {Exam} from "@/types/exam";
 import {Label} from "@/components/ui/label";
 import PrimaryButton from "@/components/shared/PrimaryButton";
@@ -8,6 +8,19 @@ import {z} from "zod";
 import {useApi} from "@/hooks/useApi";
 import CustomBadge from "@/components/CustomBadge";
 import {useToast} from "@/components/ui/use-toast";
+import {isAxiosError} from "axios";
+import {GENERIC_VALIDATION_ERROR, GenericValidationError, ValidationError} from "@/types/errors";
+import {useRouter} from "next/navigation";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle
+} from "@/components/ui/alert-dialog";
 
 type ExamData =  Exam & {
     is_my_exam: boolean
@@ -19,6 +32,13 @@ type UpdatedExamProps = {
     ip_range_end:string,
 }
 
+interface UpdateExamValidationError {
+    exam_title:string[],
+    status:string[],
+    ip_range_start:string[],
+    ip_range_end:string[],
+}
+
 export default function ReportsCards({exam , updateExam}:{exam:ExamData, updateExam:(d :UpdatedExamProps) => void}) {
     const schema = z.object({
         exam_title:z.string()
@@ -28,12 +48,13 @@ export default function ReportsCards({exam , updateExam}:{exam:ExamData, updateE
         ip_range_start:z.string().ip({
             version:'v4',
             message: "عنوان الIP غير صحيح"
-        }).nullable(),
+        }).or(z.literal('')),
         ip_range_end: z.string().ip({
             version:'v4',
             message: "عنوان الIP غير صحيح"
-        }).nullish()
-    }).superRefine((data  , ctx ) => {
+        }).or(z.literal('')),
+    })
+        .superRefine((data  , ctx ) => {
         if(!data.ip_range_end && !data.ip_range_start){
             return
 
@@ -79,6 +100,11 @@ export default function ReportsCards({exam , updateExam}:{exam:ExamData, updateE
     const api = useApi()
     const {toast} = useToast()
 
+    const [isDeleteExamDialogOpen , setIsDeleteExamDialogOpen] = useState<boolean>(false)
+    const [isDeletingExam, setIsDeletingExam] = useState<boolean>(false)
+
+    const router = useRouter()
+
     const [testData , setTestData] = useState<{
         exam_title:string,
         status:'public' | 'private',
@@ -91,17 +117,21 @@ export default function ReportsCards({exam , updateExam}:{exam:ExamData, updateE
         ip_range_end:exam.ip_range_end,
     });
 
+    const defaultValidationErrors = {
+        exam_title:[],
+        status:[],
+        ip_range_start:[],
+        ip_range_end:[],
+    }
+
+
     const [validationErrors , setValidationErrors] = useState<{
-        exam_title:string,
-        status:string,
-        ip_range_start:string,
-        ip_range_end:string,
-    }>({
-        exam_title:"",
-        status:"",
-        ip_range_start:'',
-        ip_range_end:'',
-    });
+        exam_title:string[],
+        status:string[],
+        ip_range_start:string[],
+        ip_range_end:string[],
+    }>(defaultValidationErrors);
+
 
 
     const [isSubmitting , setIsSubmitting] = useState<boolean>(false)
@@ -109,23 +139,13 @@ export default function ReportsCards({exam , updateExam}:{exam:ExamData, updateE
     function validateData () {
 
 
-        setValidationErrors({
-            exam_title:"",
-            ip_range_start:'',
-            ip_range_end:'',
-            status:''
-        })
+        setValidationErrors(defaultValidationErrors)
 
 
         const result = schema.safeParse(testData)
 
         if (result.success) {
-            setValidationErrors({
-                exam_title:"",
-                ip_range_start:'',
-                ip_range_end:'',
-                status:''
-            })
+            setValidationErrors(defaultValidationErrors)
 
             return true
         } else {
@@ -151,7 +171,7 @@ export default function ReportsCards({exam , updateExam}:{exam:ExamData, updateE
         }
 
         try {
-            const res = await api.patch(`/home/exams/${exam.id}` , testData )
+            const res = await api.patch(`/home/exams/${exam.id}`  , testData )
             if(res.status === 200) {
                 toast({
                     title: "تم تحديث بيانات الاختبار",
@@ -163,50 +183,19 @@ export default function ReportsCards({exam , updateExam}:{exam:ExamData, updateE
                 })
             }
         } catch (e:any) {
-            if(e?.response && e?.response?.status == 422 && e?.response?.data?.validationError) {
-
-                const validationError = e?.response?.data?.validationError
-                if(validationError) {
-                    if(validationError.exam_title) {
-                        setValidationErrors(prev => ({
-                            ...prev,
-                            exam_title:validationError.exam_title[0],
-
-                        }))
-
-                    }
-                    if(validationError.status) {
-                        setValidationErrors(prev => ({
-                            ...prev,
-                            status:validationError.status[0],
-
-                        }))
-
-                    }
-                    if(validationError.ip_range_start || validationError.ip_range_end) {
-                        if(validationError.ip_range_start ) {
-                            setValidationErrors(prev => ({
-                                ...prev,
-                                ip_range_end:validationError.ip_range_start[0],
-
-                            }))
-                        }
-                        if(validationError.ip_range_end) {
-                            setValidationErrors(prev => ({
-                                ...prev,
-                                ip_range_end:validationError.ip_range_end[0],
-
-                            }))
-
-                        }
-
-                    }
-
+            if(isAxiosError<ValidationError>(e) && e.response) {
+                const errors = e.response.data as GenericValidationError<UpdateExamValidationError>
+                if(errors.validation_code === GENERIC_VALIDATION_ERROR) {
+                    console.log(errors.validation_code)
+                    setValidationErrors(prevState => ({
+                        ...prevState,
+                            ...errors.validation_errors
+                    }))
 
                 }
 
-            }
 
+            }
         }
 
         setIsSubmitting(false)
@@ -218,6 +207,31 @@ export default function ReportsCards({exam , updateExam}:{exam:ExamData, updateE
             ...prevState,
             [name]:value
         }))
+
+    }
+
+
+
+
+    async function deleteConfirmed(e:React.FormEvent<HTMLButtonElement>) {
+        e.preventDefault()
+        setIsDeletingExam(true)
+
+        try {
+            const res = await api.delete(`/home/exams/${exam.id}`, )
+
+            toast({
+                title: "تم حذف الاختبار"
+            })
+            setIsDeleteExamDialogOpen(false)
+
+            router.push('/dashboard')
+
+        } catch (e) {
+            console.log(e)
+        }
+
+        setIsDeletingExam(false)
 
     }
 
@@ -261,7 +275,7 @@ export default function ReportsCards({exam , updateExam}:{exam:ExamData, updateE
                         label="عنوان الاختبار"
                         id="full_name"
                         type="text"
-                        errors={validationErrors.exam_title}
+                        errors={validationErrors.exam_title[0]}
                         value={testData.exam_title}
                         onChange={(e) => setData("exam_title", e.target.value)}
                         hint={<div className="mr-2 mt-1 text-lg flex flex-start items-center gap-1 text-green-800">
@@ -316,7 +330,7 @@ export default function ReportsCards({exam , updateExam}:{exam:ExamData, updateE
                             inputSize={'large'}
                             id="full_name"
                             type="text"
-                            errors={validationErrors.ip_range_start}
+                            errors={typeof validationErrors.ip_range_start == 'object' ? validationErrors.ip_range_start[0] : validationErrors.ip_range_start}
                             value={testData.ip_range_start ?? ""}
                             onChange={(e) => setData("ip_range_start", e.target.value)}
                             placeholder={"145.82.44.1"}
@@ -332,7 +346,7 @@ export default function ReportsCards({exam , updateExam}:{exam:ExamData, updateE
                             inputSize={'large'}
                             id="full_name"
                             type="text"
-                            errors={validationErrors.ip_range_end}
+                            errors={typeof validationErrors.ip_range_end == 'object' ? validationErrors.ip_range_end[0] : validationErrors.ip_range_end}
                             value={testData.ip_range_end ?? ""}
                             maxLength={15}
                             onChange={(e) => setData("ip_range_end", e.target.value)}
@@ -353,13 +367,47 @@ export default function ReportsCards({exam , updateExam}:{exam:ExamData, updateE
 
                         </CustomBadge>
                     </div>
-                    <div className={" ml-auto text-left"}>
+                    <div className={"flex justify-between items-center"}>
+                        <PrimaryButton color={"danger"} onClick={() => setIsDeleteExamDialogOpen(true)} className={"mt-8 "}> حذف الاختبار</PrimaryButton>
                         <PrimaryButton onClick={submit} className={"mt-8 "}>تحديث </PrimaryButton>
                     </div>
                 </div>
 
 
             </div>
+            <AlertDialog onOpenChange={setIsDeleteExamDialogOpen} open={isDeleteExamDialogOpen}>
+                <AlertDialogContent dir={"rtl"}>
+                    <AlertDialogHeader dir={"rtl"}>
+                        <AlertDialogTitle className={"text-right"}>هل أنت متأكد؟</AlertDialogTitle>
+                        <AlertDialogDescription className={"text-right"}>
+
+                            هذا الأجراء لا يمكن الغاؤه. سيتم مسح جميع البيانات  المرتبطة بهذا الاختبار بما في ذلك الأسئلة و المستخدمين المشاركين في الاختبار
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>الغاء</AlertDialogCancel>
+                        <AlertDialogAction  onClick={deleteConfirmed} className={"bg-transparent"}>
+                            <PrimaryButton disabled={isDeletingExam} color={"danger"}>
+                                {isDeletingExam ?
+                                    ( <span>
+                                    <LoaderIcon className={"animate-spin"}/>
+                                </span>
+                                    )
+                                    :
+                                    (
+                                        <span>
+                                    تأكيد
+                                </span>
+
+                                    )
+
+                                }
+
+                            </PrimaryButton>
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
 
             {/*</div>*/}
         </div>

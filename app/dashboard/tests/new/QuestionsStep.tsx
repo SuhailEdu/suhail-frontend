@@ -53,10 +53,10 @@ const QuestionsStep = forwardRef<{isReadyToSubmit:() => Promise<boolean>} , Prop
                 console.log("found:" , serverValidationError.error.message)
                 setTooltipMessage(e => ([
                     ...e,
-                    // {
-                    //     id: question.id,
-                    //     message:  serverValidationError.error.message
-                    // }
+                    {
+                        id: question.id,
+                        message:  serverValidationError.error.message
+                    }
                 ]))
             }
 
@@ -444,46 +444,7 @@ const QuestionsStep = forwardRef<{isReadyToSubmit:() => Promise<boolean>} , Prop
 
             }
 
-
-            const refinedQuestions = questions.map(q => {
-
-                const options = q.options.map((option) => {
-                    return {
-                        option : option.title,
-                        is_correct: option.isCorrect
-                    }
-                })
-
-                return {
-                    type: "options",
-                    title:  q.title,
-                    options
-                }
-
-            })
-
-            // try {
-            //     const res = await api.post("/home/exams/create/check-title" , {
-            //         questions: refinedQuestions
-            //     })
-            //
-            // } catch (e) {
-            //     if(e?.response?.status == 422) {
-            //         const error = e?.response?.data?.validationError?.exam_title
-            //         if(error) {
-            //             console.log("error" , error)
-            //
-            //             // setTitleError(error)
-            //         }
-            //
-            //     }
-            //     return false
-            // }
-
-
             return tooltipMessage.length == 0
-
-
         }
 
 

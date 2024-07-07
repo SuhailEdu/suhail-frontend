@@ -4,7 +4,8 @@ import {z} from "zod";
 import CustomTextInput from "@/components/shared/CustomTextInput";
 import {Label} from "@/components/ui/label";
 import {useApi} from "@/hooks/useApi";
-import {AxiosError} from "axios";
+import {GENERIC_VALIDATION_ERROR, ValidationError} from "@/types/errors";
+import {isAxiosError} from "axios";
 
 
 type TestData = {
@@ -49,17 +50,19 @@ const TestInfoStep = forwardRef(({testData, setTestData}: Props, ref) => {
                return true
 
            } catch (e) {
-               if( e instanceof AxiosError) {
 
-               if(e?.response?.status == 422) {
-                   console.log("error" , e.response)
-                   const error = e?.response?.data?.validationError?.exam_title
-                   if(error) {
-                       setTitleError(error)
+               if(isAxiosError<ValidationError>(e) && e.response) {
+                   if(e.response.data.validation_code == GENERIC_VALIDATION_ERROR ) {
+                          const error = e.response.data.validation_errors as {exam_title:string[]}
+                       if(error.exam_title) {
+                           setTitleError(error.exam_title[0])
+
+                       }
                    }
-               }
+
                }
                return false
+
            }
 
 

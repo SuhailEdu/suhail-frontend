@@ -250,17 +250,7 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
                 console.log(e.response.data.validation_code)
                 switch (e.response.data.validation_code){
                     case GENERIC_VALIDATION_ERROR:
-                        const errors = e.response.data.validation_errors as SubmitGenericValidationError
-                        if(errors.exam_title) {
-                            setTitleError(errors.exam_title[0])
-                        }
-                        if(errors.status) {
-                            setTitleError(errors.status[0])
-                        }
-
-                        if(errors.questions) {
-                            setTitleError(errors.questions[0])
-                        }
+                        handleServerGenericValidationError(e.response.data.validation_errors as SubmitGenericValidationError)
 
                         break
                     case QUESTIONS_VALIDATION_ERROR:
@@ -271,33 +261,28 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
                         break
                 }
 
-
-
-            // if(e?.response?.status === 422 && e?.response?.data?.validationError) {
-            //     const validationError = e.response.data.validationError
-            //     if(validationError && validationError.title) {
-            //         setTitleError(validationError.title)
-            //     }
-            //
-            //     if(validationError && validationError.question_index !== null) {
-            //         console.log(validationError)
-            //         setOptionsErrors(prevErrors => ([
-            //             ...prevErrors,
-            //             {
-            //                 id: options[0]?.id,
-            //                 message: validationError.message
-            //             }
-            //         ]))
-            //     }
-            // }
             }
 
         }
 
     }
 
+    function handleServerGenericValidationError(errors: SubmitGenericValidationError) {
+        if(errors.exam_title) {
+            setTitleError(errors.exam_title[0])
+        }
+        if(errors.status) {
+            setTitleError(errors.status[0])
+        }
+
+        if(errors.questions) {
+            setTitleError(errors.questions[0])
+        }
+
+    }
+
     function handleServerQuestionsError(error : SubmitQuestionValidationError) {
-        console.log(error)
+
         if(error.is_question_error) {
             setTitleError(error.message)
         } else {

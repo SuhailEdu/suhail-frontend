@@ -14,7 +14,7 @@ export default function PrimaryButton ({href, className,color ,  ...props}: Prop
     function getColor() {
         switch (color) {
             case "danger" :
-                return "bg-red-500 text-white hover:text-white hover:bg-red-600"
+                return "bg-white border-2 text-bold border-red-500 text-red-500 hover:text-white hover:bg-red-600"
             case "base" :
                 return "bg-white text-black hover:bg-slate-100 hover:text-black"
 
