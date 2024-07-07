@@ -3,7 +3,6 @@
 import {defaultSession, SessionData, sessionOptions} from "@/session";
 import {getIronSession} from "iron-session";
 import {cookies} from "next/headers";
-import {redirect} from "next/navigation";
 import axiosClient from "@/providers/axiosClient";
 import {isAxiosError} from "axios";
 import {GenericValidationError, ValidationError} from "@/types/errors";
@@ -48,7 +47,12 @@ type registerData = {
 
 export const register = async (
     formData:registerData
-) => {
+):Promise<{
+    isOk:boolean,
+    validation_errors?:RegisterValidationError,
+    validation_code?: string,
+    session?: string
+} | undefined> => {
     const session = await getSession();
 
     try {
@@ -61,15 +65,17 @@ export const register = async (
         session.token = res.data.token
 
         await session.save();
-        redirect("/dashboard");
+
+        return {
+            isOk:true,
+            session: JSON.stringify(session)
+        }
     }
     catch (e:any) {
         if (!isAxiosError<ValidationError>(e)|| !e.response) {
             return
         }
 
-        console.log('errors here')
-        console.log(e.response.data.validation_code)
         return {
             ...e.response.data as GenericValidationError<RegisterValidationError>,
             isOk: false
@@ -115,21 +121,12 @@ export const login = async (
             return
         }
 
-        console.log('errors here')
-        console.log(e.response.data)
         return {
             ...e.response.data as GenericValidationError<LoginValidationError>,
             isOk: false
         };
 
     }
-    // redirect('/dashboard'  );
-
-
-
-    // session.userId = "1";
-    // session.username = formUsername;
-    // session.isPro = isPro;
 };
 
 export const logout = async () => {

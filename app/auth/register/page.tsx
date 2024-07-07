@@ -7,6 +7,8 @@ import {z} from "zod";
 import {register} from "@/auth";
 import {LoaderIcon} from "lucide-react";
 import {GENERIC_VALIDATION_ERROR_KEY} from "@/types/errors";
+import {useRouter} from "next/navigation";
+import useAuthStore from "@/stores/AuthStore";
 
 
 export default function Register() {
@@ -36,6 +38,9 @@ export default function Register() {
     }
 
     const [validationErrors, setValidationErrors] = useState(defaultErrors)
+
+    const router = useRouter()
+    const setAuthUser = useAuthStore(state => state.setAuthUser)
 
 
 
@@ -69,6 +74,11 @@ export default function Register() {
 
         }
 
+        if(res != undefined && res.isOk && res.session ) {
+            console.log(res.session)
+            setAuthUser(JSON.parse(res.session))
+            router.push("/dashboard")
+        }
 
         setIsLoading(false)
 
