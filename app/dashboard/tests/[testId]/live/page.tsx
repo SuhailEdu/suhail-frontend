@@ -398,7 +398,7 @@ export default function New({params} : {params:{testId: string}}) {
                         </div>
 
                         ) : (
-                           <div>No</div>
+                           <div className={"text-red-500"}>No</div>
                             )}
                     </SheetHeader>
                 </SheetContent>

@@ -9,14 +9,15 @@ import {
 } from "@/components/ui/breadcrumb"
 import Link from "next/link";
 import {HomeIcon, PaperclipIcon} from "lucide-react";
-import ReportsCards from "@/app/dashboard/tests/[testId]/ReportsCards";
 import {useQuery, useQueryClient} from "@tanstack/react-query";
 import {useApi} from "@/hooks/useApi";
 import {Exam} from "@/types/exam";
-import QuestionsTab from "@/app/dashboard/tests/[testId]/QuestionsTab";
-import StudentsTab from "@/app/dashboard/tests/[testId]/StudentsTab";
-import {getExamLiveStatus, getExamLiveStatusBadge} from "@/helpers/liveTestHelper";
+import TestSkeleton from "@/app/dashboard/tests/[testId]/TestSkeleton";
 import CustomBadge from "@/components/CustomBadge";
+import {getExamLiveStatus, getExamLiveStatusBadge} from "@/helpers/liveTestHelper";
+import QuestionsTab from "@/app/dashboard/tests/[testId]/QuestionsTab";
+import ReportsCards from "@/app/dashboard/tests/[testId]/ReportsCards";
+import StudentsTab from "@/app/dashboard/tests/[testId]/StudentsTab";
 
 type ExamQueryData =  Exam & {
     is_my_exam: boolean
@@ -98,7 +99,7 @@ export default function ShowTest ({params}: {params:{testId: string}})  {
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
-            {!testQuery.data ?<div>No data Found</div> :
+            {testQuery.status == "success" &&  testQuery.data &&
                 <>
 
             <div className="my-12 pr-4">
@@ -160,6 +161,12 @@ export default function ShowTest ({params}: {params:{testId: string}})  {
             </>
 
             }
+            {testQuery.isLoading && (
+                <div className={"mt-8"}>
+                <TestSkeleton />
+                </div>
+            )}
+
         </div>
     )
 

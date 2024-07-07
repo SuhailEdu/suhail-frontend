@@ -4,6 +4,7 @@ import {Exam} from "@/types/exam";
 import React from "react";
 import ExamCard from "@/components/ExamCard";
 import Link from "next/link";
+import ExamCardSkeleton from "@/app/dashboard/ExamCardSkeleton";
 
 type ParticipatingExamResource = {
     id: string,
