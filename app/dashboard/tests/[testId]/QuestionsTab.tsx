@@ -18,8 +18,8 @@ import {
     AlertDialogHeader,
     AlertDialogTitle
 } from "@/components/ui/alert-dialog";
-import {AxiosError, isAxiosError} from "axios";
-import {ValidationError} from "@/types/errors";
+import {AxiosError} from "axios";
+import {isServerValidationError} from "@/types/errors";
 
 type Question = {
     title: string,
@@ -226,8 +226,8 @@ export default function QuestionsTab({ testId , isMyExam} : { testId:string , is
             console.log(res)
 
         } catch (e:unknown) {
-            if(isAxiosError<ValidationError<SubmitQuestionValidationError>>(e) && e.response) {
-                console.log(e.response.status , e.response.data.error)
+            if(isServerValidationError<SubmitQuestionValidationError>(e) && e.response) {
+                console.log(e.response)
 
 
             // if(e?.response?.status === 422 && e?.response?.data?.validationError) {

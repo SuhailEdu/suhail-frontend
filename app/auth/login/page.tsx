@@ -6,7 +6,12 @@ import Link from "next/link";
 import {z} from "zod";
 import {login} from "@/auth";
 import {LoaderIcon} from "lucide-react";
+import {GENERIC_VALIDATION_ERROR} from "@/types/errors";
 
+interface LoginValidationError {
+    email: string[],
+    password: string[],
+}
 
 export default function Login() {
 
@@ -52,14 +57,12 @@ export default function Login() {
         setIsLoading(true)
 
             const res = await login(data)
-
-        if (!res?.isOk && res?.status == 422) {
-            setValidationErrors((prevErrors) => ({
-                ...prevErrors,
-                ...res.errors.validationError
+        if(res != undefined && !res.isOk  && res.validation_code == GENERIC_VALIDATION_ERROR) {
+            setValidationErrors(prevState => ({
+                ...prevState,
+                ...res.validation_errors
             }))
-            setIsLoading(false)
-            return
+
         }
 
         setIsLoading(false)

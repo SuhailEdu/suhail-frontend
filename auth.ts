@@ -1,10 +1,24 @@
 "use server";
 
-import { sessionOptions, SessionData, defaultSession } from "@/session";
-import { getIronSession } from "iron-session";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import {defaultSession, SessionData, sessionOptions} from "@/session";
+import {getIronSession} from "iron-session";
+import {cookies} from "next/headers";
+import {redirect} from "next/navigation";
 import axiosClient from "@/providers/axiosClient";
+import {isAxiosError} from "axios";
+import {GenericValidationError} from "@/types/errors";
+
+
+interface LoginValidationError {
+    email: string[],
+    password: string[],
+}
+interface RegisterValidationError {
+    first_name: string[],
+    last_name: string[],
+    email: string[],
+    password: string[],
+}
 
 
 export const getSession = async () => {
@@ -49,19 +63,16 @@ export const register = async (
         await session.save();
     }
     catch (e:any) {
-        if (!e.isAxiosError) {
+        if (!isAxiosError<GenericValidationError<LoginValidationError>>(e)|| !e.response) {
             return
         }
 
-        if (e && e?.response?.status === 422) {
-
-            return {
-                status: e.response.status,
-                errors: e.response.data,
-                isOk: false
-            }
-        }
-        return
+        console.log('errors here')
+        console.log(e.response.data.validation_code)
+        return {
+            ...e.response.data,
+            isOk: false
+        };
     }
 
     redirect("/");
@@ -69,7 +80,12 @@ export const register = async (
 
 export const login = async (
     formData:loginData
-) => {
+): Promise<{
+    isOk:boolean,
+    validation_errors:LoginValidationError,
+    validation_code: string
+} | undefined> => {
+
     const session = await getSession();
 
     try {
@@ -83,25 +99,20 @@ export const login = async (
         session.token = res.data.token
         console.log('no errors' , res.data)
 
-
         await session.save();
     }
     catch (e:any) {
-        console.log('errors here')
-        if (!e.isAxiosError) {
+        if (!isAxiosError<GenericValidationError<LoginValidationError>>(e)|| !e.response) {
             return
         }
 
-        if (e && e?.response?.status === 422) {
-
+        console.log('errors here')
+        console.log(e.response.data.validation_code)
         return {
-            status: e.response.status,
-            errors: e.response.data,
+            ...e.response.data,
             isOk: false
-        }
-        }
-        console.log(e)
-        return
+        };
+
     }
 
     redirect("/");
