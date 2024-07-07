@@ -6,7 +6,7 @@ import {cookies} from "next/headers";
 import {redirect} from "next/navigation";
 import axiosClient from "@/providers/axiosClient";
 import {isAxiosError} from "axios";
-import {GenericValidationError} from "@/types/errors";
+import {GenericValidationError, ValidationError} from "@/types/errors";
 
 
 interface LoginValidationError {
@@ -61,21 +61,21 @@ export const register = async (
         session.token = res.data.token
 
         await session.save();
+        redirect("/dashboard");
     }
     catch (e:any) {
-        if (!isAxiosError<GenericValidationError<LoginValidationError>>(e)|| !e.response) {
+        if (!isAxiosError<ValidationError>(e)|| !e.response) {
             return
         }
 
         console.log('errors here')
         console.log(e.response.data.validation_code)
         return {
-            ...e.response.data,
+            ...e.response.data as GenericValidationError<RegisterValidationError>,
             isOk: false
         };
     }
 
-    redirect("/");
 };
 
 export const login = async (
@@ -102,20 +102,19 @@ export const login = async (
         await session.save();
     }
     catch (e:any) {
-        if (!isAxiosError<GenericValidationError<LoginValidationError>>(e)|| !e.response) {
+        if (!isAxiosError<ValidationError>(e)|| !e.response) {
             return
         }
 
         console.log('errors here')
-        console.log(e.response.data.validation_code)
+        console.log(e.response.data)
         return {
-            ...e.response.data,
+            ...e.response.data as GenericValidationError<LoginValidationError>,
             isOk: false
         };
 
     }
 
-    redirect("/");
 
 
     // session.userId = "1";
@@ -125,7 +124,20 @@ export const login = async (
 
 export const logout = async () => {
     const session = await getSession();
-    session.destroy();
-    redirect("/");
+    try {
+        const res = await axiosClient.post('/home/logout' , {} , {
+            headers: {
+                Authorization: `Bearer ${session.token}`
+
+            }
+        } );
+        console.log(res)
+        session.destroy();
+
+    } catch(e) {
+        console.error(e);
+
+    }
+
 };
 

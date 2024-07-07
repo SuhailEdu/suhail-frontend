@@ -2,6 +2,7 @@
 // export type AuthActions = "set-logged-in-user" | "delete-logged-in-user"
 
 import {create} from "zustand";
+
 type AuthUser = {
 
     id?: string,
@@ -15,6 +16,7 @@ type AuthUser = {
 type AuthStoreState  = {
     user: AuthUser,
     setAuthUser: (user: AuthUser) => void,
+    logout: () => void,
 }
 
 const useAuthStore = create<AuthStoreState>()(set => ({
@@ -22,6 +24,9 @@ const useAuthStore = create<AuthStoreState>()(set => ({
         isLoggedIn: false,
     },
     setAuthUser: (user: AuthUser) => set((state) => ({user: user})),
+    logout: () => set((state) => ({user: {
+        isLoggedIn: false,
+        }})),
 
 }))
 

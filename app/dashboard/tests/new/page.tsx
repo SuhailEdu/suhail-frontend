@@ -196,7 +196,7 @@ export default function New() {
             if(studentsEmails.length > 0) {
                 invitationMutation.mutate()
             } {
-                // setStep('testCreated')
+                setStep('testCreated')
             }
 
         }

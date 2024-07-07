@@ -7,6 +7,7 @@ import {z} from "zod";
 import {login} from "@/auth";
 import {LoaderIcon} from "lucide-react";
 import {GENERIC_VALIDATION_ERROR} from "@/types/errors";
+import {useRouter} from "next/navigation";
 
 interface LoginValidationError {
     email: string[],
@@ -16,6 +17,7 @@ interface LoginValidationError {
 export default function Login() {
 
     const [isLoading , setIsLoading] = useState(false)
+    const router = useRouter()
 
     const loginSchema = z.object({
         email: z.string().email(),
@@ -62,8 +64,12 @@ export default function Login() {
                 ...prevState,
                 ...res.validation_errors
             }))
-
         }
+
+        if(res?.isOk === true) {
+            router.push("/login")
+        }
+
 
         setIsLoading(false)
     }
