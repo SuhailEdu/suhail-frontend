@@ -18,6 +18,9 @@ const config = {
       },
     },
     extend: {
+      translate: {
+        200: '200%',
+      },
       colors: {
         black: '#333',
         border: "hsl(var(--border))",

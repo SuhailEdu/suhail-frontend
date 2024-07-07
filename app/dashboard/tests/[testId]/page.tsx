@@ -116,11 +116,15 @@ export default function ShowTest ({params}: {params:{testId: string}})  {
                     </span>
                 </div>
 
+                {/*"translate-x-0": selectedOption === "reports",*/}
+                {/*"translate-x-full": selectedOption === "questions",*/}
+                {/*"translate-x-200": selectedOption === "students",                                   })  }>الاحصائيات</p>*/}
+
                 <div className="my-8 py-4">
                     <div className="my-8">
                         <div className='flex justify-start border-b-2 '>
                                 <p onClick={() => setSelectedOption('reports')}
-                                   className={`border-b-2 ${isSelected('reports')} px-4 cursor-pointer`}>الاحصائيات</p>
+                                   className={ `border-b-2 ${isSelected("reports")}  px-4 cursor-pointer`}>الاحصائيات</p>
 
                             <p onClick={() => setSelectedOption('questions')}
                                className={`border-b-2 ${isSelected('questions')} px-4 cursor-pointer`}>

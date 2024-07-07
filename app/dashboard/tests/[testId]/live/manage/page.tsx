@@ -11,6 +11,8 @@ import Link from "next/link";
 import {
     ArrowBigLeft,
     ArrowBigRight,
+    BookmarkPlus,
+    CloverIcon,
     HomeIcon,
     LoaderIcon,
     Menu,
@@ -70,7 +72,7 @@ interface Answer{
 }
 
 
-export default function New({params} : {params:{testId: string}}) {
+function New({params} : {params:{testId: string}}) {
 
     const api = useApi()
     const queryClient = useQueryClient()
@@ -272,7 +274,7 @@ export default function New({params} : {params:{testId: string}}) {
 
                         <PrimaryButton color={'base'} onClick={() => setIsSidebarOpen(true)} className={"flex justify-between gap-2 items-center text-xl cursor-pointer"}>
                             <span><Menu/></span>
-                            <span>عرض الأسئلة</span>
+                            <span>قائمة الأسئلة</span>
                         </PrimaryButton>
                         <DropdownMenu open={dropDownOpen} onOpenChange={setDropDownOpen} dir={"rtl"}>
                             <DropdownMenuTrigger>
@@ -364,7 +366,7 @@ export default function New({params} : {params:{testId: string}}) {
 
 
             </div>
-                {selectedQuestion !== null ? (
+                {selectedQuestion !== null && questionsQuery.data.questions.length > 0 ? (
 
                     <div className="mt-20">
                         <div className={"text-2xl text-center"}>{selectedQuestion.title}</div>
@@ -393,14 +395,28 @@ export default function New({params} : {params:{testId: string}}) {
                 </div>
 
                 ): (
-                    <div>Noo</div>
+                        <div className={"flex flex-col gap-3 text-2xl justify-center items-center  "}>
+                            <BookmarkPlus size={'40'} className={""} />
+                            <div>
+                                <div>اختر سؤالا من قائمة الأسئلة</div>
+                            </div>
+                        </div>
+
+                )}
+                {questionsQuery.data.questions.length < 1 && (
+                    <div className={"flex flex-col gap-3 text-2xl justify-center items-center  "}>
+                        <CloverIcon size={'40'} className={""}/>
+                        <div>
+                            <div>لا يحتوي هذا الاختبار على أسئلة</div>
+                        </div>
+                    </div>
                 )}
             </div>
-            <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
-                <SheetContent side={"left"} dir={"rtl"}>
-                    <SheetHeader dir={"rtl"}>
-                        <SheetTitle className={"text-right"}>قائمة الأسئلة</SheetTitle>
-                        {questionsQuery.data && questionsQuery.data?.questions.length > 0 ? (
+                    <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
+                        <SheetContent side={"left"} dir={"rtl"}>
+                            <SheetHeader dir={"rtl"}>
+                                <SheetTitle className={"text-right"}>قائمة الأسئلة</SheetTitle>
+                                {questionsQuery.data && questionsQuery.data?.questions.length > 0 ? (
 
                         <div className={"mt-4"}>
                             {questionsQuery.data.questions.map(question => (
@@ -441,3 +457,5 @@ export default function New({params} : {params:{testId: string}}) {
     )
 
 }
+
+export default New

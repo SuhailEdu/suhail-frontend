@@ -1,3 +1,4 @@
+import Link from "next/link";
 
 export default function HomePricingSection() {
     return (
@@ -8,126 +9,113 @@ export default function HomePricingSection() {
                     <p className="mb-5 font-light text-gray-500 sm:text-xl dark:text-gray-400">نعرض عليك أفضل الباقات لتناسب احتياجاتك التعليمية</p>
                 </div>
                 <div className="space-y-8 lg:grid lg:grid-cols-2 sm:gap-6 xl:gap-10 lg:space-y-0">
-
                     <div
-                        className="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white">
-                        <h3 className="mb-4 text-2xl font-semibold">الأفراد</h3>
-                        <p className="font-light text-gray-500 sm:text-lg dark:text-gray-400">أفضل خيار للأفراد و لأختبارك القادم</p>
-                        <div className="flex justify-center items-baseline my-8">
-                            <span className="mr-2 text-5xl font-extrabold">$29</span>
-                            <span className="text-gray-500 dark:text-gray-400">/month</span>
+                        className="flex flex-col  max-w-sm text-gray-900 rounded-2xl bg-indigo-50 p-6 xl:py-9 xl:px-12 transition-all duration-500 hover:bg-gray-100">
+                        <h3 className="font-manrope text-2xl font-bold mb-3">الأفراد</h3>
+                        <div className="flex items-center mb-6">
+                            <span className="font-manrope mr-2 text-6xl font-semibold">$0</span>
+                            <span className="text-xl text-gray-500 ">/ شهريا</span>
                         </div>
-                        <ul role="list" className="mb-8 space-y-4 text-left">
-                            <li className="flex items-center space-x-3">
-                                <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400"
-                                     fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                    <path fillRule="evenodd"
-                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                          clipRule="evenodd"></path>
+                        <ul className="mb-12 space-y-6 text-left text-lg text-gray-500">
+                            <li className="flex items-center gap-1 space-x-4">
+                                <svg className="flex-shrink-0 w-6 h-6 text-indigo-600" viewBox="0 0 30 30" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M10 14.7875L13.0959 17.8834C13.3399 18.1274 13.7353 18.1275 13.9794 17.8838L20.625 11.25M15 27.5C8.09644 27.5 2.5 21.9036 2.5 15C2.5 8.09644 8.09644 2.5 15 2.5C21.9036 2.5 27.5 8.09644 27.5 15C27.5 21.9036 21.9036 27.5 15 27.5Z"
+                                        stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"
+                                        strokeLinejoin="round"></path>
                                 </svg>
-                                <span>Individual configuration</span>
+                                <span>10 اختبارات يومية</span>
                             </li>
-                            <li className="flex items-center space-x-3">
-
-                                <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400"
-                                     fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                    <path fillRule="evenodd"
-                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                          clipRule="evenodd"></path>
+                            <li className="flex items-center gap-1 space-x-4">
+                                <svg className="flex-shrink-0 w-6 h-6 text-indigo-600" viewBox="0 0 30 30" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M10 14.7875L13.0959 17.8834C13.3399 18.1274 13.7353 18.1275 13.9794 17.8838L20.625 11.25M15 27.5C8.09644 27.5 2.5 21.9036 2.5 15C2.5 8.09644 8.09644 2.5 15 2.5C21.9036 2.5 27.5 8.09644 27.5 15C27.5 21.9036 21.9036 27.5 15 27.5Z"
+                                        stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"
+                                        strokeLinejoin="round"></path>
                                 </svg>
-                                <span>No setup, or hidden fees</span>
+                                <span>100 مشارك لكل اختبار</span>
                             </li>
-                            <li className="flex items-center space-x-3">
-                                <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400"
-                                     fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                    <path fillRule="evenodd"
-                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                          clipRule="evenodd"></path>
+                            <li className="flex items-center gap-1 space-x-4">
+                                <svg className="flex-shrink-0 w-6 h-6 text-indigo-600" viewBox="0 0 30 30" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M10 14.7875L13.0959 17.8834C13.3399 18.1274 13.7353 18.1275 13.9794 17.8838L20.625 11.25M15 27.5C8.09644 27.5 2.5 21.9036 2.5 15C2.5 8.09644 8.09644 2.5 15 2.5C21.9036 2.5 27.5 8.09644 27.5 15C27.5 21.9036 21.9036 27.5 15 27.5Z"
+                                        stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"
+                                        strokeLinejoin="round"></path>
                                 </svg>
-                                <span>Team size: <span className="font-semibold">1 developer</span></span>
+                                <span>24/7 دعم فني </span>
                             </li>
-                            <li className="flex items-center space-x-3">
-                                <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400"
-                                     fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                    <path fillRule="evenodd"
-                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                          clipRule="evenodd"></path>
+                            <li className="flex items-center gap-1 space-x-4">
+                                <svg className="flex-shrink-0 w-6 h-6 text-indigo-600" viewBox="0 0 30 30" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M10 14.7875L13.0959 17.8834C13.3399 18.1274 13.7353 18.1275 13.9794 17.8838L20.625 11.25M15 27.5C8.09644 27.5 2.5 21.9036 2.5 15C2.5 8.09644 8.09644 2.5 15 2.5C21.9036 2.5 27.5 8.09644 27.5 15C27.5 21.9036 21.9036 27.5 15 27.5Z"
+                                        stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"
+                                        strokeLinejoin="round"></path>
                                 </svg>
-                                <span>Premium support: <span className="font-semibold">6 months</span></span>
-                            </li>
-                            <li className="flex items-center space-x-3">
-                                <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400"
-                                     fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                    <path fillRule="evenodd"
-                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                          clipRule="evenodd"></path>
-                                </svg>
-                                <span>Free updates: <span className="font-semibold">6 months</span></span>
+                                <span>وصول لحزمة المطورين API</span>
                             </li>
                         </ul>
-                        <a href="#"
-                           className="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-white  dark:focus:ring-primary-900">Get
-                            started</a>
+                        <Link href="/"
+                           className="py-4 px-8 bg-indigo-600 shadow-sm rounded-full transition-all duration-500 text-lg text-white font-semibold text-center w-fit mx-auto hover:bg-indigo-700">اشترك</Link>
                     </div>
+
                     <div
-                        className="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white">
-                        <h3 className="mb-4 text-2xl font-semibold">المنظمات</h3>
-                        <p className="font-light text-gray-500 sm:text-lg dark:text-gray-400">مناسبة للمجموعات الكبيرة </p>
-                        <div className="flex justify-center items-baseline my-8">
-                            <span className="mr-2 text-5xl font-extrabold">$99</span>
-                            <span className="text-gray-500 dark:text-gray-400">/month</span>
+                        className="flex flex-col  max-w-sm text-gray-900 rounded-2xl bg-indigo-50 p-6 xl:py-9 xl:px-12 transition-all duration-500 hover:bg-gray-100">
+                        <h3 className="font-manrope text-2xl font-bold mb-3">المنظمات</h3>
+                        <div className="flex items-center mb-6">
+                            <span className="font-manrope mr-2 text-6xl font-semibold">$100</span>
+                            <span className="text-xl text-gray-500 ">/ شهريا</span>
                         </div>
-                        <ul role="list" className="mb-8 space-y-4 text-left">
-                            <li className="flex items-center space-x-3">
-                                <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400"
-                                     fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                    <path fillRule="evenodd"
-                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                          clipRule="evenodd"></path>
+                        <ul className="mb-12 space-y-6 text-left text-lg text-gray-500">
+                            <li className="flex items-center gap-1 space-x-4">
+                                <svg className="flex-shrink-0 w-6 h-6 text-indigo-600" viewBox="0 0 30 30" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M10 14.7875L13.0959 17.8834C13.3399 18.1274 13.7353 18.1275 13.9794 17.8838L20.625 11.25M15 27.5C8.09644 27.5 2.5 21.9036 2.5 15C2.5 8.09644 8.09644 2.5 15 2.5C21.9036 2.5 27.5 8.09644 27.5 15C27.5 21.9036 21.9036 27.5 15 27.5Z"
+                                        stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"
+                                        strokeLinejoin="round"></path>
                                 </svg>
-                                <span>Individual configuration</span>
+                                <span>10 اختبارات يومية</span>
                             </li>
-                            <li className="flex items-center space-x-3">
-                                <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400"
-                                     fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                    <path fillRule="evenodd"
-                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                          clipRule="evenodd"></path>
+                            <li className="flex items-center gap-1 space-x-4">
+                                <svg className="flex-shrink-0 w-6 h-6 text-indigo-600" viewBox="0 0 30 30" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M10 14.7875L13.0959 17.8834C13.3399 18.1274 13.7353 18.1275 13.9794 17.8838L20.625 11.25M15 27.5C8.09644 27.5 2.5 21.9036 2.5 15C2.5 8.09644 8.09644 2.5 15 2.5C21.9036 2.5 27.5 8.09644 27.5 15C27.5 21.9036 21.9036 27.5 15 27.5Z"
+                                        stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"
+                                        strokeLinejoin="round"></path>
                                 </svg>
-                                <span>No setup, or hidden fees</span>
+                                <span>100 مشارك لكل اختبار</span>
                             </li>
-                            <li className="flex items-center space-x-3">
-                                <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400"
-                                     fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                    <path fillRule="evenodd"
-                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                          clipRule="evenodd"></path>
+                            <li className="flex items-center gap-1 space-x-4">
+                                <svg className="flex-shrink-0 w-6 h-6 text-indigo-600" viewBox="0 0 30 30" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M10 14.7875L13.0959 17.8834C13.3399 18.1274 13.7353 18.1275 13.9794 17.8838L20.625 11.25M15 27.5C8.09644 27.5 2.5 21.9036 2.5 15C2.5 8.09644 8.09644 2.5 15 2.5C21.9036 2.5 27.5 8.09644 27.5 15C27.5 21.9036 21.9036 27.5 15 27.5Z"
+                                        stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"
+                                        strokeLinejoin="round"></path>
                                 </svg>
-                                <span>Team size: <span className="font-semibold">10 developers</span></span>
+                                <span>24/7 دعم فني </span>
                             </li>
-                            <li className="flex items-center space-x-3">
-                                <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400"
-                                     fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                    <path fillRule="evenodd"
-                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                          clipRule="evenodd"></path>
+                            <li className="flex items-center gap-1 space-x-4">
+                                <svg className="flex-shrink-0 w-6 h-6 text-indigo-600" viewBox="0 0 30 30" fill="none"
+                                     xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M10 14.7875L13.0959 17.8834C13.3399 18.1274 13.7353 18.1275 13.9794 17.8838L20.625 11.25M15 27.5C8.09644 27.5 2.5 21.9036 2.5 15C2.5 8.09644 8.09644 2.5 15 2.5C21.9036 2.5 27.5 8.09644 27.5 15C27.5 21.9036 21.9036 27.5 15 27.5Z"
+                                        stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"
+                                        strokeLinejoin="round"></path>
                                 </svg>
-                                <span>Premium support: <span className="font-semibold">24 months</span></span>
-                            </li>
-                            <li className="flex items-center space-x-3">
-                                <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400"
-                                     fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                    <path fillRule="evenodd"
-                                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                          clipRule="evenodd"></path>
-                                </svg>
-                                <span>Free updates: <span className="font-semibold">24 months</span></span>
+                                <span>وصول لحزمة المطورين API</span>
                             </li>
                         </ul>
-                        <a href="#"
-                           className="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:text-white  dark:focus:ring-primary-900">Get
-                            started</a>
+                        <Link href="/"
+                              className="py-4 px-8 bg-indigo-600 shadow-sm rounded-full transition-all duration-500 text-lg text-white font-semibold text-center w-fit mx-auto hover:bg-indigo-700">اشترك</Link>
                     </div>
+
+
 
                 </div>
             </div>
