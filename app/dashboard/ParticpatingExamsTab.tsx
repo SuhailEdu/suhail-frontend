@@ -1,7 +1,6 @@
 import {useApi} from "@/hooks/useApi";
 import {useQuery} from "@tanstack/react-query";
 import {Exam} from "@/types/exam";
-import {LoaderIcon} from "lucide-react";
 import React from "react";
 import ExamCard from "@/components/ExamCard";
 import Link from "next/link";
@@ -28,8 +27,14 @@ function ParticipatingExams({children}:any) {
 
     return (
         <div className="my-8">
-            {query.isLoading ? <div className="flex justify-center items-center">
-                    <LoaderIcon  className="animate-spin"  />
+            {query.isLoading ? <div className="grid gap-2  grid-cols-1 md:grid-cols-2 lg:grid-cols-3  xl:grid-cols-4">
+                    <ExamCardSkeleton />
+                    <ExamCardSkeleton />
+                    <ExamCardSkeleton />
+                    <ExamCardSkeleton />
+                    <ExamCardSkeleton />
+                    <ExamCardSkeleton />
+
 
 
                 </div> :
