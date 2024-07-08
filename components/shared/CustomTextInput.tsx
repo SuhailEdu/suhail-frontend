@@ -4,7 +4,7 @@ import {Input} from "@/components/ui/input";
 
 interface CustomTextInputProps {
     label?: string
-    errors?: string
+    errors?: string | string[]
     hint?: ReactNode
     labelClass?: string
     inputSize?: 'small' | 'medium' | 'large'
@@ -49,7 +49,7 @@ export default function CustomTextInput({errors, inputSize, labelClass, hint, la
                    className={`  ${errors && 'border border-red-500'}`}
                    id={props.id} type={props.type} placeholder={props.placeholder}  {...props}/>
             {errors && (
-                <small className="text-red-500">{errors}</small>
+                <small className="text-red-500">{typeof errors == 'object' && errors[0] ? errors[0] : errors }</small>
             )}
             {!errors && hint && (
                 <small className="text-gray-600">{hint}</small>
