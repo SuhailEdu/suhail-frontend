@@ -6,7 +6,7 @@ export function useApi() {
 
 axios.defaults.headers["Content-Type"] = "application/json";
 axios.defaults.headers["Accept"] = 'application/json'
-axios.defaults.baseURL = "https://suhail.lilash.dev";
+axios.defaults.baseURL = "https://suhail-api.lilash.dev";
 //   axios.defaults.baseURL = "http://127.0.0.1:4000";
 
 
