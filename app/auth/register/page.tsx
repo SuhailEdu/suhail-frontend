@@ -17,10 +17,16 @@ export default function Register() {
 
 
     const registerSchema = z.object({
-        first_name: z.string().min(3).max(20),
-        last_name: z.string().min(3).max(20),
-        email: z.string().email(),
-        password: z.string().min(8).max(50),
+        first_name: z.string({message: 'يجب أن يكون الاسم الأول نصا'})
+            .min(3 , "يجب أن يتكون الاسم الأول من 3 حروف على الأقل")
+            .max(20, "الحد الأقصى للأسم 20 حرفا"),
+        last_name: z.string({message: 'يجب أن يكون الاسم الأول نصا'})
+            .min(3 , "يجب أن يتكون الاسم الأخير من 3 حروف على الأقل")
+            .max(20, "الحد الأقصى للأسم 20 حرفا"),
+        email: z.string({message: "البريد الالكتروني غير صحيح"}).email({message: "البريد الالكتروني غير صحيح"}),
+        password: z.string({message: "البريد الالكتروني غير صحيح"})
+            .min(8 , "يجب أن يتكون الاسم الأول من 3 حروف على الأقل")
+            .max(255, "الحد الأقصى لكلمة المرور 255 رمزا "),
     })
 
     const [data, setData] = useState<{ email: string; password: string  , first_name:string , last_name:string}>({

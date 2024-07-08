@@ -22,8 +22,10 @@ export default function Login() {
     const setAuthUser = useAuthStore(state => state.setAuthUser)
 
     const loginSchema = z.object({
-        email: z.string().email(),
-        password: z.string().min(8).max(50),
+        email: z.string({message: "البريد الالكتروني غير صحيح"}).email({message: "البريد الالكتروني غير صحيح"}),
+        password: z.string({message: "البريد الالكتروني غير صحيح"})
+            .min(8 , "يجب أن يتكون الاسم الأول من 3 حروف على الأقل")
+            .max(255, "الحد الأقصى لكلمة المرور 255 رمزا "),
     })
 
     const [data, setData] = useState<{ email: string; password: string }>({
