@@ -18,6 +18,7 @@ interface QuestionValidationError {
 interface QuestionType {
     title: string,
     id: number,
+    type: 'options' | 'yesOrNo',
     options: QuestionOptionType[]
 }
 
@@ -275,10 +276,11 @@ const QuestionsStep = forwardRef<{isReadyToSubmit:() => Promise<boolean>} , Prop
 
             }
 
-            const newQuestion =
+            const newQuestion:QuestionType =
                 {
                     title: 'سؤال جديد',
                     id: Math.random(),
+                    type: 'options',
                     options: [
                         {
                             title: 'أزرق',

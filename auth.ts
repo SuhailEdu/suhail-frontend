@@ -131,20 +131,13 @@ export const login = async (
 
 export const logout = async () => {
     const session = await getSession();
-    try {
-        const res = await axiosClient.post('/home/logout' , {} , {
+         axiosClient.post('/home/logout' , {} , {
             headers: {
                 Authorization: `Bearer ${session.token}`
-
             }
         } );
-        console.log(res)
         session.destroy();
 
-    } catch(e) {
-        console.error(e);
-
-    }
 
 };
 

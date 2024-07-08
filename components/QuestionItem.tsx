@@ -1,9 +1,11 @@
 import CustomTextInput from "@/components/shared/CustomTextInput";
-import {InfoIcon, MinusIcon} from "lucide-react";
+import {CheckCircle, HandIcon, InfoIcon, MinusIcon, Pencil} from "lucide-react";
+import {useState} from "react";
 
 interface QuestionType {
     title: string,
     id: number,
+    type: 'options' | 'yesOrNo',
     options: QuestionOptionType[]
 }
 
@@ -24,6 +26,7 @@ interface Props {
 }
 
 function QuestionItem({question, handleQuestionTitleChange, handleOptionsChange, removeOption, titleError, optionsError, clearActiveQuestionTooltipError, ...props}: Props) {
+    const [selectedType , setSelectedType] = useState<'options' | 'yesOrNo' | 'text'>('options')
 
     return (
         <>
@@ -48,6 +51,28 @@ function QuestionItem({question, handleQuestionTitleChange, handleOptionsChange,
                         <span>اختر عنوانا مناسبا للسؤال</span>
                     </div>}
                 />
+                <div className={"mt-8"}>
+                    <h4>نوع السؤال</h4>
+                    <div className="flex items-center justify-start gap-2 flex-wrap mt-4">
+                        <div onClick={() => setSelectedType('options')}
+                             className={`${selectedType == 'options' ? 'bg-primary text-white'  : 'bg-white text-primary font-bold'}  border text-sm border-primary flex justify-between gap-2 py-2 px-4 rounded-lg  cursor-pointer`}>
+                            <span><HandIcon className={""}/></span>
+                            <span>اختيارات</span>
+
+                        </div>
+                        <div onClick={() => setSelectedType('yesOrNo')} className={` ${selectedType == 'yesOrNo' ? 'bg-primary text-white'  : 'bg-white text-primary font-bold'} border text-sm border-primary flex justify-between gap-2 py-2 px-4 rounded-lg  cursor-pointer`}>
+                            <span><CheckCircle className={""}/></span>
+                            <span>صح و خطأ</span>
+
+                        </div>
+                        <div onClick={() => setSelectedType('text')} className={` ${selectedType == 'text' ? 'bg-primary text-white'  : 'bg-white text-primary font-bold'} border text-sm border-primary flex justify-between gap-2 py-2 px-4 rounded-lg  cursor-pointer`}>
+                            <span><Pencil className={""}/></span>
+                            <span>سؤال تحريري</span>
+
+                        </div>
+                    </div>
+
+                </div>
 
                 <div className="mt-8">
 
