@@ -32,6 +32,11 @@ export default function CustomTextInput({errors, inputSize, labelClass, hint, la
 
     }
 
+    function isValidError() {
+        return typeof errors == 'object'? !!errors[0] : !!errors
+
+    }
+
     return (
         <div>
             {label && (
@@ -45,10 +50,10 @@ export default function CustomTextInput({errors, inputSize, labelClass, hint, la
                 </div>
             )}
 
-            <Input color={errors ? 'failure' : 'default'}
-                   className={`  ${errors && 'border border-red-500'}`}
+            <Input  color={isValidError() ? 'failure' : 'default'}
+                   className={`  ${isValidError() && 'border border-red-500'}`}
                    id={props.id} type={props.type} placeholder={props.placeholder}  {...props}/>
-            {errors && (
+            {isValidError() && (
                 <small className="text-red-500">{typeof errors == 'object' && errors[0] ? errors[0] : errors }</small>
             )}
             {!errors && hint && (

@@ -43,7 +43,7 @@ export default function ReportsCards({exam , updateExam}:{exam:ExamData, updateE
     const schema = z.object({
         exam_title:z.string()
             .min(5, 'يجب أن يحتوي عنوان الاختبار على 5 أحرف على الأقل')
-            .max(20, 'يجب أن لا يزيد عنوان الاختبار عن 20 حرفا')
+            .max(255, 'يجب أن لا يزيد عنوان الاختبار عن 255 حرفا')
         ,
         ip_range_start:z.string().ip({
             version:'v4',
@@ -275,7 +275,7 @@ export default function ReportsCards({exam , updateExam}:{exam:ExamData, updateE
                         label="عنوان الاختبار"
                         id="full_name"
                         type="text"
-                        errors={validationErrors.exam_title[0]}
+                        errors={validationErrors.exam_title}
                         value={testData.exam_title}
                         onChange={(e) => setData("exam_title", e.target.value)}
                         hint={<div className="mr-2 mt-1 text-lg flex flex-start items-center gap-1 text-green-800">
