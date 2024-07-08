@@ -1,5 +1,9 @@
 import Image from "next/image";
 
+import Step1 from '@/public/images/step1.png'
+import Step2 from '@/public/images/step2.png'
+import Step3 from '@/public/images/step3.png'
+import Step4 from '@/public/images/step4.png'
 
 export default async function Features() {
 
@@ -21,7 +25,7 @@ export default async function Features() {
       <div className="group relative bg-white dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
         <div className="relative space-y-8 py-12 p-8">
           <Image
-            src="https://cdn-icons-png.flaticon.com/512/4341/4341139.png"
+              src={Step1}
             className="w-12"
             width="512"
             height="512"
@@ -48,7 +52,7 @@ export default async function Features() {
       <div className="group relative bg-white dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
         <div className="relative space-y-8 py-12 p-8">
           <Image
-            src="https://cdn-icons-png.flaticon.com/512/4341/4341134.png"
+              src={Step2}
             className="w-12"
             width="512"
             height="512"
@@ -74,7 +78,7 @@ export default async function Features() {
       <div className="group relative bg-white dark:bg-gray-800 transition hover:z-[1] hover:shadow-2xl hover:shadow-gray-600/10">
         <div className="relative space-y-8 py-12 p-8">
           <Image
-            src="https://cdn-icons-png.flaticon.com/512/4341/4341160.png"
+              src={Step3}
             className="w-12"
             width="512"
             height="512"
@@ -104,7 +108,7 @@ export default async function Features() {
           className="relative space-y-8 py-12 p-8 transition duration-300 group-hover:bg-white dark:group-hover:bg-gray-800"
         >
           <Image
-            src="https://cdn-icons-png.flaticon.com/512/4341/4341025.png"
+            src={Step4}
             className="w-12"
             width="512"
             height="512"

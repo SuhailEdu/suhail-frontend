@@ -1,7 +1,8 @@
 import React from "react";
 import Image from "next/image";
-import Pie from "@/public/images/svg/pie.svg"
-
+import ArticleCover1 from "@/public/images/article-cover1.avif"
+import ArticleCover2 from "@/public/images/article-cover2.avif"
+import ArticleCover3 from "@/public/images/article-cover3.avif"
 
 export default async function LatestArticles() {
 
@@ -21,7 +22,7 @@ export default async function LatestArticles() {
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
               <div className="group p-6 sm:p-8 rounded-3xl bg-white border border-gray-100 dark:shadow-none dark:border-gray-700 dark:bg-gray-800 bg-opacity-50 shadow-2xl shadow-gray-600/10">
                 <div className="relative overflow-hidden rounded-xl">
-                  <Image src="https://images.unsplash.com/photo-1661749711934-492cd19a25c3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1674&q=80"
+                  <Image src={ArticleCover1}
                        alt="art cover" loading="lazy" width="1000" height="667" className="h-64 w-full object-cover object-top transition duration-500 group-hover:scale-105"/>
                 </div>
                 <div className="mt-6 relative">
@@ -39,7 +40,7 @@ export default async function LatestArticles() {
               </div>
               <div className="group p-6 sm:p-8 rounded-3xl bg-white border border-gray-100 dark:shadow-none dark:border-gray-700 dark:bg-gray-800 bg-opacity-50 shadow-2xl shadow-gray-600/10">
                 <div className="relative overflow-hidden rounded-xl">
-                  <Image src="https://images.unsplash.com/photo-1491895200222-0fc4a4c35e18?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1674&q=80"
+                  <Image src={ArticleCover3}
                        alt="art cover" loading="lazy" width="1000" height="667" className="h-64 w-full object-cover object-top transition duration-500 group-hover:scale-105"/>
                 </div>
                 <div className="mt-6 relative">
@@ -57,7 +58,7 @@ export default async function LatestArticles() {
               </div>
               <div className="group p-6 sm:p-8 rounded-3xl bg-white border border-gray-100 dark:shadow-none dark:border-gray-700 dark:bg-gray-800 bg-opacity-50 shadow-2xl shadow-gray-600/10">
                 <div className="relative overflow-hidden rounded-xl">
-                  <Image src="https://images.unsplash.com/photo-1620121692029-d088224ddc74?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2832&q=80"
+                  <Image src={ArticleCover2}
                        alt="art cover" loading="lazy" width="1000" height="667" className="h-64 w-full object-cover object-top transition duration-500 group-hover:scale-105"/>
                 </div>
                 <div className="mt-6 relative">
