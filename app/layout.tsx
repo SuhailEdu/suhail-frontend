@@ -13,8 +13,8 @@ import NextTopLoader from "nextjs-toploader";
 const inter = Inter({subsets: ["latin"]});
 
 export const metadata: Metadata = {
-    title: "Suhail App",
-    description: "Suhail App",
+    title: "منصة سهيل الذكية",
+    description: "منصة سهيل الذكية",
     
 };
 // const queryClient = new QueryClient()
