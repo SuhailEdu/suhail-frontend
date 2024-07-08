@@ -23,6 +23,7 @@ export default async function LayoutNavbar() {
     const session = await getSession();
 
 
+
     return (
         <header className="sticky border-b-[1px] top-0 z-40 w-full bg-white dark:border-b-slate-700 dark:bg-background">
             <NavigationMenu className="mx-auto">
@@ -47,7 +48,7 @@ export default async function LayoutNavbar() {
 
                     {/* desktop */}
                     <nav className="hidden md:flex gap-2">
-                        {routeList.map((route: RouteProps, i) => (
+                        {session.isLoggedIn &&  routeList.map((route: RouteProps, i) => (
                             <Link
                                 rel="noreferrer noopener"
                                 href={route.href}
