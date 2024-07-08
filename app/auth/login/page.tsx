@@ -23,8 +23,8 @@ export default function Login() {
 
     const loginSchema = z.object({
         email: z.string({message: "البريد الالكتروني غير صحيح"}).email({message: "البريد الالكتروني غير صحيح"}),
-        password: z.string({message: "البريد الالكتروني غير صحيح"})
-            .min(8 , "يجب أن يتكون الاسم الأول من 3 حروف على الأقل")
+        password: z.string({message: "كلمة المرور  غير صحيحة"})
+            .min(8 , "يجب أن تتكون كلمة المرور من 8 رموز على الأقل")
             .max(255, "الحد الأقصى لكلمة المرور 255 رمزا "),
     })
 

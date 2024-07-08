@@ -28,15 +28,15 @@ export default async function NewHero() {
                     >معرفة المزيد</Link>
                 </div>
                 <div className="hidden py-8 mt-16 border-y border-gray-100 dark:border-gray-800 sm:flex justify-between">
-                    <div className="text-left">
+                    <div className="text-right">
                         <h6 className="text-lg font-semibold text-gray-700 dark:text-white">الأكثر كفاءة</h6>
                         <p className="mt-2 text-gray-500">عدد طلاب لا نهائي</p>
                     </div>
-                    <div className="text-left">
+                    <div className="text-right">
                         <h6 className="text-lg font-semibold text-gray-700 dark:text-white">الأسرع دائما</h6>
                         <p className="mt-2 text-gray-500">سرعة الاستجابة أولويتنا</p>
                     </div>
-                    <div className="text-left">
+                    <div className="text-right">
                         <h6 className="text-lg font-semibold text-gray-700 dark:text-white">الأفضل سعرا</h6>
                         <p className="mt-2 text-gray-500">باقات تناسب احتياجاتك</p>
                     </div>
