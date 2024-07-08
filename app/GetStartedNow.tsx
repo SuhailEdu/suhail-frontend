@@ -1,13 +1,12 @@
 import React from "react";
 import Image from "next/image";
-import Pie from "@/public/images/svg/pie.svg"
 
 import Avatar from "@/public/images/avatars/avatar.webp"
 import Avatar1 from "@/public/images/avatars/avatar-1.webp"
-import Avatar2 from "@/public/images/avatars/avatar-2.webp"
 import Avatar3 from "@/public/images/avatars/avatar-3.webp"
 import Avatar4 from "@/public/images/avatars/avatar-4.webp"
 import Link from "next/link";
+
 export default async function GetStartedNow() {
 
     return (
@@ -70,7 +69,8 @@ export default async function GetStartedNow() {
                 </p>
                 <div className="flex flex-wrap justify-center gap-6">
                   <Link
-                      href="#"
+                      prefetch={false}
+                      href="/auth/login"
                       className="relative flex h-11 w-full text-white items-center justify-center px-6  rounded-full   bg-primary  transition duration-300 hover:scale-105 active:duration-75 active:before:scale-95 sm:w-max"
                   >ابدأ الأن</Link>
                   <Link

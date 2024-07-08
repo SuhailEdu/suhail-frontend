@@ -17,7 +17,9 @@ export default async function NewHero() {
                 <p className="mt-8 text-gray-700 dark:text-gray-300">صمم اختبارات إلكترونية مخصصة تناسب احتياجاتك مع منصة سهيل سهلة الاستخدام</p>
                 <div className="mt-16 flex flex-wrap justify-center gap-y-4 gap-x-6">
                     <Link
-                      href="#"
+                        prefetch={false}
+
+                      href="/auth/login"
                       className="relative flex h-11 w-full text-white items-center justify-center px-6  rounded-full   bg-primary  transition duration-300 hover:scale-105 active:duration-75 active:before:scale-95 sm:w-max"
                     >ابدأ الأن</Link>
                     <Link
