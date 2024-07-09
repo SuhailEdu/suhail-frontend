@@ -122,7 +122,7 @@ export default function Register() {
                                     />
 
                                     <CustomTextInput
-                                        label="الأخير الأول"
+                                        label="الأسم الأخير"
                                         id="last_name"
                                         type="text"
                                         errors={validationErrors.last_name[0] ?? ""}
