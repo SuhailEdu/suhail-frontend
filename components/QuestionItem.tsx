@@ -5,7 +5,6 @@ import {useState} from "react";
 interface QuestionType {
     title: string,
     id: number,
-    type: 'options' | 'yesOrNo',
     options: QuestionOptionType[]
 }
 

@@ -279,7 +279,6 @@ const QuestionsStep = forwardRef<{isReadyToSubmit:() => Promise<boolean>} , Prop
                 {
                     title: 'سؤال جديد',
                     id: Math.random(),
-                    type: 'options',
                     options: [
                         {
                             title: 'أزرق',
