@@ -18,7 +18,7 @@ interface QuestionValidationError {
 interface QuestionType {
     title: string,
     id: number,
-    type: 'options' | 'yesOrNo',
+    type: 'options' | 'yesOrNo' | 'text',
     options: QuestionOptionType[]
 }
 
@@ -348,6 +348,15 @@ const QuestionsStep = forwardRef<{isReadyToSubmit:() => Promise<boolean>} , Prop
 
         }
 
+        function handleQuestionTypeChange(type: 'options' | 'yesOrNo' | 'text') {
+            if(activeQuestion == null || questions.length == 0) return
+
+            setQuestions(q =>  q.map(question => question.id == activeQuestion.id ? {...question , type} : question))
+
+
+            setActiveQuestion(q => q === null? null : {...q , type})
+        }
+
 
         function addEmptyOption() {
 
@@ -508,6 +517,7 @@ const QuestionsStep = forwardRef<{isReadyToSubmit:() => Promise<boolean>} , Prop
                         {activeQuestion && (
                             <QuestionItem
                                 clearActiveQuestionTooltipError={clearActiveQuestionTooltipError}
+                                handleQuestionTypeChange={handleQuestionTypeChange}
 
                                 titleError={titleError}
                                 optionsError={optionsError}
