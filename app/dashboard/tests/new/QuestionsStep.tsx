@@ -18,7 +18,6 @@ interface QuestionValidationError {
 interface QuestionType {
     title: string,
     id: number,
-    type: 'options' | 'yesOrNo',
     options: QuestionOptionType[]
 }
 
